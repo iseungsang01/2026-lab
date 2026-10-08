@@ -1,0 +1,1924 @@
+<title>카드 3연속 실험실</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ground: #F6F7FA;
+    --surface: #FFFFFF;
+    --surface-2: #EFF2F7;
+    --ink: #22314F;
+    --ink-soft: #5C6B85;
+    --ink-faint: #8A96AC;
+    --rule: #DDE3EC;
+    --accent: #7C4DB8;
+    --accent-soft: rgba(124, 77, 184, .12);
+    --gold: #F5B301;
+    --gold-soft: rgba(245, 179, 1, .18);
+    --ok: #189E5A;
+    --ok-soft: rgba(24, 158, 90, .12);
+    --warn: #E17B2E;
+    --warn-soft: rgba(225, 123, 46, .12);
+    --head-bg: #22314F;
+    --head-ink: #FFFFFF;
+    --head-dim: #A9B6CE;
+    --head-bar: #1A2740;
+    --shadow: 0 1px 2px rgba(34, 49, 79, .05), 0 6px 18px rgba(34, 49, 79, .05);
+
+    --sans: 'IBM Plex Sans KR', 'Malgun Gothic', '맑은 고딕', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', 'Consolas', ui-monospace, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #141A26;
+      --surface: #1C2433;
+      --surface-2: #232D3F;
+      --ink: #E5EAF2;
+      --ink-soft: #93A0B8;
+      --ink-faint: #6C7A94;
+      --rule: #2E3A50;
+      --accent: #AC85EE;
+      --accent-soft: rgba(172, 133, 238, .16);
+      --gold: #F5B301;
+      --gold-soft: rgba(245, 179, 1, .16);
+      --ok: #35BE79;
+      --ok-soft: rgba(53, 190, 121, .15);
+      --warn: #F0954B;
+      --warn-soft: rgba(240, 149, 75, .15);
+      --head-bg: #0F1521;
+      --head-ink: #E5EAF2;
+      --head-dim: #7C8AA4;
+      --head-bar: #0A0F18;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #141A26;
+    --surface: #1C2433;
+    --surface-2: #232D3F;
+    --ink: #E5EAF2;
+    --ink-soft: #93A0B8;
+    --ink-faint: #6C7A94;
+    --rule: #2E3A50;
+    --accent: #AC85EE;
+    --accent-soft: rgba(172, 133, 238, .16);
+    --gold: #F5B301;
+    --gold-soft: rgba(245, 179, 1, .16);
+    --ok: #35BE79;
+    --ok-soft: rgba(53, 190, 121, .15);
+    --warn: #F0954B;
+    --warn-soft: rgba(240, 149, 75, .15);
+    --head-bg: #0F1521;
+    --head-ink: #E5EAF2;
+    --head-dim: #7C8AA4;
+    --head-bar: #0A0F18;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- header + tabs ---------- */
+  header {
+    background: var(--head-bg);
+    color: var(--head-ink);
+    padding: 18px 26px 16px;
+  }
+  .kick {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: .14em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  header h1 {
+    margin: 5px 0 3px;
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+  header p {
+    margin: 0;
+    color: var(--head-dim);
+    font-size: 13.5px;
+    max-width: 76ch;
+  }
+  header code {
+    font-family: var(--mono);
+    font-size: .92em;
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 3px;
+    padding: 0 4px;
+  }
+
+  nav {
+    display: flex;
+    background: var(--head-bar);
+    padding: 0 18px;
+    overflow-x: auto;
+  }
+  .tab {
+    flex: none;
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    color: var(--head-dim);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .12s, border-color .12s;
+  }
+  .tab:hover { color: var(--head-ink); }
+  .tab[aria-selected="true"] { color: var(--head-ink); border-bottom-color: var(--gold); }
+  .tab:focus-visible { outline: 2px solid var(--gold); outline-offset: -4px; }
+
+  /* ---------- layout ---------- */
+  .pane { padding: 18px; }
+  .pane[hidden] { display: none; }
+  .grid { display: grid; gap: 14px; align-items: start; }
+  .g-lab { grid-template-columns: 292px minmax(0, 1fr) 302px; }
+  .g-proof { grid-template-columns: 244px 274px minmax(0, 1fr); }
+  .g-hunt { grid-template-columns: 296px minmax(0, 1fr); }
+  @media (max-width: 1280px) {
+    .g-lab { grid-template-columns: 292px minmax(0, 1fr); }
+    .g-lab > :nth-child(3) { grid-column: 1 / -1; }
+  }
+  @media (max-width: 1180px) {
+    .g-proof { grid-template-columns: 244px minmax(0, 1fr); }
+    .g-proof > :nth-child(3) { grid-column: 1 / -1; }
+  }
+  @media (max-width: 820px) {
+    .grid { grid-template-columns: minmax(0, 1fr) !important; }
+    .pane { padding: 14px; }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 14px;
+  }
+  .card > h2 {
+    margin: 0 0 11px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    color: var(--ink-faint);
+  }
+  .card + .card { margin-top: 14px; }
+
+  /* ---------- 문제 ---------- */
+  .card.problem { border-left: 4px solid var(--accent); margin-bottom: 14px; }
+  .problem .ask { margin: 0 0 9px; font-size: 14.5px; line-height: 1.75; color: var(--ink); }
+  .problem .ask:last-child { margin-bottom: 0; }
+  .problem .ask.q { font-weight: 600; }
+  .problem .fx {
+    font-family: var(--mono); font-size: 14.5px; margin: 0 0 9px;
+    overflow-x: auto; white-space: nowrap; color: var(--accent);
+  }
+  .problem ul { margin: 0 0 9px; padding-left: 19px; }
+  .problem li { font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 3px; }
+  .problem li:last-child { margin-bottom: 0; }
+  .problem .src {
+    margin: 11px 0 0; padding-top: 9px; border-top: 1px solid var(--rule);
+    font-size: 12.5px; color: var(--ink-faint); line-height: 1.6;
+  }
+
+  /* ---------- controls ---------- */
+  .row { display: flex; flex-wrap: wrap; gap: 7px; }
+  .row + .row { margin-top: 7px; }
+  button.btn {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 7px 12px;
+    cursor: pointer;
+    transition: border-color .12s, background .12s, color .12s;
+  }
+  button.btn:hover:not(:disabled) { border-color: var(--accent); }
+  button.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.btn:disabled { opacity: .38; cursor: default; }
+  button.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
+  button.btn.grow { flex: 1; }
+
+  select, input[type="range"], input[type="text"] {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 6px 8px;
+    width: 100%;
+  }
+  input[type="text"] {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .08em;
+  }
+  input[type="range"] { padding: 0; accent-color: var(--accent); }
+  select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  label.fld { display: block; margin-bottom: 10px; }
+  label.fld > span {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+
+  /* ---------- canvas ---------- */
+  canvas { display: block; width: 100%; touch-action: none; }
+  canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+  #cards { height: 132px; }
+  #pcards { height: 232px; }
+
+  /* ---------- 끝 세 갈래 ---------- */
+  .branch {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .br {
+    background: var(--surface-2);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 7px 7px 0;
+    padding: 9px 11px;
+    cursor: pointer;
+    transition: border-color .12s, background .12s;
+  }
+  .br:hover, .br.on { border-color: var(--accent); background: var(--accent-soft); }
+  .br .end {
+    font-family: var(--mono);
+    font-size: 15px;
+    letter-spacing: .16em;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .br .lab { font-family: var(--mono); font-size: 9.5px; letter-spacing: .05em; color: var(--ink-faint); }
+  .br .num {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1.15;
+  }
+  .br .num.bad { color: var(--warn); }
+
+  /* ---------- readout ---------- */
+  .readout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 12px;
+    background: var(--surface-2);
+  }
+  .stat { padding: 9px 12px; border-right: 1px solid var(--rule); }
+  .stat:last-child { border-right: 0; }
+  .stat dt {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .05em;
+    color: var(--ink-faint);
+    margin: 0 0 1px;
+  }
+  .stat dd {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .stat.gold dd { color: var(--gold); }
+  .stat.acc dd { color: var(--accent); }
+  .stat.warn dd { color: var(--warn); }
+  .stat.ok dd { color: var(--ok); }
+
+  /* ---------- strips ---------- */
+  .strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    padding: 9px 12px;
+    border-radius: 7px;
+    background: var(--surface-2);
+    border-left: 3px solid var(--rule);
+    font-size: 13px;
+  }  .strip.miss { background: var(--warn-soft); border-left-color: var(--warn); }
+  .strip .cnt {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  .strip .cnt.acc { border-color: var(--accent); color: var(--accent); }
+  .strip .why { color: var(--ink-soft); }  .strip .delta {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1;
+    min-width: 44px;
+    text-align: center;
+    color: var(--ink-faint);
+  }
+  .strip .delta.up { color: var(--warn); }
+  .strip .delta.down { color: var(--ok); }
+
+  /* ---------- cases (반례 · 표본) ---------- */
+  .case {
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--rule);
+    border-radius: 8px;
+    padding: 11px 13px;
+    margin-bottom: 9px;
+    background: var(--surface-2);
+  }
+  .case.bad { border-left-color: var(--warn); background: var(--warn-soft); }
+  .case.ok { border-left-color: var(--ok); background: var(--ok-soft); }
+  .case-head {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 9px;
+    flex-wrap: wrap;
+  }
+  .case-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--ink-faint);
+    color: var(--surface);
+  }
+  .case.bad .case-tag { background: var(--warn); }
+  .case.ok .case-tag { background: var(--ok); }
+  .case-n {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    letter-spacing: .1em;
+    color: var(--ink);
+  }
+  .case .go {
+    margin-left: auto;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    padding: 4px 9px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .case .go:hover { border-color: var(--accent); color: var(--accent); }
+  .case .go:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .case-grid > div { background: var(--surface); padding: 6px 9px; }
+  .case-grid dt {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: .04em;
+    color: var(--ink-faint);
+    margin: 0;
+  }
+  .case-grid dd {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .case-grid dd.hi { color: var(--warn); }
+  .case-grid dd.lo { color: var(--ok); }
+  .case-why {
+    margin: 9px 0 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .case-why b { color: var(--ink); font-weight: 600; }
+  .case-sub {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    margin: 16px 0 8px;
+  }
+  .case-sub:first-child { margin-top: 0; }
+
+  /* ---------- 뒤집힌 쌍 표 ---------- */
+  .terms-wrap { max-height: 232px; overflow-y: auto; margin-top: 12px; }
+  table.terms {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 12.5px;
+  }
+  table.terms th {
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    font-size: 10px;
+    letter-spacing: .05em;
+    font-weight: 500;
+    color: var(--ink-faint);
+    text-align: right;
+    padding: 0 8px 5px;
+    border-bottom: 1px solid var(--rule);
+  }
+  table.terms th:first-child, table.terms td:first-child { text-align: left; }
+  table.terms td {
+    text-align: right;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+  table.terms tbody tr { cursor: default; transition: background .1s; }
+  table.terms tbody tr:hover, table.terms tbody tr.on { background: var(--gold-soft); }  table.terms .far { color: var(--ink-faint); }
+  table.terms tfoot td {
+    border-bottom: 0;
+    border-top: 2px solid var(--rule);
+    padding-top: 7px;
+    font-weight: 600;
+  }  .terms-note {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 7px;
+  }
+
+  /* ---------- missions ---------- */
+  .mission {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    padding: 9px 10px;
+    border-radius: 7px;
+    background: var(--surface-2);
+    font-size: 13px;
+    line-height: 1.5;
+    transition: background .2s;
+  }
+  .mission + .mission { margin-top: 7px; }
+  .mission.done { background: var(--ok-soft); }
+  .mission .box {
+    flex: none;
+    width: 17px; height: 17px;
+    margin-top: 2px;
+    border: 1.5px solid var(--ink-faint);
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: transparent;
+  }
+  .mission.done .box { border-color: var(--ok); background: var(--ok); color: #fff; }
+  .mission.done .txt { color: var(--ink-soft); }
+  .mission b { font-weight: 600; }
+  .progress {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 10px;
+    text-align: right;
+  }
+
+  /* ---------- proof blocks ---------- */
+  .blk {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: var(--sans);
+    background: var(--surface-2);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 7px;
+    padding: 9px 11px;
+    margin-bottom: 7px;
+    cursor: pointer;
+    color: var(--ink);
+    font-size: 13.5px;
+    font-weight: 600;
+    transition: border-color .12s, transform .08s;
+  }
+  .blk:hover:not(:disabled) { border-color: var(--accent); }
+  .blk:active:not(:disabled) { transform: translateY(1px); }
+  .blk:disabled { opacity: .38; cursor: default; }
+  .blk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .blk small {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 1px;
+  }
+  .blk.b-up  { border-left-color: var(--ok); }
+
+  .prog-list {
+    min-height: 190px;
+    border: 1px dashed var(--rule);
+    border-radius: 8px;
+    padding: 8px;
+    background: var(--surface-2);
+  }
+  .pitem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    padding: 6px 8px;
+    border-radius: 5px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+  }
+  .pitem + .pitem { margin-top: 5px; }
+  .pitem .n {
+    flex: none;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 20px; height: 20px;
+    border-radius: 4px;
+    background: var(--ink);
+    color: var(--surface);
+    display: grid;
+    place-items: center;
+  }
+  .pitem.run { border-color: var(--accent); background: var(--accent-soft); }
+  .pitem.g-end .n { background: var(--gold); color: #3A2B00; }
+  .pitem.g-low .n { background: var(--accent); }
+  .pitem.g-up .n { background: var(--ok); }
+  .pitem .rm {
+    margin-left: auto;
+    border: 0; background: none;
+    color: var(--ink-faint);
+    font-size: 16px; line-height: 1;
+    cursor: pointer;
+    padding: 0 2px;
+  }
+  .pitem .rm:hover { color: var(--warn); }
+  .empty {
+    color: var(--ink-faint);
+    font-size: 12.5px;
+    text-align: center;
+    padding: 68px 0;
+    line-height: 1.7;
+  }
+
+  /* ---------- messages + log ---------- */
+  .msg {
+    margin-top: 10px;
+    padding: 9px 11px;
+    border-radius: 7px;
+    font-size: 13px;
+    line-height: 1.55;
+    background: var(--surface-2);
+    color: var(--ink-soft);
+    border-left: 3px solid var(--rule);
+  }
+  .msg.ok   { background: var(--ok-soft);   border-left-color: var(--ok);   color: var(--ink); }
+  .msg.warn { background: var(--warn-soft); border-left-color: var(--warn); color: var(--ink); }
+  .msg b { font-weight: 600; }
+  .msg code, code.k {
+    font-family: var(--mono);
+    font-size: .92em;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0 4px;
+  }
+
+  .log {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 11.5px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+    max-height: 196px;
+    overflow-y: auto;
+  }  .log div { display: flex; gap: 8px; }
+  .log .t { color: var(--ink-faint); flex: none; min-width: 20px; }
+  .log b { color: var(--ink); font-weight: 600; }
+  .log .g { color: var(--gold); }
+  .log .u { color: var(--warn); }
+  .log .d { color: var(--ok); }
+
+  /* ---------- sweep ---------- */
+  .bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--surface-2);
+    overflow: hidden;
+    margin: 12px 0 10px;
+  }
+  .bar > i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--accent);
+    transition: width .12s linear;
+  }
+  .hits { margin-top: 4px; }
+
+  .table-scroll { overflow-x: auto; }
+
+  .claim-box {
+    border-left: 3px solid var(--gold);
+    background: var(--surface-2);
+    border-radius: 0 7px 7px 0;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .claim-box .f {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 0 0 6px;
+  }
+  .claim-box p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+  .claim-box strong { color: var(--ink); font-weight: 600; }
+
+
+  /* ---------- 프로젝트 층 — 논법 · 아직 안 닫힌 곳 · 직접 확인 ---------- */
+  .open > p { margin: 0 0 12px; font-size: 13.5px; line-height: 1.65; color: var(--ink-soft); }
+  .open > p b, .open > p strong, .qbox strong { color: var(--ink); font-weight: 600; }
+  .qbox {
+    border-left: 3px solid var(--rule);
+    background: var(--surface-2);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+  }
+  .qbox.todo { border-left-color: var(--gold); }
+  .qbox + .qbox { margin-top: 10px; }
+  .qbox h4 {
+    margin: 0 0 7px; font-size: 13.5px; font-weight: 600;
+    display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  }
+  .qbox h4 em {
+    font-family: var(--mono); font-size: 10.5px; font-style: normal;
+    color: var(--gold); flex: none;
+  }
+  .qbox p { margin: 0 0 6px; font-size: 13px; line-height: 1.6; color: var(--ink-soft); }
+  .qbox p:last-child { margin-bottom: 0; }
+  .qbox b { color: var(--ink); font-weight: 600; }
+  .qbox .row { margin: 10px 0 8px; }
+  .qbox .fld { max-width: 320px; }
+  .tag {
+    display: inline-block; font-family: var(--mono); font-size: 9.5px;
+    letter-spacing: .05em; font-weight: 600; padding: 1px 6px;
+    border-radius: 4px; margin-right: 6px; vertical-align: 1px; flex: none;
+  }
+  .tag.seen { background: var(--ok); color: #fff; }
+  .tag.todo { background: var(--gold); color: #3A2B00; }
+  .qbox table {
+    width: 100%; max-width: 620px; border-collapse: collapse;
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    font-size: 12px; margin: 8px 0 6px;
+  }
+  .qbox th {
+    font-size: 9.5px; letter-spacing: .04em; font-weight: 500;
+    color: var(--ink-faint); text-align: right;
+    padding: 0 7px 4px; border-bottom: 1px solid var(--rule);
+  }
+  .qbox th:first-child, .qbox td:first-child { text-align: left; }
+  .qbox td { text-align: right; padding: 3px 7px; border-bottom: 1px solid var(--rule); }
+  .qbox tr:last-child td { border-bottom: 0; }
+
+  pre.sketch {
+    font-family: var(--mono); font-size: 12px; line-height: 1.65;
+    background: var(--surface-2); border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+    padding: 12px 14px; margin: 10px 0 0; overflow-x: auto;
+    white-space: pre; color: var(--ink); tab-size: 4;
+  }
+  pre.sketch b { color: var(--ink-faint); font-weight: 400; }
+  pre.sketch i { font-style: normal; background: var(--gold-soft); }
+  pre.sketch em { font-style: normal; color: var(--ok); font-weight: 600; }
+
+  .card.pyc { margin-top: 14px; }
+
+  footer {
+    padding: 16px 26px 30px;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--rule);
+    margin-top: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<header>
+  <div class="kick">8주차 · 증명 실험실 · 정보</div>
+  <h1>카드 3연속 실험실</h1>
+  <p>카드를 눌러 가며 가능한 배치를 전부 세어 규칙을 찾고, 끝 세 갈래로 나누는 증명을 블록으로 조립하고, 반례를 사냥한다.</p>
+</header>
+
+<nav role="tablist" aria-label="실험 모드">
+  <button class="tab" role="tab" id="tab-lab"   aria-controls="pane-lab"   aria-selected="true">실험대 · 조작</button>
+  <button class="tab" role="tab" id="tab-proof" aria-controls="pane-proof" aria-selected="false">증명 조립</button>
+  <button class="tab" role="tab" id="tab-hunt"  aria-controls="pane-hunt"  aria-selected="false">반례 사냥</button>
+  <button class="tab" role="tab" id="tab-move"  aria-controls="pane-move"  aria-selected="false">논법과 남은 것</button>
+</nav>
+
+<!-- =============== 실험대 =============== -->
+<div class="pane" id="pane-lab" role="tabpanel" aria-labelledby="tab-lab">
+  <div class="card problem">
+    <h2>문제</h2>
+    <p class="ask">철수가 영희에게 카드 <b>n</b> 장 중 몇 장을 주려 한다. 영희는 왼쪽 끝 카드부터
+       오른쪽 끝 카드까지 가면서 한 장씩 <b>가져갈지 안 가져갈지</b>를 고른다. 한 장도 안 가져가도 된다.</p>
+    <ul>
+      <li>단, <b>세 번 연속해서</b> 가져갈 수는 없다.</li>
+      <li>가져간 카드가 무엇인지는 따지지 않는다. <b>어느 자리를 골랐는가</b>만 센다.</li>
+      <li>예 &mdash; <code class="k">□■■□■□</code> 는 되고, <code class="k">□□□■■■</code> 는 안 된다.</li>
+    </ul>
+    <p class="ask q">가능한 경우의 수는 몇 가지인가. n = 5 일 때와 n = 8 일 때를 구하고,
+       「세 번」을 「k 번」으로 바꾸면 어떻게 되는지도 말하시오.</p>
+    <p class="src">7주차 충북과학고 2026 문항 5. 원문의 질문 1·2·3 을 그대로 쓴다.</p>
+  </div>
+
+  <div class="grid g-lab">
+
+    <div>
+      <div class="card">
+        <h2>주장</h2>
+        <div class="claim-box">
+          <p class="f">a(n) = a(n−1) + a(n−2) + a(n−3)</p>
+          <p><code class="k">a(n)</code> 은 카드 <strong>n</strong> 장짜리 가능한 배치의 수.
+          <code class="k">a(0) = 1</code>(아무것도 안 가져감), <code class="k">a(1) = 2</code>,
+          <code class="k">a(2) = 4</code> 에서 시작한다. <strong>k</strong> 번 연속 금지면 갈래가
+          <strong>k</strong> 개다.</p>
+        </div>
+
+        <label class="fld">
+          <span>카드 수 n = <b id="n-v" style="font-family:var(--mono)">5</b></span>
+          <input type="range" id="n-slider" min="1" max="16" step="1" value="5">
+        </label>
+        <label class="fld">
+          <span>연속 금지 k = <b id="k-v" style="font-family:var(--mono)">3</b> (k 번 연속부터 안 된다)</span>
+          <input type="range" id="k-slider" min="2" max="5" step="1" value="3">
+        </label>
+
+        <div class="row">
+          <button class="btn grow" id="b-rand">무작위 배치</button>
+          <button class="btn grow" id="b-clear">전부 안 가져감</button>
+        </div>
+        <div class="row">
+          <button class="btn primary grow" id="b-count">▶ 이 n 의 배치를 전부 세기</button>
+        </div>
+        <div class="row">
+          <button class="btn grow" id="b-grow">▶▶ 한 장씩 늘려 가며 세기</button>
+          <button class="btn" id="b-stop" disabled>중단</button>
+        </div>
+        <div class="msg" id="lab-msg">카드를 누르면 <b>가져감</b>과 <b>안 가져감</b>이 바뀐다. 화살표 키로 옮기고 <code>Enter</code> 로 눌러도 된다.</div>
+      </div>
+
+      <div class="card">
+        <h2>미션</h2>
+        <div id="missions"></div>
+        <div class="progress" id="mission-progress">0 / 3</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>카드 줄 · 끝 세 갈래</h2>
+      <canvas id="cards" tabindex="0" aria-label="카드 줄. 좌우 화살표 키로 자리를 옮기고 Enter 로 가져감을 바꾼다."></canvas>
+      <dl class="readout">
+        <div class="stat"><dt>카드 수 n</dt><dd id="r-n">5</dd></div>
+        <div class="stat"><dt>지금 배치</dt><dd id="r-ok">된다</dd></div>
+        <div class="stat acc"><dt>가짓수 (전부 세어)</dt><dd id="r-cnt">24</dd></div>
+        <div class="stat gold"><dt>앞 세 개를 더하면</dt><dd id="r-say">24</dd></div>
+      </dl>
+      <div class="strip" id="strip"></div>
+      <div class="branch" id="branch"></div>
+      <p class="terms-note">갈래를 누르면 그 끝 모양이 카드 줄에 그려진다. 세 갈래의 합이 위의 <b>가짓수</b>와 같은지 본다.</p>
+      <div class="terms-wrap"><table class="terms" id="terms"></table></div>
+      <p class="terms-note">한 줄에 마우스를 올리면 그 <code>n</code> 의 갈래가 위에 뜨고, 누르면 그 <code>n</code> 으로 옮긴다.</p>
+    </div>
+  </div>
+</div>
+
+<!-- =============== 증명 조립 =============== -->
+<div class="pane" id="pane-proof" role="tabpanel" aria-labelledby="tab-proof" hidden>
+  <div class="grid g-proof">
+
+    <div class="card">
+      <h2>증명 블록</h2>
+      <div id="blocks"></div>
+      <div class="msg" id="proof-msg">쓰는 무기는 <b>끝을 보고 나누기</b> &mdash; 맨 오른쪽 몇 장만 보고 갈래를 가른다. 블록을 눌러 순서를 쌓고 <b>▶ 실행</b>. 순서가 틀리면 실행이 멈추고 어디가 왜 틀렸는지 짚는다.</div>
+    </div>
+
+    <div class="card">
+      <h2>내 증명</h2>
+      <div class="prog-list" id="prog"></div>
+      <div class="row" style="margin-top:9px">
+        <button class="btn primary grow" id="b-run">▶ 실행</button>
+        <button class="btn" id="b-wipe">지우기</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>실행 결과 &middot; 끝 세 갈래로 나누기</h2>
+      <canvas id="pcards" aria-label="끝 세 갈래로 나눈 그림"></canvas>
+      <div class="log" id="proof-log"></div>
+    </div>
+  </div>
+
+  <div class="card pyc">
+    <h2>같은 증명을 파이썬으로</h2>
+    <pre class="sketch" id="proof-py"></pre>
+    <div class="msg">블록을 쌓으면 코드도 같이 쌓인다. 순서를 바꾸면 코드의 줄 차례도 바뀐다.</div>
+  </div>
+</div>
+
+<!-- =============== 반례 사냥 =============== -->
+<div class="pane" id="pane-hunt" role="tabpanel" aria-labelledby="tab-hunt" hidden>
+  <div class="grid g-hunt">
+
+    <div class="card">
+      <h2>사냥 설정</h2>
+      <label class="fld">
+        <span>검사할 주장</span>
+        <select id="h-claim">
+          <option value="tri">a(n) = a(n−1) + a(n−2) + a(n−3)</option>
+          <option value="fib">a(n) = a(n−1) + a(n−2)</option>
+          <option value="dbl">a(n) = 2·a(n−1) − 1</option>
+          <option value="sub">a(n) = 2ⁿ − (n−2)·2ⁿ⁻³</option>
+        </select>
+      </label>
+      <div class="msg" id="h-note">이 쪽에서 증명한 주장이다. 끝을 세 갈래로 나눠 얻는다.</div>
+      <label class="fld">
+        <span>n 을 0 부터 <b id="h-n-v" style="font-family:var(--mono)">20</b> 까지</span>
+        <input type="range" id="h-n" min="8" max="22" step="1" value="20">
+      </label>
+      <div class="row">
+        <button class="btn primary grow" id="b-hunt">▶ 사냥 시작</button>
+        <button class="btn" id="b-hunt-stop" disabled>중단</button>
+      </div>
+      <div class="msg">가짓수는 <b>직접 센다</b> &mdash; 왼쪽 카드부터 한 장씩 정해 나가며 <code>k</code> 연속이 되는 가지를 버리고, 끝까지 간 것을 하나씩 센다. 점화식도 <code>2ⁿ</code> 도 쓰지 않으므로 <b>재는 자가 주장과 따로 논다</b>.</div>
+    </div>
+
+    <div class="card">
+      <h2>사냥 기록</h2>
+      <div class="bar"><i id="h-bar"></i></div>
+      <dl class="readout" style="margin-top:0">
+        <div class="stat"><dt>검사한 n</dt><dd id="h-done">0</dd></div>
+        <div class="stat gold"><dt>반례</dt><dd id="h-bad">0</dd></div>
+        <div class="stat"><dt>가장 작은 반례</dt><dd id="h-first">—</dd></div>
+        <div class="stat ok"><dt>끝 세 갈래 합이 어긋난 n</dt><dd id="h-br">0</dd></div>
+      </dl>
+      <div class="msg" id="h-msg">주장을 고르고 사냥을 시작한다.</div>
+      <div class="hits" id="h-hits"></div>
+    </div>
+  </div>
+
+  <div class="card pyc">
+    <h2>같은 사냥을 파이썬으로</h2>
+    <pre class="sketch" id="hunt-py"></pre>
+    <div class="msg">주장과 슬라이더를 바꾸면 코드도 바뀐다. 그대로 쳐서 돌리면 화면과 같은
+      수가 나온다.</div>
+  </div>
+</div>
+
+<!-- =============== 논법과 남은 것 =============== -->
+<div class="pane" id="pane-move" role="tabpanel" aria-labelledby="tab-move" hidden>
+
+  <div class="card open">
+    <h2>끝을 보고 나누는 논법</h2>
+    <p>세는 문제에서 가장 먼저 물을 것은 <b>어디를 보면 문제가 작아지는가</b>이다. 여기서는
+    <b>맨 오른쪽 끝</b>이다. 끝에서 가져간 카드가 몇 장 연속인지는 <code class="k">0</code>·<code class="k">1</code>·<code class="k">2</code>
+    셋뿐이다 &mdash; <code class="k">3</code> 은 금지라 없다.</p>
+    <p>끝이 <code class="k">□</code>(안 가져감)이면 그 앞 <code class="k">n−1</code> 장은 조건만 지키면
+    아무렇게나 놓아도 된다. 끝이 <code class="k">□■</code>이면 <b>가져간 앞 자리는 반드시 안 가져감</b>이어야
+    하므로 그 앞 <code class="k">n−2</code> 장이 자유롭고, <code class="k">□■■</code>이면 <code class="k">n−3</code> 장이 자유롭다.
+    <b>자유로운 부분은 다시 같은 문제</b>다.</p>
+    <p class="fx" style="font-family:var(--mono);font-size:15px;color:var(--accent);margin:10px 0">a(n) = a(n−1) + a(n−2) + a(n−3)</p>
+    <p>세 갈래는 <b>겹치지 않는다</b> &mdash; 끝 모양이 서로 다르기 때문이다. <b>빠지는 것도 없다</b> &mdash;
+    끝의 연속이 <code class="k">0</code>·<code class="k">1</code>·<code class="k">2</code> 말고는 있을 수 없기 때문이다.
+    세는 문제에서 <b>겹침 없음</b>과 <b>빠짐 없음</b> 둘을 다 말해야 「더하면 된다」가 성립한다.</p>
+    <p><code class="k">k</code> 번 연속 금지로 바꾸면 끝의 연속이 <code class="k">0 … k−1</code> 이라
+    갈래가 <code class="k">k</code> 개가 되고, 같은 논법이 <code class="k">a(n) = a(n−1) + … + a(n−k)</code> 를 준다.
+    <code class="k">k = 2</code> 면 피보나치다.</p>
+  </div>
+
+  <div class="card open">
+    <h2>아직 안 닫힌 곳</h2>
+    <p>여기부터는 <b>우리가 증명하지 못한 것</b>이다. 잰 수치는 있고 이유가 없다.</p>
+
+    <div class="qbox todo">
+      <h4><em>01</em> 가짓수는 얼마나 빨리 커지는가 <span class="tag todo">안 닫힘</span></h4>
+      <p><span class="tag seen">확인함</span>한 장 늘릴 때마다 가짓수가 몇 배가 되는지 재 보면 어떤 수로
+      다가간다. 아래에서 <code class="k">a(n) ÷ a(n−1)</code> 을 직접 잰다.</p>
+      <div class="row">
+        <button class="btn primary" id="b-ratio">▶ n = 30 까지 비를 재기</button>
+      </div>
+      <dl class="readout" style="margin:0 0 8px">
+        <div class="stat"><dt>n</dt><dd id="rt-n">—</dd></div>
+        <div class="stat acc"><dt>a(n) ÷ a(n−1)</dt><dd id="rt-r">—</dd></div>
+        <div class="stat"><dt>앞 줄과의 차</dt><dd id="rt-d">—</dd></div>
+        <div class="stat gold"><dt>k = 2 일 때</dt><dd id="rt-f">—</dd></div>
+      </dl>
+      <div class="msg" id="rt-msg">눌러 보면 비가 한 수로 조여든다. <code>k = 2</code> 쪽은 널리 알려진 수로 간다.</div>
+      <p><span class="tag todo">안 닫힘</span>그 수가 <b>무슨 수인지</b>, 그리고 왜 그 수로 가는지 우리는 안 했다.
+      밀어 볼 곳 &mdash; 비가 <code class="k">r</code> 로 조여든다고 치고 점화식에 넣으면
+      <code class="k">r³ = r² + r + 1</code> 이 나온다. 이 식을 만족하는 <code class="k">r</code> 을 찾는 일이 남는다.</p>
+    </div>
+
+    <div class="qbox todo">
+      <h4><em>02</em> 홀짝이 왜 네 개마다 되풀이되는가 <span class="tag todo">안 닫힘</span></h4>
+      <p><span class="tag seen">확인함</span><code class="k">a(n)</code> 의 홀짝은
+      <b>홀 · 짝 · 짝 · 홀</b> 이 그대로 되풀이된다. <code class="k">n = 0</code> 부터
+      <code class="k">2000</code> 까지 한 번도 어긋나지 않았다.</p>
+      <div class="table-scroll"><table>
+        <thead><tr><th>n</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
+        <tbody>
+          <tr><td>a(n)</td><td>1</td><td>2</td><td>4</td><td>7</td><td>13</td><td>24</td><td>44</td><td>81</td><td>149</td></tr>
+          <tr><td>홀짝</td><td>홀</td><td>짝</td><td>짝</td><td>홀</td><td>홀</td><td>짝</td><td>짝</td><td>홀</td><td>홀</td></tr>
+        </tbody>
+      </table></div>
+      <p><span class="tag todo">안 닫힘</span>왜 <b>네 개마다</b>인지는 안 했다. 밀어 볼 곳 &mdash;
+      점화식을 <b>2 로 나눈 나머지</b>로만 적어 보면 나올 수 있는 홀짝 세 개짜리 묶음이 몇 가지뿐이라,
+      언젠가 같은 묶음이 다시 나오면 그다음은 전부 되풀이된다. 되풀이되는 길이가 왜 <code class="k">4</code> 인지가 남는다.</p>
+    </div>
+
+    <div class="qbox todo">
+      <h4><em>03</em> k 를 키우면 2 배에 얼마나 가까워지는가 <span class="tag todo">안 닫힘</span></h4>
+      <p><span class="tag seen">확인함</span><code class="k">k</code> 가 커질수록 금지가 느슨해지므로 가짓수는
+      <code class="k">2ⁿ</code> 에 가까워진다. <code class="k">k</code> 를 바꿔 가며 직접 세어 견준다.</p>
+      <label class="fld">
+        <span>연속 금지 k = <b id="kk-v" style="font-family:var(--mono)">3</b></span>
+        <input type="range" id="kk" min="2" max="8" step="1" value="3">
+      </label>
+      <div class="row">
+        <button class="btn primary" id="b-kk">▶ n = 16 까지 세어 표 만들기</button>
+      </div>
+      <div class="table-scroll"><table id="kk-tbl"></table></div>
+      <div class="msg" id="kk-msg">세어 보면 <code>k</code> 가 하나 커질 때마다 <code>2ⁿ</code> 과의 차가 확 줄어든다.</div>
+      <p><span class="tag todo">안 닫힘</span><code class="k">a(n) ÷ 2ⁿ</code> 이 <code class="k">k</code> 에 따라
+      얼마나 빨리 <code class="k">1</code> 로 가는지는 수치로만 봤다. 식으로 쓰는 것은 남는다.</p>
+    </div>
+  </div>
+
+  <div class="card open">
+    <h2>직접 확인해 보시오</h2>
+
+    <div class="qbox">
+      <h4><em>화면 안</em> 범위를 끝까지 밀어 전수로 센다</h4>
+      <p><b>반례 사냥</b> 탭에서 <code class="k">n</code> 을 <code class="k">22</code> 까지 밀고
+      <code class="k">a(n) = a(n−1) + a(n−2) + a(n−3)</code> 을 돌린다. 반례 <b>0</b>.
+      같은 자리에서 <code class="k">a(n) = 2·a(n−1) − 1</code> 로 바꾸면
+      <code class="k">n = 3</code>·<code class="k">n = 4</code> 는 맞다가 <code class="k">n = 5</code> 부터 어긋난다.</p>
+      <p>실험대에서는 <b>이 n 의 배치를 전부 세기</b>를 누르면 가능한 배치를 하나씩 다 만들어 센다.
+      <code class="k">n = 5</code> 면 <b>24</b>, <code class="k">n = 8</code> 이면 <b>149</b> 다 &mdash;
+      원문의 질문 1·2 의 답이 그 자리에서 나온다.</p>
+    </div>
+
+    <div class="qbox">
+      <h4><em>밖에서</em> 열 줄이면 된다</h4>
+      <p>점화식을 믿지 않고, 가능한 배치를 하나도 빠짐없이 만들어 센 값과 견준다.</p>
+      <pre class="sketch">from itertools import product
+def count(n, k):                       <b># 전부 만들어 세기</b>
+    t = 0
+    for s in product([0, 1], repeat=n):
+        run = best = 0
+        for v in s:
+            run = run + 1 if v else 0
+            best = max(best, run)
+        if best &lt; k: t += 1
+    return t
+print([count(n, 3) for n in range(9)])  <b># [1, 2, 4, 7, 13, 24, 44, 81, 149]</b></pre>
+      <p><code class="k">k</code> 를 <code class="k">2</code> 로 바꾸면
+      <code class="k">[1, 2, 3, 5, 8, 13, 21, 34, 55]</code> &mdash; 피보나치가 나온다.
+      <code class="k">4</code> 로 바꾸면 <code class="k">[1, 2, 4, 8, 15, 29, 56, 108, 208]</code> 이다.</p>
+    </div>
+  </div>
+</div>
+
+<footer>7주차 충북과학고 2026 문항 5. 원문 질문 3 「k 번 연속으로 바꾸면」이 이 쪽의 <code class="k">k</code> 슬라이더다.</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  function $(id) { return document.getElementById(id); }
+  function setTxt(id, v) { $(id).textContent = v; }
+  function setMsg(id, html, kind) {
+    var el = $(id);
+    el.className = "msg" + (kind ? " " + kind : "");
+    el.innerHTML = html;
+  }
+  function nowMs() { return (window.performance && performance.now) ? performance.now() : Date.now(); }
+  function fmt(v) { return v.toLocaleString(); }
+  function mono() { return getComputedStyle(document.body).getPropertyValue("--mono"); }
+
+  /* ---------------- 세는 자 ----------------
+     주장을 믿지 않고 가능한 배치를 하나씩 다 만들어 센다. 왼쪽 카드부터 한 장씩
+     정해 나가다 k 장 연속이 되는 가지는 버린다. 점화식도 2^n 도 쓰지 않는다. */
+  function bruteCount(n, k) {
+    if (n < 0) return 0;
+    var total = 0;
+    (function go(i, run) {
+      if (i === n) { total++; return; }
+      go(i + 1, 0);                        // 이 자리는 안 가져감
+      if (run + 1 < k) go(i + 1, run + 1); // 가져감 — k 연속이 되면 못 간다
+    })(0, 0);
+    return total;
+  }
+
+  /* 끝에 연속으로 몇 장 가져갔는지로 갈라 센다 */
+  function bruteBranch(n, k) {
+    var out = [], i;
+    for (i = 0; i < k; i++) out.push(0);
+    (function go(j, run) {
+      if (j === n) { out[run]++; return; }
+      go(j + 1, 0);
+      if (run + 1 < k) go(j + 1, run + 1);
+    })(0, 0);
+    return out;
+  }
+
+  var CACHE = {};
+  function cnt(n, k) {
+    if (n < 0) return 0;
+    var key = k + ":" + n;
+    if (CACHE[key] === undefined) CACHE[key] = bruteCount(n, k);
+    return CACHE[key];
+  }
+
+  /* 지금 카드 줄이 조건을 지키는가 — 지키면 -1, 아니면 어긋난 마지막 자리 */
+  function badAt(take, k) {
+    var run = 0;
+    for (var i = 0; i < take.length; i++) {
+      run = take[i] ? run + 1 : 0;
+      if (run >= k) return i;
+    }
+    return -1;
+  }
+  function tailRun(take) {
+    var r = 0;
+    for (var i = take.length - 1; i >= 0 && take[i]; i--) r++;
+    return r;
+  }
+
+  /* ---------------- 상태 ---------------- */
+  var S = { n: 5, k: 3, take: [0, 1, 1, 0, 1], cur: 0, mode: "lab", branch: -1 };
+  var MI = { counted: false, brs: {}, fib: false };
+
+  /* ---------------- 색과 캔버스 ---------------- */
+  var C = {};
+  function readTokens() {
+    var cs = getComputedStyle(document.documentElement);
+    ["ink", "ink-soft", "ink-faint", "rule", "accent", "accent-soft",
+     "gold", "gold-soft", "surface", "surface-2", "ok", "warn"].forEach(function (k) {
+      C[k] = cs.getPropertyValue("--" + k).trim();
+    });
+  }
+  function fitCanvas(cv) {
+    var r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+    cv.width = Math.max(1, Math.round(r.width * d));
+    cv.height = Math.max(1, Math.round(r.height * d));
+    var x = cv.getContext("2d");
+    x.setTransform(d, 0, 0, d, 0, 0);
+    x.clearRect(0, 0, r.width, r.height);
+    return { g: x, w: r.width, h: r.height };
+  }
+  function roundRect(g, x, y, w, h, r) {
+    g.beginPath();
+    g.moveTo(x + r, y);
+    g.arcTo(x + w, y, x + w, y + h, r);
+    g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r);
+    g.arcTo(x, y, x + w, y, r);
+    g.closePath();
+  }
+  function card(g, x, y, w, h, on, tone) {
+    roundRect(g, x, y, w, h, 6);
+    g.fillStyle = on ? (tone || C.accent) : C.surface;
+    g.fill();
+    g.lineWidth = 1.4;
+    g.strokeStyle = on ? (tone || C.accent) : C.rule;
+    g.stroke();
+  }
+
+  /* ---------------- 카드 줄 ---------------- */
+  var LAY = null;
+  function drawLab() {
+    var cv = $("cards");
+    if (!cv || S.mode !== "lab") return;
+    var f = fitCanvas(cv), g = f.g, W = f.w;
+    var n = S.n, pad = 12;
+    var gap = Math.max(4, Math.min(8, 96 / n));
+    var cw = Math.min(46, (W - pad * 2 - gap * (n - 1)) / n);
+    var total = cw * n + gap * (n - 1);
+    var x0 = (W - total) / 2, y0 = 30, ch = 56;
+    LAY = { x0: x0, cw: cw, gap: gap };
+
+    var bad = badAt(S.take, S.k), i, x;
+
+    if (bad >= 0) {
+      x = x0 + (bad - S.k + 1) * (cw + gap);
+      roundRect(g, x - 4, y0 - 6, (cw + gap) * S.k - gap + 8, ch + 12, 8);
+      g.fillStyle = C.warn;
+      g.globalAlpha = 0.16;
+      g.fill();
+      g.globalAlpha = 1;
+    }
+
+    for (i = 0; i < n; i++) {
+      x = x0 + i * (cw + gap);
+      var on = !!S.take[i];
+      var tone = (bad >= 0 && on && i > bad - S.k && i <= bad) ? C.warn : null;
+      card(g, x, y0, cw, ch, on, tone);
+
+      if (S.branch >= 0 && n - 1 - S.branch >= 0 && i >= n - 1 - S.branch) {
+        roundRect(g, x - 2.5, y0 - 2.5, cw + 5, ch + 5, 8);
+        g.lineWidth = 2;
+        g.strokeStyle = C.gold;
+        g.stroke();
+      }
+
+      g.font = "500 10px " + mono();
+      g.fillStyle = (i === S.cur) ? C.gold : C["ink-faint"];
+      g.textAlign = "center";
+      g.fillText(String(i + 1), x + cw / 2, y0 + ch + 15);
+      if (i === S.cur) g.fillRect(x + cw / 2 - 7, y0 + ch + 20, 14, 2);
+    }
+
+    g.font = "500 11px " + mono();
+    g.textAlign = "left";
+    g.fillStyle = C["ink-faint"];
+    g.fillText("■ 가져감    □ 안 가져감", pad, 18);
+    g.textAlign = "right";
+    g.fillStyle = bad >= 0 ? C.warn : C.ok;
+    g.fillText(bad >= 0 ? (S.k + " 장 연속 — 안 되는 배치") : "조건을 지킨다", W - pad, 18);
+  }
+
+  $("cards").addEventListener("click", function (ev) {
+    if (!LAY) return;
+    var r = this.getBoundingClientRect(), x = ev.clientX - r.left;
+    var i = Math.floor((x - LAY.x0 + LAY.gap / 2) / (LAY.cw + LAY.gap));
+    if (i < 0 || i >= S.n) return;
+    S.cur = i;
+    S.take[i] = S.take[i] ? 0 : 1;
+    S.branch = -1;
+    refreshLab();
+  });
+  $("cards").addEventListener("keydown", function (ev) {
+    var k = ev.key;
+    if (k === "ArrowLeft") S.cur = Math.max(0, S.cur - 1);
+    else if (k === "ArrowRight") S.cur = Math.min(S.n - 1, S.cur + 1);
+    else if (k === "Enter" || k === " ") { S.take[S.cur] = S.take[S.cur] ? 0 : 1; S.branch = -1; }
+    else return;
+    ev.preventDefault();
+    refreshLab();
+  });
+
+  /* ---------------- 실험대 갱신 ---------------- */
+  var BR_END = ["□", "□■", "□■■", "□■■■", "□■■■■", "□■■■■■", "□■■■■■■", "□■■■■■■■"];
+
+  function refreshLab() {
+    var n = S.n, k = S.k;
+    var meas = cnt(n, k);
+    var say = (n >= k) ? (function () {
+      var t = 0;
+      for (var j = 1; j <= k; j++) t += cnt(n - j, k);
+      return t;
+    })() : meas;
+
+    setTxt("r-n", n);
+    setTxt("r-ok", badAt(S.take, k) >= 0 ? "안 된다" : "된다");
+    setTxt("r-cnt", fmt(meas));
+    setTxt("r-say", n >= k ? fmt(say) : "—");
+    $("r-say").style.color = (n < k || say === meas) ? "" : C.warn;
+
+    var run = tailRun(S.take);
+    setMsg("strip", "지금 배치는 끝에 <b>" + run + "</b> 장이 연속으로 가져간 것이다"
+      + (badAt(S.take, k) >= 0
+         ? " — <b>" + k + " 장 연속</b>이라 안 되는 배치다."
+         : ". 그 앞자리는 반드시 <code>□</code> 이므로, 앞쪽 <b>" + Math.max(0, n - 1 - run)
+           + "</b> 장이 자유롭다."), badAt(S.take, k) >= 0 ? "warn" : "");
+    $("strip").className = "strip";
+
+    renderBranch();
+    renderTerms();
+    drawLab();
+    renderMissions();
+  }
+
+  function renderBranch() {
+    var n = S.n, k = S.k, br = bruteBranch(n, k), h = "", j;
+    for (j = 0; j < k; j++) {
+      var want = cnt(n - 1 - j, k);
+      var same = (n - 1 - j >= 0) && (br[j] === want);
+      h += '<div class="br' + (S.branch === j ? " on" : "") + '" data-j="' + j + '" role="button" tabindex="0">'
+         + '<div class="end">' + BR_END[j] + " 로 끝</div>"
+         + '<div class="num' + (same || n - 1 - j < 0 ? "" : " bad") + '">' + fmt(br[j]) + "</div>"
+         + '<div class="lab">' + (n - 1 - j >= 0 ? "a(" + (n - 1 - j) + ") = " + fmt(want) : "n 이 작아 갈래가 없다") + "</div>"
+         + "</div>";
+    }
+    var el = $("branch");
+    el.innerHTML = h;
+    Array.prototype.forEach.call(el.querySelectorAll(".br"), function (d) {
+      var j = parseInt(d.getAttribute("data-j"), 10);
+      function pick() {
+        S.branch = (S.branch === j) ? -1 : j;
+        MI.brs[j] = true;
+        if (S.branch >= 0 && S.n - 1 - S.branch >= 0) {
+          // 그 갈래의 끝 모양을 카드 줄에 실제로 놓아 준다
+          var t = [], i;
+          for (i = 0; i < S.n; i++) t.push(0);
+          for (i = 0; i < S.branch; i++) t[S.n - 1 - i] = 1;
+          S.take = t;
+        }
+        refreshLab();
+      }
+      d.addEventListener("click", pick);
+      d.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); pick(); }
+      });
+    });
+  }
+
+  function renderTerms() {
+    var k = S.k, n = S.n, lo = Math.max(0, n - 9), i, j;
+    var h = "<thead><tr><th>n</th><th>가짓수</th>";
+    for (j = 0; j < k; j++) h += "<th>" + BR_END[j] + " 끝</th>";
+    h += "</tr></thead><tbody>";
+    for (i = lo; i <= n; i++) {
+      var br = bruteBranch(i, k);
+      h += "<tr data-n='" + i + "'" + (i === n ? " class='on'" : "") + "><td>" + i + "</td><td>" + fmt(cnt(i, k)) + "</td>";
+      for (j = 0; j < k; j++) h += "<td>" + fmt(br[j]) + "</td>";
+      h += "</tr>";
+    }
+    h += "</tbody>";
+    var el = $("terms");
+    el.innerHTML = h;
+    Array.prototype.forEach.call(el.querySelectorAll("tbody tr"), function (tr) {
+      var m = parseInt(tr.getAttribute("data-n"), 10);
+      tr.addEventListener("mouseenter", function () {
+        var b = bruteBranch(m, k), parts = [];
+        for (var q = 0; q < k; q++) parts.push(fmt(b[q]));
+        setMsg("strip", "<code>n = " + m + "</code> 이면 <b>" + fmt(cnt(m, k)) + "</b> 가지 = "
+          + parts.join(" + ") + " — 끝 모양으로 가른 것이다. 줄을 누르면 그 <code>n</code> 으로 옮긴다.", "");
+        $("strip").className = "strip";
+      });
+      tr.addEventListener("click", function () { setN(m); });
+    });
+  }
+
+  function setN(n) {
+    n = Math.max(1, Math.min(16, n));
+    var t = [], i;
+    for (i = 0; i < n; i++) t.push(i < S.take.length ? S.take[i] : 0);
+    S.n = n;
+    S.take = t;
+    S.cur = Math.min(S.cur, n - 1);
+    S.branch = -1;
+    $("n-slider").value = n;
+    setTxt("n-v", n);
+    refreshLab();
+  }
+
+  /* ---------------- 미션 ---------------- */
+  var MISSIONS = [
+    { t: "<b>n = 8</b> 로 놓고 <b>전부 세기</b>를 눌러 <b>149</b> 가지를 확인한다.",
+      ok: function () { return MI.counted && S.n === 8 && S.k === 3; } },
+    { t: "세 갈래를 하나씩 눌러 끝 모양이 카드 줄에 그려지는 것을 본다.",
+      ok: function () { return MI.brs[0] && MI.brs[1] && MI.brs[2]; } },
+    { t: "<b>k = 2</b> 로 바꿔 <b>1 2 3 5 8 13</b> 이 나오는 것을 본다.",
+      ok: function () { return MI.fib; } }
+  ];
+  function renderMissions() {
+    var h = "", done = 0;
+    MISSIONS.forEach(function (m) {
+      var d = m.ok();
+      if (d) done++;
+      h += '<div class="mission' + (d ? " done" : "") + '"><span class="box">✓</span><span class="txt">' + m.t + "</span></div>";
+    });
+    $("missions").innerHTML = h;
+    setTxt("mission-progress", done + " / " + MISSIONS.length);
+  }
+
+  /* ---------------- 조작 ---------------- */
+  $("n-slider").addEventListener("input", function () { setN(parseInt(this.value, 10)); });
+  $("k-slider").addEventListener("input", function () {
+    S.k = parseInt(this.value, 10);
+    setTxt("k-v", S.k);
+    S.branch = -1;
+    refreshLab();
+  });
+  $("b-rand").addEventListener("click", function () {
+    var t = [], i, guard = 0;
+    do {
+      t = [];
+      for (i = 0; i < S.n; i++) t.push(Math.random() < 0.45 ? 1 : 0);
+      guard++;
+    } while (badAt(t, S.k) >= 0 && guard < 60);
+    S.take = t;
+    S.branch = -1;
+    refreshLab();
+  });
+  $("b-clear").addEventListener("click", function () {
+    S.take = S.take.map(function () { return 0; });
+    S.branch = -1;
+    refreshLab();
+  });
+  $("b-count").addEventListener("click", function () {
+    var n = S.n, k = S.k, v = cnt(n, k), b = bruteBranch(n, k), parts = [], j;
+    for (j = 0; j < k; j++) parts.push(fmt(b[j]));
+    MI.counted = true;
+    setMsg("lab-msg", "가능한 배치를 하나씩 다 만들어 세니 <b>" + fmt(v) + "</b> 가지다. 끝 모양으로 가르면 <b>"
+      + parts.join(" + ") + "</b> 이고, 앞의 " + k + " 개 답 <b>"
+      + (function () { var q = [], i; for (i = 1; i <= k; i++) q.push(fmt(cnt(n - i, k))); return q.join(" + "); })()
+      + "</b> 와 같다.", "ok");
+    refreshLab();
+  });
+
+  var growJob = null;
+  $("b-grow").addEventListener("click", function () {
+    if (growJob) return;
+    var k = S.k, seq = [], n = 0;
+    $("b-stop").disabled = false;
+    this.disabled = true;
+    growJob = setInterval(function () {
+      seq.push(cnt(n, k));
+      setN(Math.max(1, n));
+      setMsg("lab-msg", "<code>k = " + k + "</code> · <code>n = 0 …" + n + "</code> 을 하나씩 세었다 — <b>"
+        + seq.join("  ") + "</b>", "");
+      if (k === 2 && n >= 5) MI.fib = true;
+      renderMissions();
+      n++;
+      if (n > 12) stopGrow();
+    }, 420);
+  });
+  function stopGrow() {
+    if (growJob) clearInterval(growJob);
+    growJob = null;
+    $("b-stop").disabled = true;
+    $("b-grow").disabled = false;
+  }
+  $("b-stop").addEventListener("click", stopGrow);
+
+  /* ---------------- 증명 조립 ---------------- */
+  var BLOCKS = [
+    { id: "end", t: "끝 한 장부터 본다", s: "맨 오른쪽에서 연속으로 몇 장 가져갔는지로 가른다",
+      why: "무엇으로 가를지를 먼저 정해야 한다. 기준 없이 갈래부터 세면 그 셋이 전부인지 말할 수 없다." },
+    { id: "z0", t: "□ 로 끝난다", s: "앞 n−1 장이 자유 → a(n−1)",
+      why: "끝이 안 가져감이면 앞쪽에 아무 제약이 없다. 가장 헐거운 갈래부터 놓는다." },
+    { id: "z1", t: "□■ 로 끝난다", s: "앞 n−2 장이 자유 → a(n−2)",
+      why: "끝 한 장만 가져갔으면 그 앞자리는 반드시 □ 다. 그래서 자유로운 것은 n−2 장이다." },
+    { id: "z2", t: "□■■ 로 끝난다", s: "앞 n−3 장이 자유 → a(n−3)",
+      why: "끝 두 장을 가져갔으면 그 앞자리도 반드시 □ 다. 자유로운 것은 n−3 장이다." },
+    { id: "dis", t: "겹치는 것이 없다", s: "세 갈래는 끝 모양이 서로 다르다",
+      why: "갈래를 다 늘어놓은 뒤라야 겹치는지 따질 수 있다. 그 전에는 무엇과 무엇을 견주는지가 없다." },
+    { id: "cov", t: "빠지는 것도 없다", s: "끝의 연속은 0·1·2 뿐이다",
+      why: "겹침과 빠짐은 짝이다. 둘을 다 말해야 「더하면 된다」가 된다. 마지막에 놓는다." }
+  ];
+  var ORDER = ["end", "z0", "z1", "z2", "dis", "cov"];
+  var GRP = { end: "g-end", z0: "g-low", z1: "g-low", z2: "g-low", dis: "g-up", cov: "g-up" };
+  var prog = [];
+
+  function renderBlocks() {
+    var h = "";
+    BLOCKS.forEach(function (b) {
+      var used = prog.indexOf(b.id) >= 0;
+      h += '<button class="blk" data-id="' + b.id + '"' + (used ? " disabled" : "") + ">"
+         + b.t + "<small>" + b.s + "</small></button>";
+    });
+    $("blocks").innerHTML = h;
+    Array.prototype.forEach.call($("blocks").querySelectorAll(".blk"), function (b) {
+      b.addEventListener("click", function () {
+        prog.push(b.getAttribute("data-id"));
+        renderBlocks();
+        renderProg();
+      });
+    });
+  }
+
+  function renderProg() {
+    if (!prog.length) {
+      $("prog").innerHTML = '<div class="empty">왼쪽 블록을 눌러<br>순서를 쌓는다</div>';
+      return;
+    }
+    var h = "", i;
+    for (i = 0; i < prog.length; i++) {
+      var b = BLOCKS.filter(function (x) { return x.id === prog[i]; })[0];
+      h += '<div class="pitem ' + GRP[b.id] + '" data-i="' + i + '"><span class="n">' + (i + 1) + "</span>"
+         + "<span>" + b.t + '</span><button class="rm" data-i="' + i + '" aria-label="빼기">×</button></div>';
+    }
+    $("prog").innerHTML = h;
+    Array.prototype.forEach.call($("prog").querySelectorAll(".rm"), function (b) {
+      b.addEventListener("click", function () {
+        prog.splice(parseInt(b.getAttribute("data-i"), 10), 1);
+        renderBlocks();
+        renderProg();
+      });
+    });
+  }
+
+  function clearLog() { $("proof-log").innerHTML = ""; }
+  function logTo(t, html) {
+    var d = document.createElement("div");
+    d.innerHTML = '<span class="t">' + t + "</span> " + html;
+    $("proof-log").appendChild(d);
+    $("proof-log").scrollTop = $("proof-log").scrollHeight;
+  }
+
+  /* 증명 그림 — 세 갈래를 한 줄씩 */
+  var shown = 0;
+  function drawProof() {
+    var cv = $("pcards");
+    if (!cv || S.mode !== "proof") return;
+    var f = fitCanvas(cv), g = f.g, W = f.w;
+    var n = Math.max(4, Math.min(12, S.n)), k = 3;   // 증명은 문제 그대로 k = 3
+    var cw = 20, gap = 4, x1 = W - 14, y = 34, rowh = 44;
+
+    g.font = "500 11px " + mono();
+    g.textAlign = "left";
+    g.fillStyle = C["ink-faint"];
+    g.fillText("n = " + n + " · k = " + k + " — 끝 모양으로 가른다", 12, 16);
+
+    for (var j = 0; j < k; j++) {
+      if (j >= shown) break;
+      var yy = y + j * rowh;
+      var tail = j + 1;                       // □ 하나 + ■ j 개
+      var freeN = n - 1 - j;
+      var x = x1;
+      // 끝 모양 (오른쪽부터)
+      for (var i = 0; i < tail; i++) {
+        x -= cw;
+        card(g, x, yy, cw, 26, i < j, null);
+        x -= gap;
+      }
+      // 자유로운 앞부분
+      var bw = Math.max(40, x - 12 - 96);
+      roundRect(g, 12, yy, bw, 26, 5);
+      g.setLineDash([4, 3]);
+      g.lineWidth = 1.2;
+      g.strokeStyle = C.rule;
+      g.stroke();
+      g.setLineDash([]);
+      g.font = "500 11px " + mono();
+      g.fillStyle = C["ink-soft"];
+      g.textAlign = "center";
+      g.fillText(freeN >= 0 ? ("자유 " + freeN + " 장") : "없음", 12 + bw / 2, yy + 17);
+      g.textAlign = "right";
+      g.fillStyle = C.accent;
+      g.font = "600 12px " + mono();
+      g.fillText("a(" + freeN + ") = " + fmt(cnt(freeN, k)), x - 6, yy + 17);
+    }
+
+    if (shown > k) {
+      var yy2 = y + k * rowh + 6;
+      g.strokeStyle = C.rule;
+      g.lineWidth = 1;
+      g.beginPath();
+      g.moveTo(12, yy2);
+      g.lineTo(W - 14, yy2);
+      g.stroke();
+      g.textAlign = "right";
+      g.fillStyle = C.gold;
+      g.font = "600 14px " + mono();
+      g.fillText("합 " + fmt(cnt(n, k)) + " = a(" + n + ")", W - 14, yy2 + 20);
+    }
+  }
+
+  $("b-wipe").addEventListener("click", function () {
+    prog = [];
+    shown = 0;
+    renderBlocks();
+    renderProg();
+    clearLog();
+    drawProof();
+    setMsg("proof-msg", "지웠다. 블록을 다시 쌓는다.", "");
+  });
+
+  $("b-run").addEventListener("click", function () {
+    clearLog();
+    shown = 0;
+    drawProof();
+    if (!prog.length) {
+      setMsg("proof-msg", "블록이 없다. 먼저 순서를 쌓는다.", "warn");
+      return;
+    }
+    var i = 0;
+    (function step() {
+      if (i >= prog.length) {
+        if (prog.length < ORDER.length) {
+          setMsg("proof-msg", "여기까지는 맞는데 <b>블록이 " + (ORDER.length - prog.length)
+            + " 개 모자라다.</b> 겹침과 빠짐을 둘 다 말해야 「더하면 된다」가 된다.", "warn");
+        } else {
+          setMsg("proof-msg", "여섯 단계가 제 자리에 있다. <b>a(n) = a(n−1) + a(n−2) + a(n−3)</b> 이 나왔다 — "
+            + "실험대의 <b>가짓수</b>와 <b>앞 세 개를 더하면</b> 이 같은 수인 것으로 확인할 수 있다.", "ok");
+        }
+        return;
+      }
+      var want = ORDER[i], got = prog[i];
+      if (want !== got) {
+        var wb = BLOCKS.filter(function (x) { return x.id === want; })[0];
+        var gb = BLOCKS.filter(function (x) { return x.id === got; })[0];
+        logTo("✕", "<b>" + (i + 1) + "번째</b> 에서 멈춘다 — <b>" + gb.t + "</b> 이 왔다.");
+        setMsg("proof-msg", "<b>" + (i + 1) + "번째</b> 자리에는 <b>" + wb.t + "</b> 이 와야 한다. "
+          + wb.why + " 지금은 <b>" + gb.t + "</b> 이 놓여 있다.", "warn");
+        return;
+      }
+      var b = BLOCKS.filter(function (x) { return x.id === got; })[0];
+      logTo("→", "<b>" + b.t + "</b> — " + b.s);
+      if (got === "z0" || got === "z1" || got === "z2" || got === "cov") { shown++; drawProof(); }
+      i++;
+      setTimeout(step, 520);
+    })();
+  });
+
+  /* ---------------- 반례 사냥 ----------------
+     가짓수는 전부 만들어 세고, 주장은 그 값에서 예언만 한다. k 는 문제의 3 으로 고정. */
+  var CLAIM = {
+    tri: { name: "a(n−1) + a(n−2) + a(n−3)",
+           say: function (A, n) { return A[n - 1] + A[n - 2] + A[n - 3]; },
+           note: "이 쪽에서 증명한 주장이다. 끝을 세 갈래로 나눠 얻는다." },
+    fib: { name: "a(n−1) + a(n−2)",
+           say: function (A, n) { return A[n - 1] + A[n - 2]; },
+           note: "끝을 <b>두 갈래</b>로만 가른 것이다. <code>□</code> 와 <code>□■</code> 는 셌는데 <code>□■■</code> 를 빠뜨렸다." },
+    dbl: { name: "2·a(n−1) − 1",
+           say: function (A, n) { return 2 * A[n - 1] - 1; },
+           note: "한 장 늘릴 때마다 <b>거의 두 배</b>가 되는 것을 보고 세운 값이다. <code>n = 3</code>·<code>n = 4</code> 에서는 실제로 맞는다." },
+    sub: { name: "2ⁿ − (n−2)·2ⁿ⁻³",
+           say: function (A, n) { return Math.pow(2, n) - (n - 2) * Math.pow(2, n - 3); },
+           note: "<code>2ⁿ</code> 에서 <b>세 장 연속인 자리</b> <code>n−2</code> 곳을 각각 빼 본 것이다. 겹쳐 세는 것을 안 뺐다." }
+  };
+  var H = null;
+
+  $("h-claim").addEventListener("change", function () {
+    setMsg("h-note", CLAIM[this.value].note, "");
+  });
+  $("h-n").addEventListener("input", function () { setTxt("h-n-v", this.value); });
+
+  $("b-hunt").addEventListener("click", function () {
+    H = { claim: $("h-claim").value, N: parseInt($("h-n").value, 10), n: 0,
+          A: [], bad: 0, first: -1, br: 0, worst: 0, hits: [], pass: [], running: true };
+    $("b-hunt").disabled = true;
+    $("b-hunt-stop").disabled = false;
+    $("h-hits").innerHTML = "";
+    setMsg("h-msg", "가능한 배치를 하나씩 다 만들어 세는 중…", "");
+    requestAnimationFrame(huntChunk);
+  });
+  $("b-hunt-stop").addEventListener("click", function () {
+    if (!H) return;
+    H.running = false;
+    finishHunt(true);
+  });
+
+  function huntChunk() {
+    if (!H || !H.running) return;
+    var t0 = nowMs(), cl = CLAIM[H.claim];
+    while (H.n <= H.N) {
+      if (nowMs() - t0 > 14) break;
+      var n = H.n;
+      var br = bruteBranch(n, 3);
+      var meas = br[0] + br[1] + br[2];
+      H.A[n] = meas;
+
+      // 급소를 같이 잰다 — 갈래 하나하나가 정말 「더 작은 같은 문제」인가.
+      // 양쪽 다 전부 만들어 센 값이라 점화식에 기대지 않는다.
+      var off = false;
+      for (var j = 0; j < 3; j++) {
+        var m = n - 1 - j;
+        if (m < 0) continue;
+        if (br[j] !== bruteCount(m, 3)) off = true;
+      }
+      if (off) H.br++;
+
+      if (n >= 3) {
+        var pred = cl.say(H.A, n);
+        var rec = { n: n, meas: meas, pred: pred, br: br };
+        if (pred !== meas) {
+          H.bad++;
+          if (H.first < 0) H.first = n;
+          if (Math.abs(pred - meas) > H.worst) H.worst = Math.abs(pred - meas);
+          if (H.hits.length < 4) H.hits.push(rec);
+        } else if (H.pass.length < 3) {
+          H.pass.push(rec);
+        }
+      }
+      H.n++;
+    }
+    paintHunt();
+    if (H.n <= H.N) requestAnimationFrame(huntChunk);
+    else { H.running = false; finishHunt(false); }
+  }
+
+  function paintHunt() {
+    $("h-bar").style.width = Math.min(100, H.n / (H.N + 1) * 100).toFixed(1) + "%";
+    setTxt("h-done", fmt(Math.max(0, H.n)));
+    setTxt("h-bad", fmt(H.bad));
+    setTxt("h-first", H.first < 0 ? "—" : String(H.first));
+    setTxt("h-br", fmt(H.br));
+  }
+
+  function finishHunt(stopped) {
+    $("b-hunt").disabled = false;
+    $("b-hunt-stop").disabled = true;
+    paintHunt();
+    var cl = CLAIM[H.claim];
+    var tail = " 같은 사냥에서 <b>갈래가 더 작은 문제와 안 맞은 n</b> 은 <b>" + fmt(H.br)
+      + "</b> 개다 — 증명이 기대는 「자유로운 부분은 다시 같은 문제」가 여기서는 한 번도 안 무너졌다.";
+    if (H.bad === 0) {
+      setMsg("h-msg", "n = 3 ~ <b>" + (H.n - 1) + "</b> 에서 반례 <b>없음</b>. <code>a(n) = " + cl.name
+        + "</code> 이 살아남았다. 빠짐없이 다 세어 봐도 증명은 아니다." + tail
+        + (stopped ? " (중단됨)" : ""), "ok");
+    } else {
+      setMsg("h-msg", "<code>a(n) = " + cl.name + "</code> 의 반례 <b>" + fmt(H.bad)
+        + "</b> 개. 가장 작은 반례는 <b>n = " + H.first + "</b>, 최대 어긋남 <b>" + fmt(H.worst)
+        + "</b>." + tail + (stopped ? " (중단됨)" : ""), "warn");
+    }
+    var h = "", i;
+    if (H.hits.length) {
+      h += '<p class="case-sub">반례 — 주장이 준 값과 세어 본 값이 다르다</p>';
+      for (i = 0; i < H.hits.length; i++) h += caseCard(H.hits[i], "hits", i, true);
+    }
+    if (H.pass.length) {
+      h += '<p class="case-sub">' + (H.hits.length ? "통과한 n" : "n 마다 실제로 센 값") + "</p>";
+      for (i = 0; i < H.pass.length; i++) h += caseCard(H.pass[i], "pass", i, false);
+    }
+    $("h-hits").innerHTML = h;
+  }
+
+  function caseCard(t, src, i, isBad) {
+    var cl = CLAIM[H.claim];
+    var why;
+    if (!isBad) {
+      why = "끝 모양으로 가르면 <b>" + t.br.join(" + ") + " = " + fmt(t.meas) + "</b> 이고, 주장이 준 값도 <b>"
+          + fmt(t.pred) + "</b> 다" + (H.claim === "tri" ? " — 일치한다." : " — 이 n 에서는 <b>우연히</b> 맞았다.");
+    } else if (H.claim === "fib") {
+      why = "끝이 <code>□■■</code> 인 배치 <b>" + fmt(t.br[2]) + "</b> 개를 통째로 빠뜨렸다. "
+          + fmt(t.pred) + " + " + fmt(t.br[2]) + " = " + fmt(t.meas) + " 로 딱 맞는다.";
+    } else if (H.claim === "dbl") {
+      why = "한 장 늘릴 때 두 배가 되지 <b>않는다</b>. 늘어난 것은 " + fmt(t.meas) + " − " + fmt(H.A[t.n - 1])
+          + " = <b>" + fmt(t.meas - H.A[t.n - 1]) + "</b> 이고, 이것은 <code>a(n−2) + a(n−3)</code> = "
+          + fmt(H.A[t.n - 2]) + " + " + fmt(H.A[t.n - 3]) + " 다. 빼는 것이 늘 <code>1</code> 일 리가 없다.";
+    } else {
+      why = "<code>2ⁿ</code> 에서 세 장 연속인 자리를 하나씩 빼면, <b>두 군데가 겹쳐 연속인 배치</b>를 두 번 빼게 된다. "
+          + "빼는 방식으로 세려면 겹친 것을 다시 더해 줘야 한다.";
+    }
+    return '<div class="case ' + (isBad ? "bad" : "ok") + '">'
+      + '<div class="case-head">'
+      +   '<span class="case-tag">' + (isBad ? "반례" : "통과") + "</span>"
+      +   '<span class="case-n">n = ' + t.n + "</span>"
+      +   '<button class="go" data-n="' + t.n + '">실험대로 →</button>'
+      + "</div>"
+      + '<div class="case-grid">'
+      +   "<div><dt>세어 본 값</dt><dd class='lo'>" + fmt(t.meas) + "</dd></div>"
+      +   "<div><dt>주장이 준 값</dt><dd class='" + (isBad ? "hi" : "lo") + "'>" + fmt(t.pred) + "</dd></div>"
+      +   "<div><dt>어긋남</dt><dd class='" + (isBad ? "hi" : "lo") + "'>"
+      +     (t.pred === t.meas ? "0" : (t.pred > t.meas ? "+" : "−") + fmt(Math.abs(t.pred - t.meas))) + "</dd></div>"
+      +   "<div><dt>끝 모양으로 가르면</dt><dd>" + t.br.join(" + ") + "</dd></div>"
+      + "</div>"
+      + '<p class="case-why">' + why + "</p>"
+      + "</div>";
+  }
+
+  $("h-hits").addEventListener("click", function (ev) {
+    var b = ev.target.closest ? ev.target.closest(".go") : null;
+    if (!b) return;
+    var n = parseInt(b.getAttribute("data-n"), 10);
+    S.k = 3;
+    $("k-slider").value = 3;
+    setTxt("k-v", 3);
+    setMode("lab");
+    setN(Math.min(16, n));
+    setMsg("lab-msg", "<code>n = " + n + "</code> 을 실험대로 가져왔다. <b>전부 세기</b>를 눌러 "
+      + "세어 본 값을 확인하고, 아래 세 갈래가 앞의 세 답과 같은지 본다.", "");
+  });
+
+  /* ---------------- 아직 안 닫힌 곳 · 비 ---------------- */
+  function seqBy(k, N) {
+    // 여기서는 앞에서 증명한 점화식으로 잇는다 — n 이 커서 전부 세기가 어렵다
+    var A = [1], i, j, t;
+    for (i = 1; i <= N; i++) {
+      t = 0;
+      for (j = 1; j <= k; j++) t += (i - j >= 0) ? A[i - j] : (i - j === -1 ? 1 : 0);
+      A.push(t);
+    }
+    return A;
+  }
+  $("b-ratio").addEventListener("click", function () {
+    var A = seqBy(3, 30), F = seqBy(2, 30);
+    var r = A[30] / A[29], r0 = A[29] / A[28];
+    setTxt("rt-n", "30");
+    setTxt("rt-r", r.toFixed(6));
+    setTxt("rt-d", (r - r0).toExponential(1));
+    setTxt("rt-f", (F[30] / F[29]).toFixed(6));
+    setMsg("rt-msg", "<code>n = 30</code> 에서 비가 <b>" + r.toFixed(6) + "</b> 이고, 앞 줄과의 차가 <b>"
+      + (r - r0).toExponential(1) + "</b> 이다 — 이미 소수점 아래 여러 자리가 멈췄다. "
+      + "<code>k = 2</code> 쪽은 <b>" + (F[30] / F[29]).toFixed(6) + "</b> 로, 널리 알려진 수와 같다. "
+      + "<b>그런데 이 수가 무슨 수인지는 여기에 없다.</b>", "ok");
+  });
+
+  /* ---------------- 아직 안 닫힌 곳 · k 를 키우면 ---------------- */
+  $("kk").addEventListener("input", function () { setTxt("kk-v", this.value); });
+  $("b-kk").addEventListener("click", function () {
+    var k = parseInt($("kk").value, 10), h, n;
+    h = "<thead><tr><th>n</th><th>a(n)</th><th>2ⁿ</th><th>a(n) ÷ 2ⁿ</th></tr></thead><tbody>";
+    for (n = 4; n <= 16; n += 2) {
+      var v = bruteCount(n, k), p = Math.pow(2, n);
+      h += "<tr><td>" + n + "</td><td>" + fmt(v) + "</td><td>" + fmt(p) + "</td><td>"
+         + (v / p).toFixed(4) + "</td></tr>";
+    }
+    h += "</tbody>";
+    $("kk-tbl").innerHTML = h;
+    var last = bruteCount(16, k) / Math.pow(2, 16);
+    setMsg("kk-msg", "<code>k = " + k + "</code> 에서 <code>n = 16</code> 일 때 "
+      + "<code>a(n) ÷ 2ⁿ</code> 이 <b>" + last.toFixed(4) + "</b> 다. "
+      + "<code>k</code> 를 한 칸 올려 다시 눌러 보면 이 값이 얼마나 뛰는지 보인다.", "");
+  });
+
+  /* ---------------- 탭 ---------------- */
+  var TABS = ["lab", "proof", "hunt", "move"];
+  function setMode(m) {
+    S.mode = m;
+    TABS.forEach(function (t) {
+      $("tab-" + t).setAttribute("aria-selected", String(t === m));
+      $("pane-" + t).hidden = (t !== m);
+    });
+    readTokens();
+    if (m === "lab") drawLab();
+    if (m === "proof") drawProof();
+  }
+  TABS.forEach(function (t) {
+    $("tab-" + t).addEventListener("click", function () { setMode(t); });
+  });
+
+  /* ---------------- 시작 ---------------- */
+  function redrawAll() {
+    readTokens();
+    if (S.mode === "lab") drawLab();
+    if (S.mode === "proof") drawProof();
+  }
+  window.addEventListener("resize", redrawAll);
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mq.addEventListener) mq.addEventListener("change", redrawAll);
+    else if (mq.addListener) mq.addListener(redrawAll);
+  }
+
+  readTokens();
+  renderBlocks();
+  renderProg();
+  refreshLab();
+  setMsg("h-note", CLAIM.tri.note, "");
+
+  var PY_PROOF = {
+    end: ["맨 오른쪽에서 연속으로 몇 장 가져갔는지로 가른다", "끝 한 장부터 본다", "    ", 1],
+    z0: ["t0 = count(n - 1)", "&#9633; 로 끝난다 - 앞 n-1 장이 자유", "    "],
+    z1: ["t1 = count(n - 2)", "&#9633;&#9632; 로 끝난다 - 앞 n-2 장이 자유", "    "],
+    z2: ["t2 = count(n - 3)", "&#9633;&#9632;&#9632; 로 끝난다 - 앞 n-3 장이 자유", "    "],
+    dis: ["끝 모양이 서로 다르다", "겹치는 것이 없다", "    ", 1],
+    cov: ["return t0 + t1 + t2", "끝의 연속은 0·1·2 뿐 - 빠지는 것도 없다", "    "]
+  };
+  var PY_CTRL = ["h-claim", "h-n"];
+
+  function pyStepNow() { return -1; }
+  function pyProofHead() {
+    return "<b># 카드 n 장에서 세 번 연속 금지로 고르는 가짓수</b>\n"
+      + pyPad("BASE = [1, 2, 4]", 48) + "<b># n = 0, 1, 2</b>\n\n"
+      + "def count(n):\n"
+      + "    if n &lt; 3: return BASE[n]\n";
+  }
+  function pyProofTail() { return "\nprint(count(" + S.n + "))"; }
+
+  var PY_CLAIM = {
+    tri: ["return A[n - 1] + A[n - 2] + A[n - 3]", "a(n) = a(n-1) + a(n-2) + a(n-3)"],
+    fib: ["return A[n - 1] + A[n - 2]", "a(n) = a(n-1) + a(n-2)"],
+    dbl: ["return 2 * A[n - 1] - 1", "a(n) = 2·a(n-1) - 1"],
+    sub: ["return 2 ** n - (n - 2) * 2 ** (n - 3)", "a(n) = 2**n - (n-2)·2**(n-3)"]
+  };
+  function pyHuntCode() {
+    var st = PY_CLAIM[$("h-claim").value];
+    return "<b># 가능한 배치를 하나씩 다 만들어 세고, 주장은 그 값에서 예언만 한다</b>\n"
+      + "from itertools import product\n\n"
+      + "N = " + $("h-n").value + "\n\n"
+      + pyPad("def brute(n):", 48) + "<b># 3 연속이 없는 배치를 전부 센다</b>\n"
+      + "    return sum(1 for s in product((0, 1), repeat=n)\n"
+      + "               if not any(s[i] and s[i+1] and s[i+2] for i in range(n - 2)))\n\n"
+      + pyPad("def say(A, n):", 48) + "<b># 검사할 주장 - " + st[1] + "</b>\n"
+      + "    " + st[0] + "\n\n"
+      + "A, bad = [], 0\n"
+      + "for n in range(N + 1):\n"
+      + "    A.append(brute(n))\n"
+      + pyPad("    if n >= 3 and say(A, n) != A[n]:", 48) + "<b># 예언이 실측과 다르다</b>\n"
+      + "        bad += 1\n\n"
+      + "print(bad)";
+  }
+  function pyHuntResult() { return H ? H.bad : 0; }
+
+  /* ---------------- 파이썬 병기 ---------------- */
+  function pyPad(t, n) {
+    while (t.length < n) t += " ";
+    return t.length > n ? t + "  " : t;   // 48 칸을 넘으면 주석이 코드에 붙지 않게 띄운다
+  }
+  var pyHuntDone = false;
+
+  function renderProofPy() {
+    var el = document.getElementById("proof-py");
+    if (!el) return;
+    var out = pyProofHead();
+    if (!prog.length) {
+      out += "<b># 왼쪽 블록을 누르면 여기에 줄이 하나씩 쌓인다</b>";
+    } else {
+      var cur = pyStepNow();
+      for (var i = 0; i < prog.length; i++) {
+        var st = PY_PROOF[prog[i]];
+        if (!st) continue;
+        var ln = st[3]
+          ? st[2] + "<b># " + st[1] + " - " + st[0] + "</b>"
+          : pyPad(st[2] + st[0], 48) + "<b># " + st[1] + "</b>";
+        out += (i === cur ? "<i>" + ln + "</i>" : ln) + "\n";
+      }
+      out += pyProofTail();
+    }
+    el.innerHTML = out;
+  }
+
+  function renderHuntPy() {
+    var el = document.getElementById("hunt-py");
+    if (!el) return;
+    var out = pyHuntCode();
+    if (pyHuntDone) out += "\n<em># " + pyHuntResult() + "</em>";
+    el.innerHTML = out;
+  }
+
+  (function () {
+    var rp = renderProg, fh = finishHunt;
+    renderProg = function () { rp.apply(this, arguments); renderProofPy(); };
+    finishHunt = function () { fh.apply(this, arguments); pyHuntDone = true; renderHuntPy(); };
+    PY_CTRL.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("input", renderHuntPy);
+      el.addEventListener("change", renderHuntPy);
+    });
+    var bh = document.getElementById("b-hunt");
+    if (bh) bh.addEventListener("click", function () {
+      pyHuntDone = false;
+      setTimeout(renderHuntPy, 0);
+    });
+  })();
+  renderProofPy();
+  renderHuntPy();
+})();
+</script>

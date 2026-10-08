@@ -1,0 +1,1207 @@
+<title>관람석 옷색 실험실</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ground: #F4F6FA;
+    --surface: #FFFFFF;
+    --surface-2: #EBEFF6;
+    --ink: #22314F;
+    --ink-soft: #56657F;
+    --ink-faint: #8894AA;
+    --rule: #DCE3EE;
+    --accent: #E17B2E;
+    --accent-soft: rgba(225, 123, 46, .12);
+    --blue: #2E6FDB;
+    --blue-soft: rgba(46, 111, 219, .14);
+    --red: #D2454F;
+    --red-soft: rgba(210, 69, 79, .16);
+    --violet: #7C4DB8;
+    --gold: #F5B301;
+    --gold-soft: rgba(245, 179, 1, .20);
+    --ok: #189E5A;
+    --head-bg: #22314F;
+    --head-ink: #FFFFFF;
+    --head-dim: #A9B6CE;
+    --head-bar: #1A2740;
+    --shadow: 0 1px 2px rgba(34, 49, 79, .05), 0 8px 22px rgba(34, 49, 79, .06);
+    --sans: 'IBM Plex Sans KR', 'Malgun Gothic', '맑은 고딕', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', Consolas, ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #141B27;
+      --surface: #1B2432;
+      --surface-2: #222C3D;
+      --ink: #E7ECF6;
+      --ink-soft: #AAB6CC;
+      --ink-faint: #6E7C95;
+      --rule: #2D3A4E;
+      --accent: #F0954B;
+      --accent-soft: rgba(240, 149, 75, .16);
+      --blue: #5B93F0;
+      --blue-soft: rgba(91, 147, 240, .18);
+      --red: #E8636D;
+      --red-soft: rgba(232, 99, 109, .20);
+      --violet: #A47BE0;
+      --gold: #F5B301;
+      --gold-soft: rgba(245, 179, 1, .22);
+      --ok: #35BE79;
+      --head-bg: #101724;
+      --head-ink: #F2F5FB;
+      --head-dim: #8A99B5;
+      --head-bar: #0A101B;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 22px rgba(0, 0, 0, .28);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #141B27;
+    --surface: #1B2432;
+    --surface-2: #222C3D;
+    --ink: #E7ECF6;
+    --ink-soft: #AAB6CC;
+    --ink-faint: #6E7C95;
+    --rule: #2D3A4E;
+    --accent: #F0954B;
+    --accent-soft: rgba(240, 149, 75, .16);
+    --blue: #5B93F0;
+    --blue-soft: rgba(91, 147, 240, .18);
+    --red: #E8636D;
+    --red-soft: rgba(232, 99, 109, .20);
+    --violet: #A47BE0;
+    --gold: #F5B301;
+    --gold-soft: rgba(245, 179, 1, .22);
+    --ok: #35BE79;
+    --head-bg: #101724;
+    --head-ink: #F2F5FB;
+    --head-dim: #8A99B5;
+    --head-bar: #0A101B;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 22px rgba(0, 0, 0, .28);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+  sup { font-size: .7em; line-height: 0; vertical-align: super; }
+
+  /* ---------------- 머리띠 + 탭 ---------------- */
+  header.top {
+    background: var(--head-bg); color: var(--head-ink); padding: 26px 26px 20px;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: .13em;
+    text-transform: uppercase; color: var(--gold); margin: 0 0 7px;
+  }
+  header.top h1 {
+    margin: 0; font-size: clamp(24px, 4.2vw, 32px); font-weight: 700;
+    letter-spacing: -.02em; text-wrap: balance; line-height: 1.25;
+  }
+  header.top p.sub { margin: 9px 0 0; color: var(--head-dim); font-size: 14.5px; max-width: 64ch; }
+
+  .tabs {
+    background: var(--head-bar); border-bottom: 3px solid var(--accent);
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .tabs-in { max-width: 980px; margin: 0 auto; display: flex; padding: 0 18px; min-width: max-content; }
+  .tab {
+    background: none; border: 0; border-bottom: 3px solid transparent; margin-bottom: -3px;
+    color: var(--head-dim); font-family: var(--sans); font-size: 13.5px; font-weight: 600;
+    padding: 13px 13px 11px; cursor: pointer; white-space: nowrap;
+    transition: color .15s, border-color .15s;
+  }
+  .tab:hover { color: var(--head-ink); }
+  .tab[aria-selected="true"] { color: var(--head-ink); border-bottom-color: var(--gold); }
+  .tab .n {
+    font-family: var(--mono); font-size: 11px; color: var(--gold); margin-right: 5px;
+  }
+
+  main { max-width: 980px; margin: 0 auto; padding: 18px 26px 56px; }
+
+  /* ---------------- 카드 ---------------- */
+  .card {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 12px;
+    padding: 19px 21px; box-shadow: var(--shadow); margin-bottom: 16px;
+  }
+  .card > :first-child { margin-top: 0; }
+  .card > :last-child { margin-bottom: 0; }
+
+  h2 { font-size: 18.5px; font-weight: 700; margin: 0 0 9px; letter-spacing: -.01em; text-wrap: balance; }
+  h3 {
+    font-size: 11.5px; font-family: var(--mono); letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-faint); margin: 18px 0 8px; font-weight: 600;
+  }
+  p { margin: 0 0 11px; }
+  p:last-child { margin-bottom: 0; }
+  b { font-weight: 600; }
+  em { font-style: normal; color: var(--accent); font-weight: 600; }
+  code {
+    font-family: var(--mono); font-size: .92em; background: var(--surface-2);
+    padding: 1px 5px; border-radius: 4px; font-variant-numeric: tabular-nums;
+  }
+  ul { margin: 0 0 11px; padding-left: 19px; }
+  li { margin: 0 0 5px; }
+
+  .problem { border-left: 3px solid var(--accent); }
+  .rules {
+    background: var(--surface-2); border-radius: 9px; padding: 13px 16px; margin: 12px 0; font-size: 14px;
+  }
+  .rules ul { padding-left: 17px; margin: 0; }
+  .ask { font-weight: 600; margin-top: 11px; }
+  .src { font-size: 12.5px; color: var(--ink-faint); margin-top: 12px; }
+
+  .step > header { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .num {
+    font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .09em;
+    color: var(--accent); background: var(--accent-soft); border-radius: 999px;
+    padding: 3px 10px; white-space: nowrap;
+  }
+  .claim {
+    background: var(--surface-2); border-left: 3px solid var(--gold);
+    border-radius: 0 9px 9px 0; padding: 12px 15px; margin: 0 0 15px; font-size: 15.5px;
+  }
+  .claim .k { font-family: var(--mono); font-weight: 600; }
+
+  .lab { border: 1px dashed var(--rule); border-radius: 10px; padding: 14px 16px; background: var(--ground); }
+  .lab-h {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-faint); margin: 0 0 10px; font-weight: 600;
+  }
+  .fld { display: block; margin: 0 0 11px; }
+  .fld > span { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 5px; }
+  .fld b { font-family: var(--mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 100%; accent-color: var(--accent); margin: 0; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  button {
+    font-family: var(--sans); font-size: 13.5px; font-weight: 600; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 8px;
+    padding: 7px 14px; cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+  }
+  button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  button.on, button.primary {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+  }
+  button.on:hover, button.primary:hover:not(:disabled) { color: #fff; filter: brightness(1.07); }
+  button:disabled { opacity: .42; cursor: default; }
+  .now { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+
+  .out {
+    margin-top: 11px; font-size: 13.5px; color: var(--ink-soft);
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 13px;
+  }
+  .out.ok { border-color: var(--ok); color: var(--ink); }
+  .out.warn { border-color: var(--red); color: var(--ink); }
+  .out b { color: var(--ink); }
+
+  .seatrow { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; margin: 3px 0; }
+  .seat {
+    width: 15px; height: 15px; border-radius: 50%; flex: 0 0 auto;
+    background: var(--red-soft); border: 1.5px solid var(--red);
+  }
+  .seat.b { background: var(--blue); border-color: var(--blue); }
+  .seat.sm { width: 10px; height: 10px; border-width: 1.2px; }
+  .seat.xs { width: 7px; height: 7px; border-width: 1px; }
+  .rowlabel {
+    font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint);
+    width: 78px; flex: 0 0 auto; font-variant-numeric: tabular-nums;
+  }
+  .cmp { display: grid; gap: 6px; }
+  .scroller { overflow-x: auto; padding-bottom: 2px; }
+  .stack { display: grid; gap: 5px; justify-items: center; min-width: max-content; }
+  .stack .seatrow { flex-wrap: nowrap; margin: 0; }
+  .stack .seatrow.prev { opacity: .4; }
+
+  .parts { display: flex; flex-wrap: nowrap; gap: 3px; align-items: center; }
+  .part { display: flex; gap: 3px; padding: 4px; border-radius: 7px; }
+  .part.left { background: var(--blue-soft); outline: 1px solid var(--blue); }
+  .part.right { background: rgba(124, 77, 184, .14); outline: 1px solid var(--violet); }
+  .part.right .seat.b { background: var(--violet); border-color: var(--violet); }
+  .part.mid { background: var(--red-soft); outline: 1px dashed var(--red); }
+  .partlab { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); margin-top: 3px; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td {
+    border-bottom: 1px solid var(--rule); padding: 6px 9px; text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  th { color: var(--ink-faint); font-weight: 600; font-size: 11.5px; }
+  th:first-child, td:first-child { text-align: left; }
+  td.m, th.m { font-family: var(--mono); }
+  tr.hl td { background: var(--gold-soft); }
+
+  canvas { display: block; width: 100%; }
+  .cvbox { max-width: 620px; margin: 0 auto; }
+  .cvcap {
+    font-family: var(--mono); font-size: 11px; color: var(--ink-faint);
+    text-align: center; margin: 5px 0 0;
+  }
+  .twin { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 620px) { .twin { grid-template-columns: 1fr; } }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-soft); margin-top: 9px; }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+
+  pre.code {
+    font-family: var(--mono); font-size: 12px; line-height: 1.66;
+    background: var(--surface-2); border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+    padding: 12px 14px; margin: 0; overflow-x: auto; white-space: pre; color: var(--ink);
+  }
+  pre.code b { color: var(--ink-faint); font-weight: 400; }
+
+  details.proof { margin-top: 15px; border-top: 1px solid var(--rule); padding-top: 13px; }
+  details.proof summary {
+    cursor: pointer; font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--accent); font-weight: 600; list-style: none;
+  }
+  details.proof summary::-webkit-details-marker { display: none; }
+  details.proof summary::before { content: "▸ "; }
+  details.proof[open] summary::before { content: "▾ "; }
+  details.proof .body { margin-top: 11px; font-size: 14.5px; }
+  details.proof .body p:last-child::after { content: " ∎"; color: var(--accent); font-weight: 700; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 10px; margin-top: 12px; }
+  .stat { background: var(--surface); border: 1px solid var(--rule); border-radius: 9px; padding: 9px 12px; }
+  .stat dt { font-size: 11.5px; color: var(--ink-faint); margin: 0 0 2px; }
+  .stat dd {
+    margin: 0; font-family: var(--mono); font-size: 19px; font-weight: 600;
+    font-variant-numeric: tabular-nums; line-height: 1.2;
+  }
+  .stat.gold dd { color: var(--gold); }
+  .stat.blue dd { color: var(--blue); }
+  .stat.ok dd { color: var(--ok); }
+
+  .answer { border-left: 3px solid var(--ok); }
+  .big {
+    font-family: var(--mono); font-size: 27px; font-weight: 600; color: var(--ok);
+    font-variant-numeric: tabular-nums;
+  }
+  .nextline { display: flex; justify-content: flex-end; margin-top: 14px; }
+
+  @media (max-width: 560px) {
+    .rowlabel { width: 100%; }
+    .seat { width: 12px; height: 12px; }
+    main { padding: 16px 16px 44px; }
+    header.top { padding: 22px 18px 17px; }
+  }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">충북과학고 2023 · 문항 6</p>
+    <h1>관람석 옷색 실험실</h1>
+    <p class="sub">31번째 줄부터 65번째 줄까지 파란 옷을 입은 학생은 몇 명인가.
+      한 번에 답하지 않고 디딤돌 다섯 개를 하나씩 놓아 건넌다. 디딤돌마다 먼저 눌러서 확인하고,
+      그다음 왜 그런지 읽는다.</p>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tabs-in" role="tablist">
+    <button class="tab" role="tab" id="tab-p" aria-controls="pane-p" aria-selected="true">문제</button>
+    <button class="tab" role="tab" id="tab-1" aria-controls="pane-1" aria-selected="false"><span class="n">1</span>색은 덧셈</button>
+    <button class="tab" role="tab" id="tab-2" aria-controls="pane-2" aria-selected="false"><span class="n">2</span>전부 파랑인 줄</button>
+    <button class="tab" role="tab" id="tab-3" aria-controls="pane-3" aria-selected="false"><span class="n">3</span>두 벌로 복제</button>
+    <button class="tab" role="tab" id="tab-4" aria-controls="pane-4" aria-selected="false"><span class="n">4</span>줄 번호가 정한다</button>
+    <button class="tab" role="tab" id="tab-5" aria-controls="pane-5" aria-selected="false"><span class="n">5</span>자리마다 3 배</button>
+    <button class="tab" role="tab" id="tab-a" aria-controls="pane-a" aria-selected="false">답</button>
+  </div>
+</div>
+
+<main>
+
+<!-- ================= 문제 ================= -->
+<div class="pane" id="pane-p" role="tabpanel" aria-labelledby="tab-p">
+  <section class="card problem">
+    <h2>문제</h2>
+    <p><b>N</b> 번째 줄에는 <b>N</b> 개의 자리가 있다. 학생들은 1 번째 줄부터, 각 줄에서는 가장
+      왼쪽부터 차례대로 앉는다. 옷은 파란색 아니면 빨간색이다.</p>
+    <div class="rules">
+      <ul>
+        <li>1 번째 줄에는 파란 옷을 입은 학생이 앉는다.</li>
+        <li>각 줄의 가장 왼쪽과 가장 오른쪽 자리에는 파란 옷을 입은 학생이 앉는다.</li>
+        <li>끝자리가 아니면 <b>바로 앞줄의 같은 자리</b>와 <b>그 왼쪽 자리</b> 두 학생의 옷 색을
+          보고, 두 색이 <em>다르면 파랑</em> · <em>같으면 빨강</em> 을 입은 학생이 앉는다.</li>
+      </ul>
+    </div>
+    <p class="ask">질문 1 &nbsp; 10 번째 줄에 앉은 학생들의 옷 색을 왼쪽부터 순서대로 말하시오.</p>
+    <p class="ask">질문 2 &nbsp; 31 번째 줄부터 65 번째 줄까지 파란 옷을 입은 학생의 수를 말하고,
+      그 이유를 설명하시오.</p>
+    <p class="src">6주차 학습지 문제 2. 규칙 하나가 색·무늬·개수를 한꺼번에 정한다.</p>
+  </section>
+
+  <section class="card">
+    <h2>한 줄씩 내려가 본다</h2>
+    <p>버튼을 누를 때마다 <b>줄이 하나씩</b> 아래에 나타난다. 32 번째 줄까지 간다. 새 줄의 안쪽 자리는 바로 위 두 점 사이에
+      앉아 그 둘을 본다 — 두 색이 다르면 파랑, 같으면 빨강이다. 양 끝은 늘 파랑이다.</p>
+    <div class="lab">
+      <div class="row">
+        <button class="primary" id="b-step">한 줄 내리기</button>
+        <button id="b-step10">10 줄</button>
+        <button id="b-reset">맨 윗줄로</button>
+        <span class="now" id="v-now"></span>
+      </div>
+      <div class="cvbox" style="margin-top:12px">
+        <canvas id="c-tri" aria-label="규칙대로 앉힌 관람석. 파란 옷은 채운 점, 빨간 옷은 옅은 점이다."></canvas>
+      </div>
+      <h3 style="margin-top:14px">방금 내려온 줄</h3>
+      <div class="scroller">
+        <div class="stack">
+          <div class="seatrow prev" id="r-prev"></div>
+          <div class="seatrow" id="r-now"></div>
+        </div>
+      </div>
+      <div class="out" id="o-tri"></div>
+    </div>
+    <h3>밖에서 다시 재려면</h3>
+    <pre class="code" id="py-p"></pre>
+    <div class="nextline"><button data-go="1">디딤돌 1 로 &rarr;</button></div>
+  </section>
+</div>
+
+<!-- ================= 디딤돌 1 ================= -->
+<div class="pane" id="pane-1" role="tabpanel" aria-labelledby="tab-1" hidden>
+  <section class="card step">
+    <header><span class="num">디딤돌 1</span><h2>색은 덧셈이다</h2></header>
+    <p class="claim"><b>N</b> 번째 줄의 옷 색을 파랑 <span class="k">1</span> · 빨강
+      <span class="k">0</span> 으로 적으면, 그 줄은 <b>파스칼 삼각형의 <span class="k">N − 1</span>
+      번째 줄을 <span class="k">2</span> 로 나눈 나머지</b>와 완전히 같다.</p>
+
+    <div class="lab">
+      <p class="lab-h">실험 — 두 방식으로 따로 만들어 겹쳐 본다</p>
+      <div class="twin">
+        <div>
+          <canvas id="c-l1a" aria-label="규칙 그대로 앉힌 삼각형"></canvas>
+          <p class="cvcap">규칙 1) ~ 6) 그대로</p>
+        </div>
+        <div>
+          <canvas id="c-l1b" aria-label="파스칼 삼각형을 2로 나눈 나머지"></canvas>
+          <p class="cvcap">파스칼 삼각형 mod 2</p>
+        </div>
+      </div>
+      <label class="fld" for="s-l1" style="margin-top:13px">
+        <span>줄 하나만 따로 견주기 — <b id="v-l1">10</b> 번째 줄</span>
+        <input type="range" id="s-l1" min="1" max="40" step="1" value="10">
+      </label>
+      <div class="cmp scroller">
+        <div class="seatrow"><span class="rowlabel">규칙대로</span><span id="r-l1a"></span></div>
+        <div class="seatrow"><span class="rowlabel">파스칼 mod 2</span><span id="r-l1b"></span></div>
+      </div>
+      <div class="row" style="margin-top:11px">
+        <button id="b-l1">1 ~ 300 번째 줄 전부 맞춰 보기</button>
+      </div>
+      <div class="out" id="o-l1"></div>
+    </div>
+
+    <details class="proof">
+      <summary>왜 그런가</summary>
+      <div class="body">
+        <p>파랑을 <code>1</code>, 빨강을 <code>0</code> 이라 적는다. 「두 색이 <b>다르면</b> 파랑」은
+          두 수를 놓고 보면 「더해서 <b>홀수</b>면 <code>1</code>」과 같은 말이다. 두 수가 같으면
+          합이 <code>0</code> 이나 <code>2</code> 라 짝수고, 다르면 합이 <code>1</code> 이라
+          홀수이기 때문이다.</p>
+        <p>그러므로 끝자리가 아닌 자리의 수는 <b>바로 앞줄의 같은 자리 + 그 왼쪽 자리를
+          <code>2</code> 로 나눈 나머지</b>다. 양 끝은 규칙에 따라 늘 <code>1</code> 이다.</p>
+        <p>파스칼 삼각형을 만드는 규칙도 똑같다 — 양 끝이 <code>1</code> 이고, 안쪽은 위 두 수의 합.
+          다른 것은 <em>합을 그대로 적지 않고 2 로 나눈 나머지만 적는다</em>는 점뿐이다.
+          첫 줄이 같고 만드는 규칙이 같으므로 두 삼각형은 줄마다 같다.</p>
+      </div>
+    </details>
+    <h3>밖에서 다시 재려면</h3>
+    <pre class="code" id="py-1"></pre>
+    <div class="nextline"><button data-go="2">디딤돌 2 로 &rarr;</button></div>
+  </section>
+</div>
+
+<!-- ================= 디딤돌 2 ================= -->
+<div class="pane" id="pane-2" role="tabpanel" aria-labelledby="tab-2" hidden>
+  <section class="card step">
+    <header><span class="num">디딤돌 2</span><h2>전부 파랑인 줄이 따로 있다</h2></header>
+    <p class="claim">줄 번호가 <b><span class="k">2</span> 의 거듭제곱</b>이면 그 줄은
+      <b>전부 파랑</b>이고, 바로 다음 줄은 <b>양 끝만 파랑</b>이다.</p>
+
+    <div class="lab">
+      <p class="lab-h">실험 — 위에서부터 훑으며 찾는다</p>
+      <div class="row">
+        <button class="primary" id="b-scan">찾기 시작</button>
+        <button id="b-scan-stop" disabled>멈춤</button>
+        <span class="now" id="v-scan"></span>
+      </div>
+      <div class="cvbox" style="margin-top:12px">
+        <canvas id="c-l2" aria-label="찾은 줄에 금색 띠가 그려진 삼각형"></canvas>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--gold)"></i>전부 파랑인 줄</span>
+        <span><i style="background:var(--violet)"></i>양 끝만 파랑인 줄</span>
+      </div>
+      <div class="out" id="o-l2">버튼을 누르면 1 번째 줄부터 64 번째 줄까지 한 줄씩 훑는다. 아직 안 훑은 줄은 흐리게 둔다.</div>
+    </div>
+
+    <details class="proof">
+      <summary>왜 그런가</summary>
+      <div class="body">
+        <p>먼저 <b>전부 파랑인 줄 아래는 양 끝만 파랑</b>이다. 어떤 줄이 전부 <code>1</code> 이면
+          그 아래 줄의 안쪽 자리는 모두 「같은 두 수」를 보게 되어 <code>0</code> 이 된다. 살아남는
+          것은 규칙이 못박은 양 끝뿐이다.</p>
+        <p>거꾸로 <b>양 끝만 파랑인 줄 아래는 다시 자란다.</b> 그 줄의 왼쪽 끝과 오른쪽 끝이 각각
+          새 삼각형의 꼭대기 노릇을 하고, 둘 사이는 <code>0</code> 이 넓게 깔려 있어 서로 닿지
+          않는다(디딤돌 3 에서 다시 본다).</p>
+        <p>1 번째 줄은 <code>1</code> 하나라 전부 파랑이다. 전부 파랑인 줄이
+          <code>2<sup>k</sup></code> 번째에 있으면, 그 아래로 왼쪽 삼각형이
+          <code>2<sup>k</sup></code> 줄을 자라 다시 전부 파랑이 되는 자리가
+          <code>2<sup>k</sup> + 2<sup>k</sup> = 2<sup>k+1</sup></code> 번째 줄이다. 그래서 전부
+          파랑인 줄은 <code>1, 2, 4, 8, 16, …</code> 로만 나온다.</p>
+      </div>
+    </details>
+    <h3>밖에서 다시 재려면</h3>
+    <pre class="code" id="py-2"></pre>
+    <div class="nextline"><button data-go="3">디딤돌 3 으로 &rarr;</button></div>
+  </section>
+</div>
+
+<!-- ================= 디딤돌 3 ================= -->
+<div class="pane" id="pane-3" role="tabpanel" aria-labelledby="tab-3" hidden>
+  <section class="card step">
+    <header><span class="num">디딤돌 3</span><h2>그 아래는 두 벌로 복제된다</h2></header>
+    <p class="claim"><span class="k">1 ≤ j ≤ 2<sup>k</sup></span> 일 때,
+      <b><span class="k">2<sup>k</sup> + j</span> 번째 줄</b>은
+      <b><span class="k">j</span> 번째 줄</b> · 빨강 <span class="k">2<sup>k</sup> − j</span> 명 ·
+      <b><span class="k">j</span> 번째 줄</b> 을 이어 붙인 모양이다. 그러므로 파랑 수는
+      <b>정확히 두 배</b>다.</p>
+
+    <div class="lab">
+      <p class="lab-h">실험 — 삼각형에서 두 벌을 갈라 칠한다</p>
+      <div class="row" style="margin-bottom:11px">
+        <span style="font-size:13px;color:var(--ink-soft)">2<sup>k</sup> =</span>
+        <button class="kbtn" data-k="2">4</button>
+        <button class="kbtn on" data-k="3">8</button>
+        <button class="kbtn" data-k="4">16</button>
+        <button class="kbtn" data-k="5">32</button>
+      </div>
+      <label class="fld" for="s-l3">
+        <span>j = <b id="v-l3">2</b> &nbsp;→&nbsp; 보는 줄 <b id="v-l3n">10</b></span>
+        <input type="range" id="s-l3" min="1" max="8" step="1" value="2">
+      </label>
+      <div class="cvbox">
+        <canvas id="c-l3" aria-label="복제된 두 벌을 다른 색으로 칠한 삼각형"></canvas>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--blue)"></i>왼쪽 벌</span>
+        <span><i style="background:var(--violet)"></i>오른쪽 벌</span>
+        <span><i style="background:var(--gold)"></i>지금 보는 줄</span>
+      </div>
+      <h3>그 줄을 세 토막으로 자르면</h3>
+      <div class="scroller">
+        <div class="stack" style="justify-items:start">
+          <div class="parts" id="r-l3a"></div>
+          <div class="partlab" id="p-l3"></div>
+          <div class="seatrow" id="r-l3b" style="margin-top:6px"></div>
+          <div class="partlab" id="p-l3b"></div>
+        </div>
+      </div>
+      <div class="out" id="o-l3"></div>
+      <div class="row" style="margin-top:10px">
+        <button id="b-l3">2<sup>k</sup> = 4 ~ 64 의 모든 j 로 맞춰 보기</button>
+      </div>
+      <div class="out" id="o-l3b" hidden></div>
+    </div>
+
+    <details class="proof">
+      <summary>왜 그런가</summary>
+      <div class="body">
+        <p>디딤돌 2 에서 <code>2<sup>k</sup> + 1</code> 번째 줄은 양 끝만 파랑이었다. 이 줄의 왼쪽 끝
+          <code>1</code> 하나를 꼭대기로 보면, 그 아래로 자라는 것은 <b>처음부터 다시 시작하는 같은
+          삼각형</b>이다 — 만드는 규칙이 같고 꼭대기가 <code>1</code> 하나로 같기 때문이다.
+          오른쪽 끝도 마찬가지다.</p>
+        <p>두 삼각형이 섞이지 않는 것은 사이에 <code>0</code> 이 깔려 있기 때문이다.
+          <code>2<sup>k</sup> + 1</code> 번째 줄의 가운데 <code>0</code> 은
+          <code>2<sup>k</sup> − 1</code> 칸인데, 한 줄 내려갈 때마다 왼쪽 삼각형은 오른쪽으로 한 칸,
+          오른쪽 삼각형은 왼쪽으로 한 칸씩만 자란다. 그래서 <code>j</code> 줄을 내려가면 가운데
+          <code>0</code> 이 <code>2<sup>k</sup> − j</code> 칸 남고, 두 삼각형이 처음 닿는 때가
+          <code>j = 2<sup>k</sup></code> — 곧 다시 전부 파랑이 되는 <code>2<sup>k+1</sup></code>
+          번째 줄이다.</p>
+        <p>따라서 <code>2<sup>k</sup> + j</code> 번째 줄은 <code>j</code> 번째 줄이 왼쪽과 오른쪽에
+          한 벌씩 놓인 모양이고, 파랑 수는 <code>j</code> 번째 줄의 <em>두 배</em>다.</p>
+      </div>
+    </details>
+    <h3>밖에서 다시 재려면</h3>
+    <pre class="code" id="py-3"></pre>
+    <div class="nextline"><button data-go="4">디딤돌 4 로 &rarr;</button></div>
+  </section>
+</div>
+
+<!-- ================= 디딤돌 4 ================= -->
+<div class="pane" id="pane-4" role="tabpanel" aria-labelledby="tab-4" hidden>
+  <section class="card step">
+    <header><span class="num">디딤돌 4</span><h2>줄 번호가 파랑 수를 정한다</h2></header>
+    <p class="claim"><b><span class="k">N</span> 번째 줄의 파랑 수</b> =
+      <b><span class="k">2</span> 를, <span class="k">N − 1</span> 을 2 진법으로 썼을 때
+      <span class="k">1</span> 의 개수만큼 곱한 값</b>.</p>
+
+    <div class="lab">
+      <p class="lab-h">실험 — 줄마다 파랑 수를 막대로 세운다</p>
+      <canvas id="c-l4" aria-label="줄마다 파란 옷 학생 수를 나타낸 막대"></canvas>
+      <p class="cvcap">1 ~ 64 번째 줄 · 막대 높이 = 그 줄의 파랑 수</p>
+      <label class="fld" for="s-l4" style="margin-top:12px">
+        <span>몇 번째 줄 <b id="v-l4">31</b></span>
+        <input type="range" id="s-l4" min="1" max="64" step="1" value="31">
+      </label>
+      <div class="scroller"><table id="t-l4"></table></div>
+      <div class="row" style="margin-top:11px">
+        <button id="b-l4">1 ~ 300 번째 줄 전부 맞춰 보기</button>
+      </div>
+      <div class="out" id="o-l4"></div>
+    </div>
+
+    <details class="proof">
+      <summary>왜 그런가</summary>
+      <div class="body">
+        <p><code>N − 1</code> 을 2 진법으로 쓴다는 것은 <code>N − 1</code> 을 서로 다른
+          <code>2</code> 의 거듭제곱의 합으로 쪼갠다는 뜻이다. 가장 큰 거듭제곱을
+          <code>2<sup>k</sup></code> 라 하고 <code>N = 2<sup>k</sup> + j</code> 로 쓰면, 디딤돌 3 이
+          <code>j</code> 번째 줄의 파랑 수에 <b><code>2</code> 를 한 번 곱하라</b>고 말해 준다.</p>
+        <p>남은 <code>j</code> 에도 같은 일을 되풀이한다. <code>N − 1</code> 의 2 진법에서
+          <code>1</code> 이 하나 나올 때마다 <code>2</code> 가 한 번씩 곱해지고, 마지막에 남는 것은
+          1 번째 줄의 파랑 <code>1</code> 명이다.</p>
+        <p>그래서 <code>1</code> 이 <code>s</code> 개면 파랑 수는 <code>2</code> 를 <code>s</code> 번
+          곱한 값이다.</p>
+      </div>
+    </details>
+    <h3>밖에서 다시 재려면</h3>
+    <pre class="code" id="py-4"></pre>
+    <div class="nextline"><button data-go="5">디딤돌 5 로 &rarr;</button></div>
+  </section>
+</div>
+
+<!-- ================= 디딤돌 5 ================= -->
+<div class="pane" id="pane-5" role="tabpanel" aria-labelledby="tab-5" hidden>
+  <section class="card step">
+    <header><span class="num">디딤돌 5</span><h2>자리마다 3 배씩 불어난다</h2></header>
+    <p class="claim"><span class="k">1</span> 번째 줄부터 <span class="k">2<sup>k</sup></span>
+      번째 줄까지 파랑을 모두 더하면 <b><span class="k">3</span> 을 <span class="k">k</span> 번
+      곱한 값</b>이다.</p>
+
+    <div class="lab">
+      <p class="lab-h">실험 — 자리를 하나씩 정하며 갈라 본다</p>
+      <label class="fld" for="s-l5">
+        <span>2 진법 자릿수 k = <b id="v-l5">3</b> &nbsp;(1 번째 줄 ~ <b id="v-l5b">8</b> 번째 줄)</span>
+        <input type="range" id="s-l5" min="1" max="5" step="1" value="3">
+      </label>
+      <canvas id="c-l5" aria-label="자리마다 1 배와 2 배로 갈라지는 가지 그림"></canvas>
+      <p class="cvcap">자리마다 <span style="color:var(--ink-faint)">0 이면 ×1</span> ·
+        <span style="color:var(--blue)">1 이면 ×2</span> — 끝에 달린 수가 그 줄의 파랑 수다</p>
+      <dl class="stats">
+        <div class="stat blue"><dt>끝에 달린 수를 다 더하면</dt><dd id="d-l5a">0</dd></div>
+        <div class="stat gold"><dt>3 을 k 번 곱한 값</dt><dd id="d-l5b">0</dd></div>
+      </dl>
+      <div class="out" id="o-l5"></div>
+    </div>
+
+    <details class="proof">
+      <summary>왜 그런가</summary>
+      <div class="body">
+        <p>디딤돌 4 에 따르면 줄 하나의 파랑 수는 <code>N − 1</code> 의 2 진법에서 <code>1</code> 인
+          자리마다 <code>2</code> 를 곱한 값이다. 1 번째 줄부터 <code>2<sup>k</sup></code> 번째 줄까지
+          더한다는 것은 <code>N − 1</code> 이 <code>0</code> 부터 <code>2<sup>k</sup> − 1</code> 까지,
+          곧 <b><code>k</code> 자리 2 진수를 하나도 빠짐없이</b> 훑는다는 뜻이다.</p>
+        <p>각 자리는 <code>0</code> 이거나 <code>1</code> 이고, <code>0</code> 이면 <code>1</code> 배,
+          <code>1</code> 이면 <code>2</code> 배를 준다. 모든 경우를 더하면 자리마다
+          <code>1 + 2 = 3</code> 이 곱해진다.</p>
+        <p><code>(1 + 2) × (1 + 2) × ⋯ × (1 + 2)</code> 를 <code>k</code> 번 곱한 것이므로 합은
+          <code>3</code> 을 <code>k</code> 번 곱한 값이다.</p>
+      </div>
+    </details>
+    <h3>밖에서 다시 재려면</h3>
+    <pre class="code" id="py-5"></pre>
+    <div class="nextline"><button data-go="a">답으로 &rarr;</button></div>
+  </section>
+</div>
+
+<!-- ================= 답 ================= -->
+<div class="pane" id="pane-a" role="tabpanel" aria-labelledby="tab-a" hidden>
+  <section class="card step">
+    <header><span class="num">건너간다</span><h2>31 번째 줄부터 65 번째 줄까지</h2></header>
+    <p>디딤돌 5 는 <b>1 번째 줄부터</b> 세는 합만 준다. 가운데 토막을 재려면
+      <b>긴 합에서 앞 토막을 뺀다.</b></p>
+
+    <div class="lab">
+      <p class="lab-h">실험 — 구간을 손으로 옮겨 본다</p>
+      <label class="fld" for="s-a">
+        <span>시작 줄 <b id="v-a">31</b></span>
+        <input type="range" id="s-a" min="1" max="80" step="1" value="31">
+      </label>
+      <label class="fld" for="s-b">
+        <span>끝 줄 <b id="v-b">65</b></span>
+        <input type="range" id="s-b" min="1" max="80" step="1" value="65">
+      </label>
+      <canvas id="c-a" aria-label="줄마다 파랑 수 막대에서 고른 구간이 칠해진 그림"></canvas>
+      <p class="cvcap">칠해진 막대가 지금 고른 구간이다</p>
+      <div class="row" style="margin-top:11px"><button id="b-preset">31 ~ 65 로 되돌리기</button></div>
+      <dl class="stats">
+        <div class="stat"><dt>1 ~ 끝 줄</dt><dd id="d-hi">0</dd></div>
+        <div class="stat"><dt>1 ~ 시작 줄 앞</dt><dd id="d-lo">0</dd></div>
+        <div class="stat gold"><dt>구간의 파랑 수</dt><dd id="d-sum">0</dd></div>
+      </dl>
+      <div class="out" id="o-done"></div>
+    </div>
+
+    <details class="proof" open>
+      <summary>손으로 셈하기</summary>
+      <div class="body">
+        <p><b>1 ~ 65 번째 줄</b> — 1 ~ 64 번째 줄이 디딤돌 5 로 <code>3</code> 을 6 번 곱한
+          <code>729</code>. 65 번째 줄은 <code>64 = 1000000</code> 이라 <code>1</code> 이 하나뿐이니
+          <code>2</code>. 합해서 <b>731</b>.</p>
+        <p><b>1 ~ 30 번째 줄</b> — 1 ~ 32 번째 줄이 <code>3</code> 을 5 번 곱한 <code>243</code>.
+          여기서 31 번째 줄(<code>30 = 11110</code>, <code>1</code> 이 4 개 → <code>16</code>)과
+          32 번째 줄(<code>31 = 11111</code>, <code>1</code> 이 5 개 → <code>32</code>)을 뺀다.
+          <code>243 − 16 − 32 =</code> <b>195</b>.</p>
+        <p><code>731 − 195 = 536</code></p>
+      </div>
+    </details>
+  </section>
+
+  <section class="card answer">
+    <h2>두 질문의 답</h2>
+    <h3>질문 1 · 10 번째 줄</h3>
+    <p><code>10 = 8 + 2</code> 이므로 디딤돌 3 이 그대로 답한다 — 2 번째 줄을 왼쪽과 오른쪽에 한
+      벌씩 놓고 가운데를 빨강 <code>8 − 2 = 6</code> 명으로 채운 모양이다.</p>
+    <div class="scroller"><div class="seatrow" id="r-ans"></div></div>
+    <p style="margin-top:10px">왼쪽부터 <b>파랑 · 파랑 · 빨강 여섯 명 · 파랑 · 파랑</b> 이고
+      파란 옷은 <b>4 명</b>이다.</p>
+    <h3>질문 2 · 31 번째 줄부터 65 번째 줄까지</h3>
+    <p class="big">536 명</p>
+    <h3>밖에서 다시 재려면</h3>
+    <pre class="code" id="py-a"></pre>
+  </section>
+</div>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- 규칙 그대로 줄을 만든다 ---------- */
+  var rows = [[1]];
+  function seatRow(N) {
+    while (rows.length < N) {
+      var p = rows[rows.length - 1], r = [1], j;
+      for (j = 1; j < p.length; j++) r.push(p[j] !== p[j - 1] ? 1 : 0);
+      r.push(1);
+      rows.push(r);
+    }
+    return rows[N - 1];
+  }
+  /* ---------- 파스칼 삼각형 mod 2 는 따로 만든다 ---------- */
+  function pascalRow(N) {
+    var n = N - 1, r = [], k;
+    for (k = 0; k <= n; k++) r.push(((k & (n - k)) === 0) ? 1 : 0);
+    return r;
+  }
+  function blueCount(N) {
+    var r = seatRow(N), s = 0, i;
+    for (i = 0; i < r.length; i++) s += r[i];
+    return s;
+  }
+  function onesOf(n) { var c = 0; while (n) { c += n & 1; n >>= 1; } return c; }
+  function bin(n) { return n.toString(2); }
+  function same(a, b) {
+    if (a.length !== b.length) return false;
+    for (var i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+    return true;
+  }
+  function fmt(n) { return n.toLocaleString(); }
+  function seatHTML(arr, size) {
+    var c = (size === true) ? " sm" : (size ? " " + size : ""), h = "", i;
+    for (i = 0; i < arr.length; i++) h += '<span class="seat' + (arr[i] ? " b" : "") + c + '"></span>';
+    return h;
+  }
+  function sizeFor(n) { return n > 40 ? "xs" : (n > 22 ? "sm" : ""); }
+
+  /* ---------- 색 토큰 ---------- */
+  var C = {};
+  function readTokens() {
+    var cs = getComputedStyle(document.documentElement);
+    ["blue", "red", "gold", "violet", "rule", "ink", "ink-faint", "ink-soft", "accent", "surface"]
+      .forEach(function (k) { C[k] = cs.getPropertyValue("--" + k).trim(); });
+  }
+
+  /* ---------- 캔버스 공통 ---------- */
+  function fit(cv, h) {
+    var w = cv.clientWidth || 560, dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    cv.style.height = h + "px";
+    var g = cv.getContext("2d");
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, w, h);
+    return { g: g, w: w, h: h };
+  }
+  /* 삼각형 하나. opt.rowFn · opt.upto · opt.colorOf(N,j,bit) · opt.bands([{N,color}]) */
+  function triDraw(cv, rows_, opt) {
+    opt = opt || {};
+    var w0 = cv.clientWidth || 560;
+    var cell = w0 / (rows_ + 1), rh = cell * 0.9, top = 5;
+    var rowFn = opt.rowFn || seatRow;
+    var upto = opt.upto == null ? rows_ : opt.upto;
+    var hRows = opt.heightRows == null ? rows_ : opt.heightRows;
+    var F = fit(cv, rh * hRows + top * 2), g = F.g, w = F.w;
+    var rad = Math.max(1.1, cell * 0.34);
+    for (var N = 1; N <= upto; N++) {
+      var row = rowFn(N), y = top + (N - 0.5) * rh, x0 = (w - N * cell) / 2 + cell / 2;
+      for (var j = 0; j < N; j++) {
+        var col = opt.colorOf ? opt.colorOf(N, j, row[j]) : (row[j] ? C.blue : null);
+        g.beginPath();
+        g.arc(x0 + j * cell, y, rad, 0, 6.2832);
+        if (col) { g.fillStyle = col; g.globalAlpha = 1; g.fill(); }
+        else { g.fillStyle = C.red; g.globalAlpha = 0.22; g.fill(); g.globalAlpha = 1; }
+      }
+    }
+    if (opt.bands) {
+      opt.bands.forEach(function (b) {
+        if (b.N > upto) return;
+        var ww = b.N * cell, yy = top + (b.N - 1) * rh;
+        g.strokeStyle = b.color;
+        g.lineWidth = 1.4;
+        g.strokeRect((w - ww) / 2 - 2, yy - 0.5, ww + 4, rh + 1);
+      });
+    }
+    return { cell: cell, rh: rh, top: top, w: w };
+  }
+
+  /* ================= 문제 · 한 줄씩 내려가기 ================= */
+  var MAXN = 64, TOPN = 32, TRI = { n: 4 };
+
+  function paintTri() {
+    var N = TRI.n;
+    $("v-now").textContent = N + " 번째 줄까지";
+    $("b-step").disabled = N >= TOPN;
+    $("b-step10").disabled = N >= TOPN;
+    var sz = sizeFor(N);
+    $("r-prev").innerHTML = N > 1 ? seatHTML(seatRow(N - 1), sz) : "";
+    $("r-now").innerHTML = seatHTML(seatRow(N), sz);
+    var b = blueCount(N);
+    var msg = "<b>" + N + " 번째 줄</b> — 자리 " + N + " 개 가운데 파랑 <b>" + b
+      + "</b> 명, 빨강 <b>" + (N - b) + "</b> 명.";
+    if (N >= TOPN) {
+      msg += " &nbsp;<b>맨 위 16 줄의 무늬가 그 아래 왼쪽과 오른쪽에 그대로 한 벌씩</b> 더 있다."
+           + " 같은 무늬가 절반 크기로 되풀이된다 — 그 되풀이가 이 쪽의 디딤돌 셋을 만든다.";
+    } else if (N >= 8 && (N & (N - 1)) === 0) {
+      msg += " &nbsp;위쪽 " + (N / 2) + " 줄과 아래쪽을 견주어 보시오.";
+    }
+    $("o-tri").className = "out" + (N >= TOPN ? " ok" : "");
+    $("o-tri").innerHTML = msg;
+    drawTriTop();
+  }
+  function drawTriTop() {
+    triDraw($("c-tri"), TOPN, {
+      upto: TRI.n, heightRows: TRI.n,
+      bands: [{ N: TRI.n, color: C.gold }]
+    });
+  }
+  $("b-step").addEventListener("click", function () {
+    if (TRI.n < TOPN) { TRI.n++; paintTri(); }
+  });
+  $("b-step10").addEventListener("click", function () {
+    TRI.n = Math.min(TOPN, TRI.n + 10);
+    paintTri();
+  });
+  $("b-reset").addEventListener("click", function () { TRI.n = 1; paintTri(); });
+
+  /* ================= 디딤돌 1 ================= */
+  function drawL1() {
+    triDraw($("c-l1a"), 40, {});
+    triDraw($("c-l1b"), 40, { rowFn: pascalRow });
+  }
+  function paintL1() {
+    var N = parseInt($("s-l1").value, 10);
+    $("v-l1").textContent = N;
+    var a = seatRow(N), b = pascalRow(N), sz = sizeFor(N);
+    $("r-l1a").innerHTML = seatHTML(a, sz);
+    $("r-l1b").innerHTML = seatHTML(b, sz);
+    var ok = same(a, b);
+    $("o-l1").className = "out " + (ok ? "ok" : "warn");
+    $("o-l1").innerHTML = ok
+      ? "두 줄이 <b>한 자리도 어긋나지 않는다</b>. 파랑 " + blueCount(N) + " 명."
+      : "어긋난다.";
+  }
+  $("s-l1").addEventListener("input", paintL1);
+  $("b-l1").addEventListener("click", function () {
+    var bad = 0, N;
+    for (N = 1; N <= 300; N++) if (!same(seatRow(N), pascalRow(N))) bad++;
+    $("o-l1").className = "out " + (bad === 0 ? "ok" : "warn");
+    $("o-l1").innerHTML = bad === 0
+      ? "<b>300 줄 모두 일치</b>. 어긋난 줄 <b>0</b> 개 — 규칙과 파스칼 삼각형은 같은 것을 만든다."
+      : "어긋난 줄 <b>" + bad + "</b> 개.";
+  });
+
+  /* ================= 디딤돌 2 ================= */
+  var L2 = { n: 0, all: [], ends: [], timer: 0, running: false };
+  function drawL2() {
+    var bands = [];
+    L2.all.forEach(function (N) { bands.push({ N: N, color: C.gold }); });
+    L2.ends.forEach(function (N) { bands.push({ N: N, color: C.violet }); });
+    if (L2.running && L2.n) bands.push({ N: L2.n, color: C.accent });
+    triDraw($("c-l2"), MAXN, {
+      colorOf: function (N, j, bit) {
+        if (!bit) return null;
+        return N <= L2.n ? C.blue : "rgba(128,140,165,.30)";
+      },
+      bands: bands
+    });
+  }
+  function paintL2Msg() {
+    $("v-scan").textContent = L2.n ? (L2.n + " 번째 줄까지 훑었다") : "";
+    var t = "";
+    if (L2.all.length) {
+      t += "<b>전부 파랑인 줄</b> — <code>" + L2.all.join(", ") + "</code>";
+      if (!L2.running) t += " &nbsp;모두 <code>2</code> 를 거듭 곱한 수다.";
+      t += "<br>";
+    }
+    if (L2.ends.length) {
+      t += "<b>양 끝만 파랑인 줄</b> — <code>" + L2.ends.join(", ") + "</code>";
+      if (!L2.running) t += " &nbsp;모두 전부 파랑인 줄의 <b>바로 다음</b>이다.";
+    }
+    $("o-l2").className = "out" + (!L2.running && L2.all.length ? " ok" : "");
+    $("o-l2").innerHTML = t || "버튼을 누르면 1 번째 줄부터 64 번째 줄까지 한 줄씩 훑는다. 아직 안 훑은 줄은 흐리게 둔다.";
+  }
+  function scanStep() {
+    if (!L2.running) return;
+    L2.n++;
+    var N = L2.n, b = blueCount(N);
+    if (b === N) L2.all.push(N);
+    else if (b === 2) L2.ends.push(N);
+    drawL2();
+    paintL2Msg();
+    if (L2.n >= MAXN) { stopScan(); return; }
+    L2.timer = setTimeout(scanStep, reduce ? 0 : 45);
+  }
+  function stopScan() {
+    L2.running = false;
+    clearTimeout(L2.timer);
+    $("b-scan").disabled = false;
+    $("b-scan-stop").disabled = true;
+    drawL2();
+    paintL2Msg();
+  }
+  $("b-scan").addEventListener("click", function () {
+    L2 = { n: 0, all: [], ends: [], timer: 0, running: true };
+    $("b-scan").disabled = true;
+    $("b-scan-stop").disabled = false;
+    scanStep();
+  });
+  $("b-scan-stop").addEventListener("click", stopScan);
+
+  /* ================= 디딤돌 3 ================= */
+  var L3 = { k: 3, j: 2 };
+  function drawL3() {
+    var K = Math.pow(2, L3.k), j = L3.j, N = K + j;
+    triDraw($("c-l3"), 2 * K, {
+      colorOf: function (n, i, bit) {
+        if (!bit) return null;
+        if (n > K && n <= 2 * K) {
+          var jj = n - K;
+          if (i < jj) return C.blue;
+          if (i >= n - jj) return C.violet;
+        }
+        return n <= K ? C.blue : C.blue;
+      },
+      bands: [{ N: N, color: C.gold }, { N: K, color: C.rule }]
+    });
+  }
+  function paintL3() {
+    var K = Math.pow(2, L3.k), j = L3.j, N = K + j;
+    var big = seatRow(N), small = seatRow(j), mid = K - j;
+    $("v-l3").textContent = j;
+    $("v-l3n").textContent = N;
+
+    var sz = sizeFor(N);
+    $("r-l3a").innerHTML =
+      '<span class="part left">' + seatHTML(big.slice(0, j), sz) + "</span>"
+      + (mid > 0 ? '<span class="part mid">' + seatHTML(big.slice(j, j + mid), sz) + "</span>" : "")
+      + '<span class="part right">' + seatHTML(big.slice(j + mid), sz) + "</span>";
+    $("p-l3").innerHTML = N + " 번째 줄 — 왼쪽 " + j + " 자리"
+      + (mid > 0 ? " · 가운데 빨강 " + mid + " 자리" : "") + " · 오른쪽 " + j + " 자리";
+    $("r-l3b").innerHTML = seatHTML(small, sz);
+    $("p-l3b").textContent = j + " 번째 줄";
+
+    var left = big.slice(0, j), right = big.slice(j + mid);
+    var midRed = big.slice(j, j + mid).every(function (v) { return v === 0; });
+    var ok = same(left, small) && same(right, small) && midRed;
+    $("o-l3").className = "out " + (ok ? "ok" : "warn");
+    $("o-l3").innerHTML = ok
+      ? "왼쪽 토막과 오른쪽 토막이 <b>둘 다 " + j + " 번째 줄과 같고</b>, 가운데는 빨강뿐이다. "
+        + "파랑 <b>" + blueCount(N) + "</b> 명 = " + blueCount(j) + " 명의 <b>두 배</b>."
+      : "어긋난다.";
+    drawL3();
+    renderPy3();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".kbtn"), function (b) {
+    b.addEventListener("click", function () {
+      Array.prototype.forEach.call(document.querySelectorAll(".kbtn"), function (x) {
+        x.classList.remove("on");
+      });
+      b.classList.add("on");
+      L3.k = parseInt(b.getAttribute("data-k"), 10);
+      var K = Math.pow(2, L3.k), s = $("s-l3");
+      s.max = String(K);
+      if (L3.j > K) L3.j = K;
+      s.value = String(L3.j);
+      paintL3();
+    });
+  });
+  $("s-l3").addEventListener("input", function () { L3.j = parseInt(this.value, 10); paintL3(); });
+  $("b-l3").addEventListener("click", function () {
+    var bad = 0, tested = 0, k, K, j;
+    for (k = 2; k <= 6; k++) {
+      K = Math.pow(2, k);
+      for (j = 1; j <= K; j++) {
+        var big = seatRow(K + j), small = seatRow(j), mid = K - j;
+        var one = same(big.slice(0, j), small) && same(big.slice(j + mid), small)
+          && big.slice(j, j + mid).every(function (v) { return v === 0; });
+        tested++;
+        if (!one) bad++;
+      }
+    }
+    var el = $("o-l3b");
+    el.hidden = false;
+    el.className = "out " + (bad === 0 ? "ok" : "warn");
+    el.innerHTML = bad === 0
+      ? "<code>2<sup>k</sup></code> 가 4 · 8 · 16 · 32 · 64 인 <b>" + tested
+        + "</b> 가지 <code>j</code> 를 모두 잘라 봤다. 어긋난 것 <b>0</b> 개."
+      : "어긋난 것 <b>" + bad + "</b> 개.";
+  });
+
+  /* ================= 디딤돌 4 — 막대 ================= */
+  function drawBars(cv, upto, sel, range) {
+    var F = fit(cv, 168), g = F.g, w = F.w;
+    var pad = 20, bw = (w - 8) / upto, maxV = 64;
+    var base = F.h - pad;
+    g.strokeStyle = C.rule;
+    g.lineWidth = 1;
+    g.beginPath(); g.moveTo(4, base + .5); g.lineTo(w - 4, base + .5); g.stroke();
+    for (var N = 1; N <= upto; N++) {
+      var v = blueCount(N), h = (v / maxV) * (base - 12);
+      var x = 4 + (N - 1) * bw;
+      var inR = range && N >= range[0] && N <= range[1];
+      g.fillStyle = (sel === N) ? C.gold : (inR ? C.accent : C.blue);
+      g.globalAlpha = (sel === N || inR || !range) ? 1 : 0.28;
+      g.fillRect(x, base - h, Math.max(1, bw - 1.4), h);
+      g.globalAlpha = 1;
+    }
+    g.fillStyle = C["ink-faint"];
+    g.font = "10px " + "IBM Plex Mono, monospace";
+    g.textAlign = "center";
+    [1, 8, 16, 32, 64].forEach(function (N) {
+      if (N > upto) return;
+      g.fillText(String(N), 4 + (N - 0.5) * bw, F.h - 6);
+    });
+  }
+  function paintL4() {
+    var N = parseInt($("s-l4").value, 10);
+    $("v-l4").textContent = N;
+    var h = "<tr><th>줄</th><th class='m'>줄 − 1 의 2 진법</th><th>1 의 개수</th>"
+          + "<th>2 를 그만큼 곱한 값</th><th>세어 본 파랑</th></tr>";
+    var lo = Math.max(1, N - 2), hi = Math.min(64, N + 2), i;
+    for (i = lo; i <= hi; i++) {
+      var s = onesOf(i - 1), v = Math.pow(2, s), b = blueCount(i);
+      h += "<tr" + (i === N ? " class='hl'" : "") + "><td>" + i + "</td><td class='m'>"
+        + bin(i - 1) + "</td><td>" + s + "</td><td>" + v + "</td><td>" + b + "</td></tr>";
+    }
+    $("t-l4").innerHTML = h;
+    var okN = blueCount(N) === Math.pow(2, onesOf(N - 1));
+    $("o-l4").className = "out " + (okN ? "ok" : "warn");
+    $("o-l4").innerHTML = okN
+      ? "<b>" + N + " 번째 줄</b> — 세어 본 파랑 <b>" + blueCount(N) + "</b> 명, 계산한 값 <b>"
+        + Math.pow(2, onesOf(N - 1)) + "</b>. 같다."
+      : "어긋난다.";
+    drawBars($("c-l4"), 64, N, null);
+  }
+  $("s-l4").addEventListener("input", paintL4);
+  $("b-l4").addEventListener("click", function () {
+    var bad = 0, N;
+    for (N = 1; N <= 300; N++) if (blueCount(N) !== Math.pow(2, onesOf(N - 1))) bad++;
+    $("o-l4").className = "out " + (bad === 0 ? "ok" : "warn");
+    $("o-l4").innerHTML = bad === 0
+      ? "<b>300 줄 모두 일치</b>. 어긋난 줄 <b>0</b> 개."
+      : "어긋난 줄 <b>" + bad + "</b> 개.";
+  });
+
+  /* ================= 디딤돌 5 — 가지 그림 ================= */
+  function drawTree(cv, k) {
+    var leaves = Math.pow(2, k);
+    var F = fit(cv, 40 + k * 46 + 26), g = F.g, w = F.w;
+    var top = 16, dy = 46, x0 = 14, span = w - 28;
+    function xAt(depth, idx) {
+      var n = Math.pow(2, depth);
+      return x0 + span * (idx + 0.5) / n;
+    }
+    g.textAlign = "center";
+    for (var d = 0; d < k; d++) {
+      var n = Math.pow(2, d);
+      for (var i = 0; i < n; i++) {
+        var px = xAt(d, i), py = top + d * dy;
+        for (var s = 0; s < 2; s++) {
+          var cx = xAt(d + 1, i * 2 + s), cy = top + (d + 1) * dy;
+          g.strokeStyle = s ? C.blue : C["ink-faint"];
+          g.lineWidth = s ? 1.6 : 1;
+          g.globalAlpha = s ? 1 : .55;
+          g.beginPath(); g.moveTo(px, py); g.lineTo(cx, cy); g.stroke();
+          g.globalAlpha = 1;
+          if (k <= 4) {
+            g.fillStyle = s ? C.blue : C["ink-faint"];
+            g.font = "10px IBM Plex Mono, monospace";
+            g.fillText(s ? "×2" : "×1", (px + cx) / 2 + (s ? 9 : -9), (py + cy) / 2 + 3);
+          }
+        }
+      }
+    }
+    // 마디
+    for (d = 0; d <= k; d++) {
+      var m = Math.pow(2, d);
+      for (i = 0; i < m; i++) {
+        var x = xAt(d, i), y = top + d * dy;
+        g.beginPath(); g.arc(x, y, d === k ? 3 : 2.4, 0, 6.2832);
+        g.fillStyle = d === k ? C.blue : C["ink-faint"];
+        g.fill();
+      }
+    }
+    // 잎에 값
+    g.font = (leaves > 16 ? "9px " : "11px ") + "IBM Plex Mono, monospace";
+    g.fillStyle = C.ink;
+    for (i = 0; i < leaves; i++) {
+      g.fillText(String(Math.pow(2, onesOf(i))), xAt(k, i), top + k * dy + 18);
+    }
+  }
+  function sumTo(N) {
+    var s = 0, i;
+    for (i = 1; i <= N; i++) s += Math.pow(2, onesOf(i - 1));
+    return s;
+  }
+  function paintL5() {
+    var k = parseInt($("s-l5").value, 10), K = Math.pow(2, k);
+    $("v-l5").textContent = k;
+    $("v-l5b").textContent = fmt(K);
+    var real = sumTo(K), said = Math.pow(3, k);
+    $("d-l5a").textContent = fmt(real);
+    $("d-l5b").textContent = fmt(said);
+    var ok = real === said;
+    $("o-l5").className = "out " + (ok ? "ok" : "warn");
+    $("o-l5").innerHTML = ok
+      ? "가지 끝이 <b>" + fmt(K) + "</b> 개고, 거기 달린 수를 다 더하면 <b>" + fmt(real)
+        + "</b> 이다. 갈림길마다 <code>1 + 2 = 3</code> 이 곱해지므로 <code>3</code> 을 " + k
+        + " 번 곱한 값과 같다."
+      : "어긋난다.";
+    drawTree($("c-l5"), k);
+  }
+  $("s-l5").addEventListener("input", paintL5);
+
+  /* ================= 답 ================= */
+  function paintDone() {
+    var a = parseInt($("s-a").value, 10), b = parseInt($("s-b").value, 10);
+    if (a > b) { var t = a; a = b; b = t; }
+    $("v-a").textContent = a;
+    $("v-b").textContent = b;
+    var hi = sumTo(b), lo = sumTo(a - 1);
+    $("d-hi").textContent = fmt(hi);
+    $("d-lo").textContent = fmt(lo);
+    $("d-sum").textContent = fmt(hi - lo);
+    var target = (a === 31 && b === 65);
+    $("o-done").className = "out" + (target ? " ok" : "");
+    $("o-done").innerHTML = "<b>" + a + "</b> 번째 줄부터 <b>" + b + "</b> 번째 줄까지 파랑은 <b>"
+      + fmt(hi - lo) + "</b> 명이다. <code>" + fmt(hi) + " − " + fmt(lo) + "</code>."
+      + (target ? " <b>문제가 묻는 구간이다.</b>" : "");
+    drawBars($("c-a"), 80, -1, [a, b]);
+  }
+  $("s-a").addEventListener("input", paintDone);
+  $("s-b").addEventListener("input", paintDone);
+  $("b-preset").addEventListener("click", function () {
+    $("s-a").value = "31"; $("s-b").value = "65"; paintDone();
+  });
+
+  /* ---------------- 밖에서 다시 재는 코드 ---------------- */
+  var PY = {
+    "py-p": "<b># 규칙 1)~6) 그대로 줄을 만든다</b>\ndef next_row(prev):                     <b># 앞줄을 보고 다음 줄을 만든다</b>\n    inner = [1 if prev[j] != prev[j - 1] else 0\n             for j in range(1, len(prev))]\n    return [1] + inner + [1]            <b># 양 끝은 늘 파랑</b>\n\nrow = [1]                               <b># 1 번째 줄</b>\nfor n in range(2, 33):                  <b># 32 번째 줄까지 내려간다</b>\n    row = next_row(row)\n    print(n, \"\".join(\"B\" if c else \"R\" for c in row))\n",
+    "py-1": "<b># 규칙으로 만든 줄과 파스칼 삼각형 mod 2 가 같은가</b>\nfrom math import comb\n\ndef pascal(n):                          <b># 파스칼 n-1 번째 줄을 2 로 나눈 나머지</b>\n    return [comb(n - 1, k) % 2 for k in range(n)]\n\nrow, bad = [1], 0\nfor n in range(1, 301):\n    if row != pascal(n):\n        bad += 1\n    row = [1] + [1 if row[j] != row[j - 1] else 0\n                 for j in range(1, len(row))] + [1]\nprint(bad)                              <b># 어긋난 줄 수 - 0 이 나온다</b>\n",
+    "py-2": "<b># 전부 파랑인 줄과 양 끝만 파랑인 줄을 훑어 찾는다</b>\nallblue, ends = [], []\nrow = [1]\nfor n in range(1, 65):\n    b = sum(row)\n    if b == n:                          <b># 자리 수와 파랑 수가 같다</b>\n        allblue.append(n)\n    elif b == 2:                        <b># 파랑이 양 끝 둘뿐이다</b>\n        ends.append(n)\n    row = [1] + [1 if row[j] != row[j - 1] else 0\n                 for j in range(1, len(row))] + [1]\nprint(allblue)                          <b># 1 2 4 8 16 32 64</b>\nprint(ends)                             <b># 3 5 9 17 33</b>\n",
+    "py-4": "<b># 세어 본 파랑 수와 「2 를 1 의 개수만큼 곱한 값」이 같은가</b>\nrow, bad = [1], 0\nfor n in range(1, 301):\n    if sum(row) != 2 ** bin(n - 1).count(\"1\"):\n        bad += 1\n    row = [1] + [1 if row[j] != row[j - 1] else 0\n                 for j in range(1, len(row))] + [1]\nprint(bad)                              <b># 0 이 나온다</b>\n",
+    "py-5": "<b># 1 번째 줄부터 2^k 번째 줄까지 파랑을 다 더하면 3 을 k 번 곱한 값인가</b>\ndef blue(n):                            <b># n 번째 줄의 파랑 수</b>\n    return 2 ** bin(n - 1).count(\"1\")\n\nfor k in range(1, 10):\n    total = sum(blue(n) for n in range(1, 2 ** k + 1))\n    print(k, total, 3 ** k, total == 3 ** k)\n",
+    "py-a": "<b># 31 번째 줄부터 65 번째 줄까지</b>\ndef blue(n):\n    return 2 ** bin(n - 1).count(\"1\")\n\nprint(sum(blue(n) for n in range(31, 66)))     <b># 536</b>\nprint(sum(blue(n) for n in range(1, 66)),      <b># 731</b>\n      sum(blue(n) for n in range(1, 31)))      <b># 195</b>\n"
+  };
+  function renderPy() {
+    Object.keys(PY).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.innerHTML = PY[id];
+    });
+    renderPy3();
+  }
+  function renderPy3() {
+    var el = document.getElementById("py-3");
+    if (!el) return;
+    el.innerHTML = "<b># 2^k + j 번째 줄을 잘라 j 번째 줄과 맞춰 본다</b>\ndef seat(n):                            <b># 규칙 1)~6) 으로 n 번째 줄</b>\n    row = [1]\n    for _ in range(n - 1):\n        row = [1] + [1 if row[j] != row[j - 1] else 0\n                     for j in range(1, len(row))] + [1]\n    return row\n\nk, j = " + L3.k + ", " + L3.j + "\nK = 2 ** k\nbig, small = seat(K + j), seat(j)\nleft, mid, right = big[:j], big[j:K], big[K:]\nprint(left == small, right == small, all(v == 0 for v in mid))\nprint(sum(big), \"=\", sum(small), \"x 2\")\n";
+  }
+
+  /* ================= 탭 ================= */
+  var TABS = ["p", "1", "2", "3", "4", "5", "a"];
+  var PAINT = {
+    p: paintTri, "1": function () { drawL1(); paintL1(); }, "2": drawL2,
+    "3": paintL3, "4": paintL4, "5": paintL5, a: paintDone
+  };
+  var mode = "p";
+  function setMode(m) {
+    mode = m;
+    TABS.forEach(function (t) {
+      $("tab-" + t).setAttribute("aria-selected", String(t === m));
+      $("pane-" + t).hidden = (t !== m);
+    });
+    readTokens();
+    if (PAINT[m]) PAINT[m]();
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  }
+  TABS.forEach(function (t) {
+    $("tab-" + t).addEventListener("click", function () { setMode(t); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-go]"), function (b) {
+    b.addEventListener("click", function () { setMode(b.getAttribute("data-go")); });
+  });
+
+  /* ================= 다시 그리기 ================= */
+  function redraw() { readTokens(); if (PAINT[mode]) PAINT[mode](); }
+  window.addEventListener("resize", redraw);
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mq.addEventListener) mq.addEventListener("change", redraw);
+    else if (mq.addListener) mq.addListener(redraw);
+  }
+  new MutationObserver(redraw).observe(document.documentElement, {
+    attributes: true, attributeFilter: ["data-theme"]
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
+
+  /* ================= 첫 그리기 ================= */
+  readTokens();
+  paintTri();
+  paintL1();
+  paintL3();
+  paintL4();
+  paintL5();
+  paintDone();
+  paintL2Msg();
+  renderPy();
+  $("r-ans").innerHTML = seatHTML(seatRow(10), "");
+})();
+</script>

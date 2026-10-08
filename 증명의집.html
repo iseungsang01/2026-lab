@@ -1,0 +1,1665 @@
+<title>증명의 집</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ground: #F6F7FA;
+    --surface: #FFFFFF;
+    --surface-2: #EFF2F7;
+    --ink: #22314F;
+    --ink-soft: #5C6B85;
+    --ink-faint: #8A96AC;
+    --rule: #DDE3EC;
+    --gold: #F5B301;
+    --gold-ink: #2A1F00;
+    --warn: #E17B2E;
+    --lobby: #22314F;
+    --alg: #2E6FDB;
+    --geo: #189E5A;
+    --com: #E17B2E;
+    --inf: #7C4DB8;
+    --head-bg: #22314F;
+    --head-ink: #FFFFFF;
+    --frame: #22314F;
+    --shadow: 0 1px 2px rgba(34, 49, 79, .05), 0 8px 24px rgba(34, 49, 79, .08);
+
+    /* 지도 — 캔버스가 그릴 때 읽는다 */
+    --floor-a: #E4E9F1;
+    --floor-b: #ECEFF5;
+    --wall: #22314F;
+    --wall-top: #33466E;
+    --wall-face: #4A5F8A;
+    --wall-line: #1A2740;
+    --shade: rgba(26, 39, 64, .14);
+    --desk: #BAC5D8;
+    --desk-edge: #7F8DA6;
+    --paper: #FFFFFF;
+    --paper-line: #B8C3D6;
+    --board: #1A2740;
+    --chalk: #E9EFF7;
+    --glass: #CFE0F7;
+    --lobby-ink: #22314F;
+    --night: 0;
+
+    --sans: 'IBM Plex Sans KR', 'Malgun Gothic', '맑은 고딕', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', 'Consolas', ui-monospace, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #141A26;
+      --surface: #1C2433;
+      --surface-2: #232D3F;
+      --ink: #E5EAF2;
+      --ink-soft: #93A0B8;
+      --ink-faint: #6C7A94;
+      --rule: #2E3A50;
+      --warn: #F0954B;
+      --lobby: #C3CDDE;
+      --alg: #5B93F0;
+      --geo: #35BE79;
+      --com: #F0954B;
+      --inf: #AC85EE;
+      --head-bg: #0F1521;
+      --head-ink: #E5EAF2;
+      --frame: #0A0F18;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .3);
+
+      --floor-a: #222B3C;
+      --floor-b: #262F42;
+      --wall: #0A0F18;
+      --wall-top: #141C2B;
+      --wall-face: #1D2940;
+      --wall-line: #05080F;
+      --shade: rgba(0, 0, 0, .28);
+      --desk: #3D4A62;
+      --desk-edge: #283246;
+      --paper: #DCE2EC;
+      --paper-line: #98A4BA;
+      --board: #0B111C;
+      --chalk: #C9D3E3;
+      --glass: #16233D;
+      --night: 1;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #141A26;
+    --surface: #1C2433;
+    --surface-2: #232D3F;
+    --ink: #E5EAF2;
+    --ink-soft: #93A0B8;
+    --ink-faint: #6C7A94;
+    --rule: #2E3A50;
+    --warn: #F0954B;
+    --lobby: #C3CDDE;
+    --alg: #5B93F0;
+    --geo: #35BE79;
+    --com: #F0954B;
+    --inf: #AC85EE;
+    --head-bg: #0F1521;
+    --head-ink: #E5EAF2;
+    --frame: #0A0F18;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .3);
+
+    --floor-a: #222B3C;
+    --floor-b: #262F42;
+    --wall: #0A0F18;
+    --wall-top: #141C2B;
+    --wall-face: #1D2940;
+    --wall-line: #05080F;
+    --shade: rgba(0, 0, 0, .28);
+    --desk: #3D4A62;
+    --desk-edge: #283246;
+    --paper: #DCE2EC;
+    --paper-line: #98A4BA;
+    --board: #0B111C;
+    --chalk: #C9D3E3;
+    --glass: #16233D;
+    --night: 1;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- 머리띠 ---------- */
+  header.top {
+    background: var(--head-bg);
+    color: var(--head-ink);
+    padding-block: 14px;
+    padding-inline: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+  }
+  .kick {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .14em;
+    color: var(--gold);
+  }
+  header h1 {
+    margin: 2px 0 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    line-height: 1.2;
+  }
+  .hud { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .chip {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    padding: 4px 9px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, .18);
+    background: rgba(255, 255, 255, .06);
+    color: var(--head-ink);
+    white-space: nowrap;
+  }
+  .chip.where { border-left: 3px solid var(--zone, var(--gold)); }
+  .hbtn {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--head-ink);
+    background: none;
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: 5px;
+    padding: 4px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .hbtn:hover { border-color: var(--gold); }
+  .hbtn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* ---------- 무대 ---------- */
+  main.wrap {
+    max-width: 1760px;
+    margin: 0 auto;
+    padding-inline: 16px;
+    padding-block: 16px 32px;
+  }
+  .stage { position: relative; width: max-content; max-width: 100%; margin: 0 auto; }
+  canvas#map {
+    display: block;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    border: 3px solid var(--frame);
+    border-radius: 4px;
+    background: var(--frame);
+    touch-action: none;
+    outline: none;
+  }
+  canvas#map:focus-visible { box-shadow: 0 0 0 3px var(--gold); }
+
+  .tapme {
+    position: absolute;
+    left: 50%;
+    top: 14px;
+    transform: translateX(-50%);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--gold-ink);
+    background: var(--gold);
+    border-radius: 999px;
+    padding: 4px 12px;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  /* 대화 상자 — 두 겹 테두리 */
+  .dialog {
+    position: absolute;
+    left: 11px;
+    right: 11px;
+    bottom: 11px;
+    min-height: 74px;
+    background: var(--surface);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 2px var(--surface), inset 0 0 0 3px var(--rule);
+    padding: 12px 34px 12px 16px;
+    font-size: 15px;
+    line-height: 1.65;
+    cursor: pointer;
+    word-break: keep-all;
+  }
+  .dialog .who {
+    position: absolute;
+    top: -13px;
+    left: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    background: var(--ink);
+    color: var(--surface);
+    padding: 1px 8px;
+    border-radius: 4px;
+  }
+  .dialog .next {
+    position: absolute;
+    right: 13px;
+    bottom: 9px;
+    color: var(--gold);
+    font-size: 12px;
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  /* 지도가 넓게 펴지면 대화 상자 글씨도 키운다 */
+  .stage.big .dialog { left: 16px; right: 16px; bottom: 16px; min-height: 96px; padding: 16px 46px 16px 22px; font-size: 18px; }
+  .stage.big .dialog .who { font-size: 12.5px; top: -14px; }
+  .stage.big .tapme { font-size: 14px; top: 18px; }
+
+  .hint {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 12px 0 0;
+    min-height: 1.7em;
+    word-break: keep-all;
+  }
+  kbd {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.4;
+    min-width: 1.6em;
+    text-align: center;
+    padding: 0 5px;
+    margin: 0 1px;
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  /* ---------- 손가락 조작 ---------- */
+  .pad {
+    display: none;
+    max-width: 360px;
+    margin: 14px auto 0;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  @media (pointer: coarse) { .pad { display: flex; } }
+  .dpad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(3, 50px); }
+  .pad button {
+    font-family: var(--sans);
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--surface);
+    border: 2px solid var(--rule);
+    touch-action: none;
+    cursor: pointer;
+  }
+  .pad button:active { background: var(--surface-2); border-color: var(--ink-faint); }
+  .dpad button { border-radius: 8px; font-size: 15px; }
+  .dpad [data-dir="up"] { grid-area: 1 / 2; }
+  .dpad [data-dir="left"] { grid-area: 2 / 1; }
+  .dpad [data-dir="right"] { grid-area: 2 / 3; }
+  .dpad [data-dir="down"] { grid-area: 3 / 2; }
+  #b-act {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    font-size: 15px;
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--gold-ink);
+  }
+
+  /* ---------- 방 목록 ---------- */
+  .rooms { margin-top: 26px; }
+  .rooms h2 {
+    margin: 0 0 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    color: var(--ink-faint);
+  }
+  .rooms ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+  }
+  .rooms li {
+    display: grid;
+    grid-template-columns: 4px 1fr auto;
+    column-gap: 11px;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 9px 12px 9px 0;
+    overflow: hidden;
+  }
+  .rooms li i { grid-row: 1 / 3; align-self: stretch; background: var(--zone); margin: -9px 0; }
+  .rooms .rn { font-size: 13.5px; font-weight: 600; }
+  .rooms .rt { grid-column: 2; font-size: 12.5px; color: var(--ink-soft); }
+  .rooms .st {
+    grid-column: 3;
+    grid-row: 1 / 3;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--surface-2);
+    color: var(--ink-faint);
+  }
+  .rooms .st.on { background: var(--gold); color: var(--gold-ink); }
+
+  /* ---------- 종이 ---------- */
+  .sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    background: var(--ground);
+  }
+  .sheet-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;
+    background: var(--head-bg);
+    color: var(--head-ink);
+    border-bottom: 3px solid var(--zone);
+  }
+  .sheet-bar .t { flex: 1; min-width: 0; }
+  .sheet-bar h2 {
+    margin: 1px 0 0;
+    font-size: 17px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sheet-body { position: relative; flex: 1; min-height: 0; overflow-y: auto; }
+  .sheet-body iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    visibility: hidden;
+  }
+  .sheet-body iframe.on { visibility: visible; }
+  .loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+  .doc { padding-block: 28px 40px; padding-inline: 16px; }
+
+  .paper, .lockbox {
+    max-width: 680px;
+    margin: 0 auto;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    word-break: keep-all;
+  }
+  .paper {
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--zone);
+    border-radius: 4px 10px 10px 4px;
+    padding: 20px 24px 22px;
+  }
+  .paper h3 { margin: 0 0 12px; font-size: 17px; font-weight: 700; }
+  .paper p { margin: 0 0 12px; font-size: 15px; line-height: 1.8; }
+  .paper .ask.q { font-weight: 600; margin-top: 14px; }
+  .paper .fx {
+    font-family: var(--mono);
+    font-size: 14.5px;
+    color: var(--zone);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .paper ul, .paper ol { margin: 0 0 12px; padding-left: 20px; }
+  .paper ul li { font-size: 14px; line-height: 1.75; color: var(--ink-soft); margin-bottom: 3px; }
+  .paper ol li { font-size: 14.5px; line-height: 1.75; margin-bottom: 8px; }
+  .paper .src {
+    margin: 16px 0 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--rule);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink-faint);
+  }
+  .paper code {
+    font-family: var(--mono);
+    font-size: .92em;
+    background: var(--surface-2);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0 4px;
+  }
+  .paper .ans {
+    margin: 18px 0 0;
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    font-size: 14.5px;
+    line-height: 1.7;
+  }
+  .ans span, .lock-kick {
+    display: block;
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    color: var(--ink-faint);
+  }
+  @media (max-width: 560px) { .paper { padding: 16px 16px 18px; } }
+
+  /* 원본 문항 — 시험지 그대로 흰 종이 위에 (밤에도 흰 종이다) */
+  .paper.orig { background: #FFFFFF; padding: 18px 18px 14px; }
+  .paper.orig img { display: block; width: 100%; height: auto; }
+  .paper.orig .src { margin-top: 12px; color: #8A96AC; border-top-color: #DDE3EC; }
+
+  /* 노트북 — 종이를 넓게. 문 앞에서는 원본 문제를 크게 왼쪽에, 자물쇠를 오른쪽에 붙여 둔다 */
+  @media (min-width: 1000px) {
+    .doc { padding-inline: 32px; }
+    .doc .paper { max-width: 820px; padding: 26px 32px 28px; }
+    .doc .paper h3 { font-size: 19px; }
+    .doc .paper p { font-size: 16px; }
+    .doc .paper ol li { font-size: 15.5px; }
+    .doc .paper.orig { max-width: 900px; padding: 22px 22px 16px; }
+    .doc .paper.orig .src { font-size: 13px; }
+    .doc.with-lock {
+      display: grid;
+      grid-template-columns: minmax(0, 900px) 360px;
+      justify-content: center;
+      align-items: start;
+      gap: 24px;
+    }
+    .doc.with-lock .paper, .doc.with-lock .lockbox { margin: 0; max-width: none; }
+    .doc.with-lock .lockbox { position: sticky; top: 0; }
+  }
+
+  /* 문에 걸린 자물쇠 */
+  .lockbox {
+    margin-top: 16px;
+    border: 3px solid var(--ink);
+    border-top: 6px solid var(--zone);
+    border-radius: 6px;
+    padding: 14px 18px 16px;
+  }
+  .lock-q { margin: 4px 0 12px; font-size: 15px; line-height: 1.7; }
+  .lockbox form { display: flex; gap: 8px; }
+  .lockbox input {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: .2em;
+    text-align: center;
+    padding: 7px 8px;
+    border: 2px solid var(--rule);
+    border-radius: 6px;
+    background: var(--surface-2);
+    color: var(--ink);
+  }
+  .lockbox input:focus-visible { outline: none; border-color: var(--gold); }
+  .lock-msg { min-height: 1.6em; margin: 10px 0 0; font-size: 13px; color: var(--ink-soft); }
+  .lock-msg.bad { color: var(--warn); font-weight: 600; }
+  .lock-hint {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    background: var(--surface-2);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .lock-side {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 12px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .shake { animation: shake .32s; }
+  @keyframes shake {
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(3px); }
+  }
+
+  .btn {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+  .btn:hover { border-color: var(--ink-faint); }
+  .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .btn.primary { background: var(--gold); border-color: var(--gold); color: var(--gold-ink); }
+  .btn.primary:focus-visible { outline-color: var(--ink); }
+
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<header class="top">
+  <div>
+    <div class="kick">8주차 · 증명 회차</div>
+    <h1>증명의 집</h1>
+  </div>
+  <div class="hud">
+    <span class="chip where" id="where">로비 · 거리의 합</span>
+    <span class="chip" id="keys">문 0 / 4</span>
+    <button class="hbtn" id="b-theme" type="button">밤</button>
+    <button class="hbtn" id="b-reset" type="button">처음부터</button>
+  </div>
+</header>
+
+<main class="wrap" id="wrap">
+  <div class="stage" id="stage">
+    <canvas id="map" tabindex="0" aria-label="증명의 집 지도. 방향키로 걷고 Space 로 살핀다. 로비의 문 네 개에 문제가 붙어 있고, 답을 넣으면 문이 열린다."></canvas>
+    <div class="tapme" id="tapme" hidden>지도를 누르면 움직일 수 있다</div>
+    <div class="dialog" id="dialog" hidden aria-live="polite">
+      <span class="who" id="d-who"></span>
+      <span id="d-text"></span>
+      <span class="next" id="d-next" aria-hidden="true">▼</span>
+    </div>
+  </div>
+  <p class="hint" id="hint"></p>
+
+  <div class="pad" id="pad">
+    <div class="dpad">
+      <button type="button" data-dir="up" aria-label="위">▲</button>
+      <button type="button" data-dir="left" aria-label="왼쪽">◀</button>
+      <button type="button" data-dir="right" aria-label="오른쪽">▶</button>
+      <button type="button" data-dir="down" aria-label="아래">▼</button>
+    </div>
+    <button type="button" id="b-act">확인</button>
+  </div>
+
+  <section class="rooms" aria-labelledby="rooms-h">
+    <h2 id="rooms-h">방</h2>
+    <ul id="room-list"></ul>
+  </section>
+</main>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet-bar">
+    <div class="t">
+      <div class="kick" id="sheet-kick"></div>
+      <h2 id="sheet-title"></h2>
+    </div>
+    <button class="hbtn" type="button" id="sheet-alt" hidden>← 문제</button>
+    <button class="hbtn" type="button" id="sheet-close">닫기 ✕</button>
+  </div>
+  <div class="sheet-body" id="sheet-body">
+    <div class="loading" id="sheet-loading">실험실을 켜는 중…</div>
+    <div class="doc" id="sheet-doc">
+      <article class="paper" id="sheet-paper"></article>
+      <section class="lockbox" id="lockbox" hidden aria-labelledby="lock-kick">
+        <p class="lock-kick" id="lock-kick">자물쇠 번호</p>
+        <p class="lock-q" id="lock-q"></p>
+        <form id="lock-form" autocomplete="off">
+          <label class="sr" for="lock-in">번호</label>
+          <input id="lock-in" type="text" inputmode="numeric" maxlength="6" placeholder="번호">
+          <button class="btn primary" type="submit">열기</button>
+        </form>
+        <p class="lock-msg" id="lock-msg" aria-live="polite"></p>
+        <p class="lock-hint" id="lock-hint" hidden></p>
+        <div class="lock-side">
+          <span>막히면 문 옆 실험실을 켠다.</span>
+          <button class="btn" type="button" id="lock-lab">실험실 켜기</button>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- 풀이 — 각 방 실험실의 「… 논법」 절과 같은 말이다 -->
+<template id="sol-lobby">
+  <h3>바깥에서부터 짝짓는 논법</h3>
+  <p>가장 바깥 두 점 <code>aᵢ</code>, <code>aⱼ</code> 를 한 쌍으로 묶으면, 이 쌍의 거리 합은 두 점
+     <b>사이</b>에서 <code>aⱼ − aᵢ</code> 로 <b>일정</b>하고 밖으로 나가면 나간 만큼 두 배로 늘어난다.</p>
+  <p>안쪽으로 계속 짝지어 들어가면 모든 쌍이 동시에 일정한 구간은 <b>가장 안쪽 쌍의 구간</b> 하나뿐이다.
+     그 구간이 중앙값이고, 그때의 값은 각 쌍의 길이를 전부 더한 것이다.</p>
+  <p>점이 홀수 개면 가운데 하나가 짝 없이 남는다. 그 점은 <code>x</code> 가 자기 자신일 때만 <code>0</code>
+     이므로, 최소가 되는 곳이 구간이 아니라 <b>점 하나</b>로 좁혀진다.</p>
+  <p class="ans"><span>결론</span>f(x) 는 x 가 중앙값일 때 가장 작다. n 이 홀수면 가운데 점 하나, 짝수면
+     가운데 두 점 사이의 구간 전체다.</p>
+</template>
+
+<template id="sol-alg">
+  <h3>짝수를 합성수로 미는 논법</h3>
+  <p>2주차에서 푼 기출 (3) 은 <code>n</code> 이 4 이상의 짝수인 경우였고, 무기는 <b>홀짝</b>이었다.
+     짝수 걸음은 짝수 점으로만 간다. <b>2 로 나눈 나머지</b>가 걸음마다 안 바뀌기 때문이다.</p>
+  <p>그 논증에서 <code>2</code> 가 하는 일은 <b>n 을 나눈다</b>는 것 하나뿐이다. 그래서 <code>2</code> 자리에
+     <code>n</code> 의 아무 소인수 <code>p</code> 를 넣어도 같은 논증이 그대로 돈다.</p>
+  <p>번호가 <code>a</code> 인 점에서는 <code>a × m</code> 칸 가므로, 다음 번호는 <code>a × (1 + m)</code> 을
+     <code>n</code> 으로 나눈 나머지다. 곧 <code>a1 = m</code>, <code>a(k+1) = a(k) · (1 + m)</code>.
+     <code>p</code> 가 <code>n</code> 을 나누므로 <code>p</code> 로 나눈 나머지는 <code>n</code> 으로 나눈 뒤에도 그대로다.</p>
+  <ol>
+    <li><b>m 이 p 의 배수</b> — <code>a1</code> 부터 전부 <code>p</code> 의 배수다. 말은 <code>p</code> 의 배수인 점
+        <code>n/p</code> 개 안에 갇히고, 나머지 <code>n − n/p</code> 개는 못 밟는다.</li>
+    <li><b>1 + m 이 p 의 배수</b> — <code>a2</code> 부터 전부 <code>p</code> 의 배수다. <code>p</code> 의 배수가 아닌
+        점 가운데 밟는 것은 <code>a1</code> 하나뿐인데, 그런 점은 <code>n − n/p ≥ 2</code> 개라 적어도 하나가 남는다.</li>
+    <li><b>둘 다 아니다</b> — <code>m</code> 도 <code>1 + m</code> 도 <code>p</code> 로 나누어떨어지지 않고 <code>p</code> 가
+        소수이므로, 그 둘을 곱해 가는 <code>a(k)</code> 도 <code>p</code> 로 나누어떨어지지 않는다. 0 말고 <code>p</code> 의
+        배수인 점 <code>n/p − 1</code> 개(1 개 이상)를 못 밟는다.</li>
+  </ol>
+  <p>세 경우 어디서든 못 밟는 점이 남는다. <code>n</code> 이 소수면 잡을 수 있는 소인수가 <code>n</code> 자신뿐이라
+     이 논증이 막힌다 — 다만 <b>막힌다는 것이 곧 전부 밟힌다는 뜻은 아니다.</b> 소수에서 그런 <code>m</code> 이
+     반드시 있는지는 아직 안 닫혀 있다.</p>
+  <p class="ans"><span>자물쇠 번호</span>4 부터 30 까지 27 개 가운데 소수
+     <code>5 · 7 · 11 · 13 · 17 · 19 · 23 · 29</code> 여덟 개에서는 그런 <code>m</code> 이 실제로 있다(실험실에서 확인).
+     남은 합성수 <b>19</b> 개에서는 없다.</p>
+</template>
+
+<template id="sol-geo">
+  <h3>몇 바퀴 도는가로 세는 논법</h3>
+  <p>별을 한 붓으로 그릴 때 손은 직선으로 나아가다 꼭짓점에서만 방향을 튼다. 튼 각이 <b>외각</b>이고,
+     꼭짓점의 각은 <code>180° − 외각</code> 이다.</p>
+  <p>출발점으로 돌아오면 손이 향한 방향도 출발할 때와 같다. 따라서 튼 각을 전부 더하면 <code>360°</code> 의
+     배수가 되고, 몇 배인지가 곧 <b>몇 바퀴 돌았는가</b>다. <code>k</code> 칸씩 건너뛰면 한 바퀴 도는 동안 원을
+     <code>k</code> 번 감으므로 그 배수는 <code>k</code> 다.</p>
+  <p>그러면 <code>n × 외각 = 360k</code>, 즉 외각은 <code>360k/n</code> 이고 한 각은
+     <code>180 − 360k/n = 180(n − 2k)/n</code> 이다. <code>n</code> 배 하면 <code>180(n − 2k)</code>.
+     <code>k = 1</code> 을 넣으면 <code>180(n − 2)</code> — 볼록 다각형 공식이 이 식의 한 경우다.</p>
+  <p class="ans"><span>자물쇠 번호</span>점 9 개를 2 칸씩 이은 별 <code>{9/2}</code> 는 <code>180 × (9 − 4) = 900</code>.
+     오각별 <code>{5/2}</code> 의 180°, <code>{7/2}</code> 의 540° 도 같은 식에서 나온다.</p>
+</template>
+
+<template id="sol-com">
+  <h3>더 작은 경우로 되돌리는 논법</h3>
+  <p>0행부터 <code>2ᵏ−1</code>행까지를 블록 <code>T</code> 라 한다. 그 아래 <code>2ᵏ</code>행부터
+     <code>2ᵏ⁺¹−1</code>행까지에는 <code>T</code> 와 <b>똑같은 무늬가 왼쪽과 오른쪽에 하나씩</b> 놓이고, 그 사이는
+     <b>전부 0</b>이다. 홀짝만 보면 <code>C(n,k) ≡ C(n−2ᵏ, k) + C(n−2ᵏ, k−2ᵏ)</code> 이고, 두 항은 <code>k</code> 의
+     범위가 겹치지 않아 서로 더해지지 않기 때문이다.</p>
+  <p>그래서 <code>2n</code>행은 <code>n</code>행과 홀수 개수가 같고, <code>2n+1</code>행은 왼쪽·오른쪽 두 복제가
+     <b>동시에</b> 살아 있어 두 배가 된다. 두 줄이 <code>f(2n) = f(n)</code>, <code>f(2n+1) = 2f(n)</code> 이다.</p>
+  <p>2진법으로 <code>n</code> 을 쓰면 <code>n → 2n</code> 은 뒤에 <code>0</code> 을 붙이는 것,
+     <code>n → 2n+1</code> 은 <code>1</code> 을 붙이는 것이다. <code>0</code> 은 <code>f</code> 를 그대로 두고
+     <code>1</code> 은 두 배로 만들므로, <code>f(0) = 1</code> 에서 시작해 <code>1</code> 의 개수만큼 두 배가 된다.</p>
+  <p class="ans"><span>자물쇠 번호</span>관람석의 파랑은 파스칼 삼각형의 홀수 자리이고, 1번째 줄이 0 행이다.
+     2026번째 줄은 2025 행 — <code>2025 = 11111101001₂</code> 에 <code>1</code> 이 8 개라 <code>2⁸ = 256</code> 명.</p>
+</template>
+
+<template id="sol-inf">
+  <h3>끝을 보고 나누는 논법</h3>
+  <p>어디를 보면 문제가 작아지는가 — 여기서는 <b>맨 오른쪽 끝</b>이다. 끝에서 가져간 카드가 몇 장 연속인지는
+     <code>0</code>·<code>1</code>·<code>2</code> 셋뿐이다 — <code>3</code> 은 금지라 없다.</p>
+  <p>끝이 <code>□</code>(안 가져감)이면 그 앞 <code>n−1</code> 장은 조건만 지키면 아무렇게나 놓아도 된다.
+     끝이 <code>□■</code> 이면 <b>가져간 앞 자리는 반드시 안 가져감</b>이어야 하므로 그 앞 <code>n−2</code> 장이
+     자유롭고, <code>□■■</code> 이면 <code>n−3</code> 장이 자유롭다. <b>자유로운 부분은 다시 같은 문제</b>다.</p>
+  <p class="fx">a(n) = a(n−1) + a(n−2) + a(n−3)</p>
+  <p>세 갈래는 <b>겹치지 않는다</b> — 끝 모양이 서로 다르기 때문이다. <b>빠지는 것도 없다</b> — 끝의 연속이
+     <code>0</code>·<code>1</code>·<code>2</code> 말고는 있을 수 없기 때문이다. <b>겹침 없음</b>과 <b>빠짐 없음</b>
+     둘을 다 말해야 「더하면 된다」가 성립한다.</p>
+  <p><code>k</code> 번 연속 금지로 바꾸면 끝의 연속이 <code>0 … k−1</code> 이라 갈래가 <code>k</code> 개가 되고, 같은
+     논법이 <code>a(n) = a(n−1) + … + a(n−k)</code> 를 준다. <code>k = 2</code> 면 피보나치다.</p>
+  <p class="ans"><span>자물쇠 번호</span><code>1 · 2 · 4 · 7 · 13 · 24 · 44 · 81 · 149</code> —
+     <code>n = 5</code> 면 24, <code>n = 8</code> 이면 <b>149</b>.</p>
+</template>
+
+<script>
+(function () {
+  "use strict";
+
+  var $ = function (id) { return document.getElementById(id); };
+  var mq = function (q) { return !!(window.matchMedia && window.matchMedia(q).matches); };
+  var reduced = mq("(prefers-reduced-motion: reduce)");
+  var coarse = mq("(pointer: coarse)");
+  var T = 16;
+
+  /* ---------------- 지도 ----------------
+     # 벽 윗면 · = 벽 앞면 · D 문 · . 로비 · a 대수 · g 기하 · c 조합 · i 정보 */
+  var MAP = [
+    "###########################",
+    "#=======#=========#=======#",
+    "#aaaaaaa#.........#ggggggg#",
+    "#aaaaaaa#.........#ggggggg#",
+    "#aaaaaaaD.........Dggggggg#",
+    "#aaaaaaa#.........#ggggggg#",
+    "#aaaaaaa#.........#ggggggg#",
+    "#########.........#########",
+    "#=======#.........#=======#",
+    "#ccccccc#.........#iiiiiii#",
+    "#ccccccc#.........#iiiiiii#",
+    "#cccccccD.........Diiiiiii#",
+    "#ccccccc#.........#iiiiiii#",
+    "#ccccccc#.........#iiiiiii#",
+    "#########.........#########",
+    "#########.........#########",
+    "###########################"
+  ];
+  var MW = MAP[0].length, MH = MAP.length;
+  var ZONE = { ".": "lobby", "D": "lobby", a: "alg", g: "geo", c: "com", i: "inf" };
+
+  /* 방 — 문에는 문제(q, 원본 그대로), 문 옆에는 실험실(page), 방 안 칠판에는 풀이.
+     page 는 같은 폴더의 실험실 쪽, q 는 _src/build_house.py 가 원본에서 잘라 낸 SVG 다. */
+  var ROOMS = {
+    lobby: {
+      name: "로비", title: "거리의 합", tone: "--lobby", page: "견본_거리의합과중앙값.html",
+      q: "문항/로비.svg", src: "3주차 마무리 문제 · 기출 아님"
+    },
+    alg: {
+      name: "대수의 방", title: "원 위의 말", tone: "--alg", page: "실험실_원위의말.html", door: [8, 4], lab: [9, 3],
+      q: "문항/대수.svg", src: "2주차 · 대전과학고 2026 문항 2",
+      lock: {
+        q: "<b>n = 4</b> 부터 <b>30</b> 까지 가운데, 말이 모든 점을 밟게 하는 <b>m</b> 이 <b>없는</b> n 은 몇 개인가?",
+        a: "19",
+        hint: "<b>n = 4 · 6 · 8 · 9</b> 에서는 그런 m 이 없고, <b>n = 5 · 7</b> 에서는 있다."
+      }
+    },
+    geo: {
+      name: "기하의 방", title: "별 다각형", tone: "--geo", page: "실험실_별다각형.html", door: [18, 4], lab: [17, 3],
+      q: "문항/기하.svg", src: "1주차 진단 B3 · 기출 아님",
+      lock: {
+        q: "원 위에 같은 간격으로 찍은 점 <b>9</b> 개를 <b>2</b> 칸씩 건너뛰며 한 붓으로 이은 별에서, "
+          + "뾰족한 각 9 개를 모두 더하면 몇 도인가?",
+        a: "900",
+        hint: "오각별(점 <b>5</b> 개 · <b>2</b> 칸씩)은 <b>180°</b>, 점 <b>7</b> 개를 <b>2</b> 칸씩 이으면 <b>540°</b> 다."
+      }
+    },
+    com: {
+      name: "조합의 방", title: "파스칼 mod 2", tone: "--com", page: "실험실_파스칼mod2.html", door: [8, 11], lab: [9, 10],
+      q: "문항/조합.svg", src: "6주차 · 충북과학고 2023 문항 6",
+      lock: {
+        q: "같은 규칙으로 <b>2026번째 줄</b>까지 앉았을 때, 2026번째 줄에서 파란색 옷을 입은 사람은 몇 명인가?",
+        a: "256",
+        hint: "<b>5 · 8 · 12</b>번째 줄의 파랑은 <b>2 · 8 · 8</b> 명이다. 줄 번호에서 1 을 뺀 수를 2진법으로 써 본다."
+      }
+    },
+    inf: {
+      name: "정보의 방", title: "카드 3연속", tone: "--inf", page: "실험실_카드3연속.html", door: [18, 11], lab: [17, 10],
+      q: "문항/정보.svg", src: "7주차 · 충북과학고 2026 문항 5",
+      lock: {
+        q: "질문 2 — <b>n = 8</b> 일 때 가능한 경우의 수는 몇 가지인가?",
+        a: "149",
+        hint: "카드가 <b>0 · 1 · 2 · 3 · 4 · 5</b> 장이면 <b>1 · 2 · 4 · 7 · 13 · 24</b> 가지다."
+      }
+    }
+  };
+  var ORDER = ["alg", "geo", "com", "inf"];
+
+  /* 칸 위의 물건 */
+  var OBJ = {};
+  function put(x, y, o) { o.x = x; o.y = y; OBJ[x + "," + y] = o; }
+  // 로비 책상 — 견본 한 벌: 문제 · 실험실 · 풀이
+  put(12, 8, { kind: "paper", room: "lobby", sheet: "problem", mark: "?" });
+  put(13, 8, { kind: "lab", room: "lobby" });
+  put(14, 8, { kind: "paper", room: "lobby", sheet: "solution", mark: "v" });
+  ORDER.forEach(function (id) {
+    var R = ROOMS[id];
+    put(R.lab[0], R.lab[1], { kind: "lab", room: id });          // 문 옆 실험실
+  });
+  // 방 안 칠판 — 풀이. 칠판 아래 칸에서 위를 보고 읽는다
+  [["alg", 3, 1], ["geo", 21, 1], ["com", 3, 8], ["inf", 21, 8]].forEach(function (b) {
+    for (var i = 0; i < 3; i++) put(b[1] + i, b[2], { kind: "board", room: b[0] });
+  });
+  [[1, 2], [25, 2], [1, 9], [25, 9]].forEach(function (p) { put(p[0], p[1], { kind: "shelf" }); });
+  [[1, 6], [25, 6], [1, 13], [25, 13], [9, 15], [17, 15]].forEach(function (p) { put(p[0], p[1], { kind: "plant" }); });
+  put(10, 1, { kind: "sign" });
+  put(16, 1, { kind: "window" });
+
+  var BOARDS = [
+    { room: "lobby", x: 12, y: 1 }, { room: "alg", x: 3, y: 1 }, { room: "geo", x: 21, y: 1 },
+    { room: "com", x: 3, y: 8 }, { room: "inf", x: 21, y: 8 }
+  ];
+  var DOOR_AT = {};
+  ORDER.forEach(function (id) { DOOR_AT[ROOMS[id].door.join(",")] = id; });
+
+  var START = { x: 13, y: 14, dir: "up" };
+  var NPC = { x: 11, y: 13, dir: "right", home: "right" };
+  var DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+  var BACK = { up: "down", down: "up", left: "right", right: "left" };
+
+  /* ---------------- 상태 ---------------- */
+  var S = { open: {}, anim: {}, busy: null, zone: "lobby", lockId: null, tries: 0, sheetRoom: null };
+  var me = { x: START.x, y: START.y, dir: START.dir, fx: START.x, fy: START.y, t: 1, moving: false, steps: 0 };
+  var STORE = "house-of-proofs-v2";
+
+  function save() {
+    try {
+      localStorage.setItem(STORE, JSON.stringify({ open: S.open, x: me.x, y: me.y, dir: me.dir }));
+    } catch (e) { /* 저장이 막혀도 그대로 논다 */ }
+  }
+  function load() {
+    var d = null;
+    try { d = JSON.parse(localStorage.getItem(STORE) || "null"); } catch (e) { d = null; }
+    if (!d) return;
+    ORDER.forEach(function (id) { if (d.open && d.open[id]) S.open[id] = true; });
+    if (typeof d.x === "number" && typeof d.y === "number" && walkable(d.x, d.y)) {
+      me.x = me.fx = d.x; me.y = me.fy = d.y;
+    }
+    if (DIRS[d.dir]) me.dir = d.dir;
+  }
+  function openCount() { return ORDER.filter(function (id) { return S.open[id]; }).length; }
+
+  function walkable(x, y) {
+    if (x < 0 || y < 0 || x >= MW || y >= MH) return false;
+    var ch = MAP[y][x], key = x + "," + y;
+    if (ch === "#" || ch === "=") return false;
+    if (ch === "D" && !S.open[DOOR_AT[key]]) return false;
+    if (OBJ[key]) return false;
+    if (NPC.x === x && NPC.y === y) return false;
+    return true;
+  }
+
+  /* ---------------- 색 ---------------- */
+  var C = {}, FLOOR = {};
+  var TOKENS = ["floor-a", "floor-b", "wall", "wall-top", "wall-face", "wall-line", "shade", "desk",
+    "desk-edge", "paper", "paper-line", "board", "chalk", "glass", "lobby-ink", "gold",
+    "alg", "geo", "com", "inf", "night"];
+
+  function rgb(hex) {
+    var h = hex.replace("#", "");
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  }
+  function mix(a, b, t) {
+    var p = rgb(a), q = rgb(b);
+    return "rgb(" + Math.round(p[0] + (q[0] - p[0]) * t) + "," + Math.round(p[1] + (q[1] - p[1]) * t)
+      + "," + Math.round(p[2] + (q[2] - p[2]) * t) + ")";
+  }
+  function readTokens() {
+    var cs = getComputedStyle(document.documentElement);
+    TOKENS.forEach(function (k) { C[k] = cs.getPropertyValue("--" + k).trim(); });
+    C.night = C.night === "1";
+    var t1 = C.night ? .13 : .09, t2 = C.night ? .18 : .15;
+    FLOOR.lobby = [C["floor-a"], C["floor-b"]];
+    ORDER.forEach(function (id) {
+      FLOOR[id] = [mix(C["floor-a"], C[id], t1), mix(C["floor-b"], C[id], t2)];
+    });
+    C.rug = mix(C["floor-a"], C.gold, C.night ? .12 : .24);
+  }
+  function toneOf(room) { return room === "lobby" ? C.gold : C[room]; }
+
+  /* ---------------- 캔버스 크기 ---------------- */
+  var cv = $("map"), g = cv.getContext("2d");
+  var nc = document.createElement("canvas"), nx = nc.getContext("2d");
+  var VW = 15, VH = 11;
+
+  /* 넓은 화면은 넓게 — 가로 22칸 · 세로 10칸 이상 보이는 가장 큰 배율(4~1)을 고른다.
+     노트북이면 집의 가로 27칸이 한눈에 든다. 그만큼 안 되는 좁은 화면(휴대폰)은 10칸 남짓만 보인다. */
+  function layout() {
+    var aw = Math.max(200, $("wrap").clientWidth - 32 - 6);
+    var ah = window.innerHeight - document.querySelector("header.top").offsetHeight - (coarse ? 300 : 110);
+    var pick = null, s, w, h;
+    for (s = 4; s >= 2 && !pick; s--) {
+      w = Math.min(MW, Math.floor(aw / (T * s)));
+      h = Math.min(MH, Math.floor(ah / (T * s)));
+      if (w >= 22 && h >= 10) pick = { s: s, w: w, h: h };
+    }
+    if (!pick) {
+      s = aw >= 15 * T * 3 ? 3 : (aw >= 9 * T * 2 ? 2 : 1);
+      pick = { s: s, w: Math.max(7, Math.min(MW, Math.floor(aw / (T * s)))),
+               h: Math.max(7, Math.min(11, Math.floor(ah / (T * s)))) };
+    }
+    VW = pick.w; VH = pick.h;
+    cv.width = nc.width = VW * T;
+    cv.height = nc.height = VH * T;
+    cv.style.width = VW * T * pick.s + "px";
+    cv.style.height = VH * T * pick.s + "px";
+    $("stage").classList.toggle("big", VW * T * pick.s >= 960);
+  }
+
+  /* ---------------- 그리기 ---------------- */
+  function rect(color, x, y, w, h) { g.fillStyle = color; g.fillRect(x, y, w, h); }
+
+  var OUT = "#1A2233";
+  var PAL_ME = { shirt: "#F5B301", arm: "#D99A00", pants: "#22314F", skin: "#F1C7A1", hair: "#3B2A20" };
+  var PAL_NPC = { shirt: "#5C6B85", arm: "#4A5870", pants: "#2B3548", skin: "#EBC19B", hair: "#C3CDDE" };
+
+  var GLYPH = {
+    "?": ["##.", "..#", ".#.", "...", ".#."],
+    "v": ["...#", "..#.", "#.#.", ".#.."]
+  };
+  function glyph(ch, x, y, color) {
+    g.fillStyle = color;
+    GLYPH[ch].forEach(function (row, r) {
+      for (var c = 0; c < row.length; c++) if (row[c] === "#") g.fillRect(x + c, y + r, 1, 1);
+    });
+  }
+
+  function tile(x, y) {
+    var ch = MAP[y][x], px = x * T, py = y * T;
+    if (ch === "#") { rect(C.wall, px, py, T, T); return; }
+    if (ch === "=") {
+      rect(C["wall-face"], px, py, T, T);
+      rect(C["wall-top"], px, py, T, 2);
+      g.globalAlpha = .45;
+      rect(C["wall-line"], px + 7, py + 2, 1, 11);
+      rect(C["wall-line"], px + 15, py + 2, 1, 11);
+      g.globalAlpha = 1;
+      rect(C["wall-line"], px, py + 13, T, 3);
+      return;
+    }
+    var F = FLOOR[ZONE[ch]] || FLOOR.lobby;
+    rect((x + y) & 1 ? F[0] : F[1], px, py, T, T);
+    var up = MAP[y - 1][x], lf = MAP[y][x - 1];
+    if (up === "=" || up === "#") rect(C.shade, px, py, T, 3);
+    if (lf === "#") rect(C.shade, px, py, 2, T);
+  }
+
+  /* 문 — 잠겨 있으면 문제 한 장과 자물쇠가 걸려 있다 */
+  function door(id, now) {
+    var d = ROOMS[id].door, px = d[0] * T, py = d[1] * T, tone = C[id];
+    rect(tone, px, py, T, 2);
+    rect(tone, px, py + T - 2, T, 2);
+    var k = 1;
+    if (S.open[id]) {
+      k = S.anim[id] && !reduced ? Math.max(0, 1 - (now - S.anim[id]) / 380) : 0;
+      if (k <= 0) return;
+    }
+    var w = Math.max(1, Math.round(12 * k)), x0 = px + 2 + Math.round((12 - w) / 2);
+    rect(C["wall-top"], x0, py + 2, w, 12);
+    if (k < 1) return;
+    rect(C.paper, px + 4, py + 2, 8, 7);
+    glyph("?", px + 7, py + 3, tone);
+    rect(C.gold, px + 6, py + 9, 4, 1);
+    rect(C.gold, px + 6, py + 9, 1, 2);
+    rect(C.gold, px + 9, py + 9, 1, 2);
+    rect(C.gold, px + 5, py + 11, 6, 3);
+    rect(OUT, px + 7, py + 12, 2, 1);
+  }
+
+  function dot(x, y) { g.fillRect(Math.round(x), Math.round(y), 1, 1); }
+  function pline(x0, y0, x1, y1) {
+    x0 = Math.round(x0); y0 = Math.round(y0); x1 = Math.round(x1); y1 = Math.round(y1);
+    var dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1, e = dx + dy;
+    for (;;) {
+      g.fillRect(x0, y0, 1, 1);
+      if (x0 === x1 && y0 === y1) break;
+      var e2 = 2 * e;
+      if (e2 >= dy) { e += dy; x0 += sx; }
+      if (e2 <= dx) { e += dx; y0 += sy; }
+    }
+  }
+
+  /* 칠판 그림 — 방마다 그 방 문제의 모양 하나 */
+  function board(b) {
+    var px = b.x * T, py = b.y * T, cx = px + 24, cy = py + 7, j, a;
+    rect(toneOf(b.room), px + 1, py + 1, 46, 13);
+    rect(C.board, px + 2, py + 2, 44, 11);
+    g.fillStyle = C.chalk;
+    if (b.room === "alg") {
+      for (j = 0; j < 7; j++) {
+        a = -Math.PI / 2 + 2 * Math.PI * j / 7;
+        dot(cx + 4.4 * Math.cos(a), cy + 4.4 * Math.sin(a));
+      }
+      rect(C.gold, cx, cy - 5, 1, 2);
+    } else if (b.room === "geo") {
+      var P = [];
+      for (j = 0; j < 5; j++) {
+        a = -Math.PI / 2 + 2 * Math.PI * j / 5;
+        P.push([cx + 5 * Math.cos(a), cy + 1 + 5 * Math.sin(a)]);
+      }
+      for (j = 0; j < 5; j++) { var q = P[(j + 2) % 5]; pline(P[j][0], P[j][1], q[0], q[1]); }
+    } else if (b.room === "com") {
+      for (var n = 0; n < 8; n++) {
+        for (var k = 0; k <= n; k++) if ((k & n) === k) dot(cx - n + 2 * k, cy - 3 + n);
+      }
+    } else if (b.room === "inf") {
+      var cards = [1, 1, 0, 1, 0, 0, 1, 1];
+      for (j = 0; j < cards.length; j++) {
+        var x = cx - 20 + j * 5;
+        rect(C.chalk, x, cy - 3, 4, 6);
+        if (!cards[j]) rect(C.board, x + 1, cy - 2, 2, 4);
+      }
+    } else {
+      rect(C.chalk, cx - 18, cy + 2, 37, 1);
+      [-16, -9, -2, 6, 15].forEach(function (o) { rect(o === -2 ? C.gold : C.chalk, cx + o, cy, 2, 2); });
+      rect(C.gold, cx - 3, cy - 4, 4, 1);
+      rect(C.gold, cx - 2, cy - 3, 2, 1);
+    }
+  }
+
+  function desk(px, py) {
+    rect(C["desk-edge"], px + 2, py + 12, 2, 4);
+    rect(C["desk-edge"], px + 12, py + 12, 2, 4);
+    rect(C["desk-edge"], px + 1, py + 10, 14, 3);
+    rect(C.desk, px + 1, py + 3, 14, 8);
+  }
+
+  function thing(o) {
+    var px = o.x * T, py = o.y * T;
+    if (o.kind === "paper") {
+      desk(px, py);
+      rect(C["paper-line"], px + 3, py + 1, 10, 10);
+      rect(C.paper, px + 4, py + 2, 8, 8);
+      if (o.mark === "?") glyph("?", px + 7, py + 3, C["lobby-ink"]);
+      else glyph("v", px + 6, py + 4, C["lobby-ink"]);
+    } else if (o.kind === "lab") {
+      // 실험실 단말기 — 화면에 그 방 색의 막대
+      var tone = toneOf(o.room);
+      desk(px, py);
+      rect(C["wall-line"], px + 3, py - 1, 10, 9);
+      rect(C.board, px + 4, py, 8, 7);
+      rect(tone, px + 5, py + 4, 1, 2);
+      rect(tone, px + 7, py + 2, 1, 4);
+      rect(tone, px + 9, py + 3, 1, 3);
+      rect(C["wall-line"], px + 7, py + 8, 2, 2);
+    } else if (o.kind === "plant") {
+      rect("#B8613A", px + 3, py + 9, 10, 2);
+      rect("#9C4F2E", px + 4, py + 11, 8, 4);
+      rect("#1F7A48", px + 5, py + 2, 6, 7);
+      rect("#1F7A48", px + 2, py + 5, 4, 4);
+      rect("#1F7A48", px + 10, py + 4, 4, 4);
+      rect("#35BE79", px + 6, py + 1, 3, 3);
+      rect("#35BE79", px + 3, py + 5, 2, 2);
+      rect("#35BE79", px + 11, py + 4, 2, 2);
+      rect("#35BE79", px + 8, py + 6, 2, 2);
+    } else if (o.kind === "shelf") {
+      rect(C["desk-edge"], px + 1, py - 6, 14, 21);
+      rect(C["wall-line"], px + 2, py - 5, 12, 19);
+      var tones = [C.alg, C.geo, C.com, C.inf, C.gold, C.paper];
+      for (var s = 0; s < 3; s++) {
+        var yy = py - 5 + s * 6;
+        for (var b = 0; b < 6; b++) {
+          var h = (b + s) % 3 === 0 ? 5 : 4;
+          rect(tones[(b + s * 2) % 6], px + 2 + b * 2, yy + 5 - h, 2, h);
+        }
+        rect(C["desk-edge"], px + 2, yy + 5, 12, 1);
+      }
+    } else if (o.kind === "sign") {
+      rect("#8A6A00", px + 1, py + 2, 14, 10);
+      rect(C.gold, px + 2, py + 3, 12, 8);
+      rect("#6B5200", px + 4, py + 5, 8, 1);
+      rect("#6B5200", px + 4, py + 8, 6, 1);
+    } else if (o.kind === "window") {
+      rect(C["wall-line"], px + 2, py + 2, 12, 10);
+      rect(C.glass, px + 3, py + 3, 10, 8);
+      rect(C["wall-line"], px + 3, py + 6, 10, 1);
+      rect(C["wall-line"], px + 8, py + 3, 1, 8);
+      if (C.night) { rect("#F5E6A8", px + 10, py + 4, 2, 2); rect(C.chalk, px + 5, py + 4, 1, 1); }
+    }
+  }
+
+  function person(px, py, dir, pose, pal) {
+    var b = pose ? -1 : 0, side = dir === "left" || dir === "right";
+    g.fillStyle = "rgba(10, 16, 30, .25)";
+    g.fillRect(px + 3, py + 14, 10, 2);
+    // 다리 — 걸을 때 한쪽이 한 칸 들린다
+    var h1 = pose === 1 ? 2 : 3, h2 = pose === 2 ? 2 : 3;
+    var l1 = side ? px + 6 : px + 5, l2 = px + 9;
+    rect(OUT, l1 - 1, py + 11, 4, h1 + 2);
+    rect(OUT, l2 - 1, py + 11, 4, h2 + 2);
+    rect(pal.pants, l1, py + 11, 2, h1 + 1);
+    rect(pal.pants, l2, py + 11, 2, h2 + 1);
+    // 몸통
+    rect(OUT, px + 3, py + 5 + b, 10, 7);
+    rect(pal.shirt, px + 4, py + 6 + b, 8, 5);
+    if (side) {
+      rect(pal.arm, px + 7, py + 7 + b, 2, 3);
+    } else {
+      rect(OUT, px + 2, py + 6 + b, 1, 5);
+      rect(OUT, px + 13, py + 6 + b, 1, 5);
+      rect(pal.skin, px + 2, py + 10 + b, 1, 1);
+      rect(pal.skin, px + 13, py + 10 + b, 1, 1);
+    }
+    // 머리
+    var hy = py - 4 + b;
+    rect(OUT, px + 3, hy, 10, 10);
+    rect(pal.skin, px + 4, hy + 1, 8, 8);
+    g.fillStyle = pal.hair;
+    if (dir === "up") g.fillRect(px + 4, hy + 1, 8, 7);
+    else {
+      g.fillRect(px + 4, hy + 1, 8, 3);
+      if (dir === "down") { g.fillRect(px + 4, hy + 4, 1, 2); g.fillRect(px + 11, hy + 4, 1, 2); }
+      else if (dir === "left") g.fillRect(px + 9, hy + 4, 3, 3);
+      else g.fillRect(px + 4, hy + 4, 3, 3);
+    }
+    g.fillStyle = OUT;
+    if (dir === "down") { g.fillRect(px + 6, hy + 5, 1, 2); g.fillRect(px + 9, hy + 5, 1, 2); }
+    else if (dir === "left") g.fillRect(px + 5, hy + 5, 1, 2);
+    else if (dir === "right") g.fillRect(px + 10, hy + 5, 1, 2);
+  }
+
+  function marker(x, y, now) {
+    var px = x * T, py = y * T, o = (!reduced && ((now / 420) | 0) & 1) ? 1 : 0;
+    g.fillStyle = C.gold;
+    g.fillRect(px - o, py - o, 4, 1); g.fillRect(px - o, py - o, 1, 4);
+    g.fillRect(px + T - 4 + o, py - o, 4, 1); g.fillRect(px + T - 1 + o, py - o, 1, 4);
+    g.fillRect(px - o, py + T - 1 + o, 4, 1); g.fillRect(px - o, py + T - 4 + o, 1, 4);
+    g.fillRect(px + T - 4 + o, py + T - 1 + o, 4, 1); g.fillRect(px + T - 1 + o, py + T - 4 + o, 1, 4);
+  }
+
+  function pos() {
+    var k = me.moving ? me.t : 1;
+    return { x: Math.round((me.fx + (me.x - me.fx) * k) * T), y: Math.round((me.fy + (me.y - me.fy) * k) * T) };
+  }
+  function camera(p) {
+    var vw = VW * T, vh = VH * T, mw = MW * T, mh = MH * T;
+    var cx = p.x + T / 2 - vw / 2, cy = p.y + T / 2 - vh / 2;
+    cx = mw <= vw ? (mw - vw) / 2 : Math.max(0, Math.min(mw - vw, cx));
+    cy = mh <= vh ? (mh - vh) / 2 : Math.max(0, Math.min(mh - vh, cy));
+    return { x: Math.round(cx), y: Math.round(cy) };
+  }
+
+  function light(x, y, r) {
+    var grd = nx.createRadialGradient(x, y, r * .2, x, y, r);
+    grd.addColorStop(0, "rgba(0, 0, 0, 1)");
+    grd.addColorStop(1, "rgba(0, 0, 0, 0)");
+    nx.fillStyle = grd;
+    nx.fillRect(x - r, y - r, 2 * r, 2 * r);
+  }
+
+  function draw(now) {
+    var p = pos(), cam = camera(p), x, y, key;
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    rect(C.wall, 0, 0, cv.width, cv.height);
+    g.setTransform(1, 0, 0, 1, -cam.x, -cam.y);
+
+    var x0 = Math.max(0, Math.floor(cam.x / T)), y0 = Math.max(0, Math.floor(cam.y / T));
+    var x1 = Math.min(MW - 1, Math.ceil((cam.x + cv.width) / T)), y1 = Math.min(MH - 1, Math.ceil((cam.y + cv.height) / T));
+    for (y = y0; y <= y1; y++) for (x = x0; x <= x1; x++) tile(x, y);
+
+    // 로비 깔개와 현관 매트
+    rect(C.rug, 11 * T + 2, 7 * T + 2, 5 * T - 4, 3 * T - 4);
+    g.strokeStyle = C.gold; g.lineWidth = 1;
+    g.strokeRect(11 * T + 4.5, 7 * T + 4.5, 5 * T - 9, 3 * T - 9);
+    rect(C["wall-top"], 12 * T + 2, 15 * T + 5, 3 * T - 4, 9);
+    rect(C.gold, 12 * T + 4, 15 * T + 7, 3 * T - 8, 1);
+    rect(C.gold, 12 * T + 4, 15 * T + 11, 3 * T - 8, 1);
+
+    ORDER.forEach(function (id) { door(id, now); });
+    BOARDS.forEach(board);
+    for (key in OBJ) thing(OBJ[key]);
+
+    var pose = 0;
+    if (me.moving) pose = me.t < .5 ? (me.steps % 2 ? 1 : 2) : 0;
+    var npcFirst = NPC.y * T <= p.y;
+    if (npcFirst) person(NPC.x * T, NPC.y * T, NPC.dir, 0, PAL_NPC);
+    person(p.x, p.y, me.dir, pose, PAL_ME);
+    if (!npcFirst) person(NPC.x * T, NPC.y * T, NPC.dir, 0, PAL_NPC);
+
+    if (!S.busy && !me.moving) {
+      var a = ahead();
+      if (targetAt(a.x, a.y)) marker(a.x, a.y, now);
+    }
+
+    // 밤 — 손전등 하나와 실험실 화면만 켜져 있다
+    if (C.night) {
+      nx.globalCompositeOperation = "source-over";
+      nx.clearRect(0, 0, nc.width, nc.height);
+      nx.fillStyle = "rgba(3, 6, 12, .84)";
+      nx.fillRect(0, 0, nc.width, nc.height);
+      nx.globalCompositeOperation = "destination-out";
+      light(p.x - cam.x + 8, p.y - cam.y + 4, 76);
+      for (key in OBJ) {
+        if (OBJ[key].kind === "lab") light(OBJ[key].x * T + 8 - cam.x, OBJ[key].y * T + 4 - cam.y, 26);
+      }
+      light(16 * T + 8 - cam.x, 1 * T + 7 - cam.y, 16);
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      g.drawImage(nc, 0, 0);
+    }
+  }
+
+  /* ---------------- 앞에 무엇이 있나 ---------------- */
+  function ahead() { var v = DIRS[me.dir]; return { x: me.x + v[0], y: me.y + v[1] }; }
+  function targetAt(x, y) {
+    if (NPC.x === x && NPC.y === y) return { kind: "npc" };
+    var o = OBJ[x + "," + y];
+    if (o) return o;
+    var d = DOOR_AT[x + "," + y];
+    if (d && !S.open[d]) return { kind: "door", room: d };
+    return null;
+  }
+
+  var ACT = coarse ? "<kbd>확인</kbd> 으로" : "<kbd>Space</kbd> 로";
+  var lastHint = null;
+  function setHint(html) {
+    if (html === lastHint) return;
+    lastHint = html;
+    $("hint").innerHTML = html;
+  }
+  function hintNow() {
+    if (S.busy === "dialog") return (coarse ? "<kbd>확인</kbd>" : "<kbd>Space</kbd>") + " 다음";
+    if (S.busy) return "";
+    var a = ahead(), t = me.moving ? null : targetAt(a.x, a.y);
+    if (!t) {
+      return coarse
+        ? "방향 버튼으로 걷고 " + ACT + " 살핀다."
+        : "<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> 걷기 · <kbd>Space</kbd> 살피기";
+    }
+    var R = ROOMS[t.room] || {};
+    if (t.kind === "door") return R.name + " · 문 — " + ACT + " 문제를 본다.";
+    if (t.kind === "lab") return (t.room === "lobby" ? "견본" : R.name) + " 실험실 — " + ACT + " 켠다.";
+    if (t.kind === "board") return R.name + " · 칠판 — " + ACT + " 풀이를 읽는다.";
+    if (t.kind === "paper") return "견본 · " + (t.sheet === "problem" ? "문제" : "풀이") + " — " + ACT + " 읽는다.";
+    if (t.kind === "npc") return "관리인 — " + ACT + " 말을 건다.";
+    return ACT + " 살핀다.";
+  }
+
+  /* ---------------- 대화 상자 ---------------- */
+  var DLG = { pages: [], i: 0, shown: 0, drawn: -1, done: null };
+
+  function say(pages, who, done) {
+    if (typeof pages === "string") pages = [pages];
+    DLG = { pages: pages, i: 0, shown: reduced ? 1e9 : 0, drawn: -1, done: done || null };
+    S.busy = "dialog";
+    held.length = 0;
+    $("d-who").textContent = who || "";
+    $("d-who").hidden = !who;
+    $("dialog").hidden = false;
+    paintDialog();
+  }
+  function paintDialog() {
+    var txt = DLG.pages[DLG.i], n = Math.min(txt.length, Math.floor(DLG.shown));
+    if (n === DLG.drawn) return;
+    DLG.drawn = n;
+    $("d-text").textContent = txt.slice(0, n);
+    $("d-next").hidden = n < txt.length;
+  }
+  function stepDialog(dt) {
+    if (S.busy !== "dialog") return;
+    DLG.shown += dt / 24;
+    paintDialog();
+  }
+  function endDialog() {
+    $("dialog").hidden = true;
+    S.busy = null;
+    var done = DLG.done;
+    DLG.done = null;
+    if (done) done();
+  }
+  function nextDialog() {
+    var txt = DLG.pages[DLG.i];
+    if (Math.floor(DLG.shown) < txt.length) { DLG.shown = 1e9; paintDialog(); return; }
+    DLG.i++;
+    if (DLG.i >= DLG.pages.length) { endDialog(); return; }
+    DLG.shown = reduced ? 1e9 : 0;
+    DLG.drawn = -1;
+    paintDialog();
+  }
+  $("dialog").addEventListener("click", nextDialog);
+
+  /* ---------------- 살피기 ---------------- */
+  var LINES = {
+    plant: ["화분이다. 잎이 반질반질하다."],
+    shelf: ["1~7주차 문제지가 빼곡히 꽂혀 있다."],
+    sign: ["증명의 집 · 로비", "문에 붙은 문제를 풀어 답을 넣으면 문이 열린다. 가운데 책상은 견본 한 벌이다."]
+  };
+
+  function talk() {
+    NPC.dir = BACK[me.dir];
+    var n = openCount(), pages;
+    if (n === 0) {
+      pages = [
+        "증명의 집이다.",
+        "문마다 문제가 한 장씩 붙어 있다. 답이 곧 자물쇠 번호다.",
+        "문 옆 단말기에는 그 문제의 실험실이 있다. 막히면 켜 본다.",
+        "문을 열고 들어가면 칠판에 풀이가 적혀 있다.",
+        "가운데 책상은 견본이다 — 문제, 실험실, 풀이가 한 벌로 놓여 있다."
+      ];
+    } else if (n < 4) {
+      pages = ["문이 " + n + " 개 열렸다. 남은 문은 " + (4 - n) + " 개다.", "막히면 문 옆 단말기를 켠다."];
+    } else {
+      pages = ["문이 전부 열렸다.", "방마다 칠판에 풀이가 있다."];
+    }
+    say(pages, "관리인", function () { NPC.dir = NPC.home; });
+  }
+
+  function act() {
+    if (S.busy === "dialog") { nextDialog(); return; }
+    if (S.busy || me.moving) return;
+    var a = ahead(), t = targetAt(a.x, a.y);
+    if (!t) return;
+    if (t.kind === "npc") talk();
+    else if (t.kind === "door") openSheet(t.room, "door");
+    else if (t.kind === "lab") openSheet(t.room, "lab");
+    else if (t.kind === "board") openSheet(t.room, "solution");
+    else if (t.kind === "paper") openSheet("lobby", t.sheet);
+    else if (t.kind === "window") say(C.night ? "창밖이 캄캄하다. 달이 떴다." : "창밖이 환하다.");
+    else if (LINES[t.kind]) say(LINES[t.kind]);
+  }
+
+  /* ---------------- 종이 ---------------- */
+  var FRAMES = {};
+
+  // 실험실은 힌트로만 연다 — 증명 조립 · 논법 탭은 방 안 칠판(풀이)의 몫이라 가린다
+  function prepFrame(f) {
+    try {
+      var d = f.contentDocument;
+      if (!d || !d.documentElement) return;
+      if (d.head && !d.getElementById("house-hint")) {
+        var s = d.createElement("style");
+        s.id = "house-hint";
+        s.textContent = "#tab-proof, #tab-move { display: none !important; }";
+        d.head.appendChild(s);
+      }
+      var t = document.documentElement.getAttribute("data-theme");
+      if (t) d.documentElement.setAttribute("data-theme", t);
+      else d.documentElement.removeAttribute("data-theme");
+    } catch (e) { /* 다른 출처면 건드리지 않는다 */ }
+  }
+  function frameFor(room) {
+    var f = FRAMES[room];
+    if (f) return f;
+    f = document.createElement("iframe");
+    f.src = ROOMS[room].page;
+    f.title = ROOMS[room].title + " 실험실";
+    f.addEventListener("load", function () { prepFrame(f); });
+    $("sheet-body").appendChild(f);
+    FRAMES[room] = f;
+    return f;
+  }
+
+  var MODE = { problem: "문제", door: "문 · 문제", lab: "실험실", solution: "풀이" };
+
+  function openSheet(room, mode) {
+    var R = ROOMS[room], lobby = room === "lobby";
+    S.busy = "sheet";
+    S.sheetRoom = room;
+    held.length = 0;
+    $("sheet").style.setProperty("--zone", "var(" + R.tone + ")");
+    $("sheet-kick").textContent = (lobby ? "로비 · 견본" : R.name) + " · " + MODE[mode]
+      + (mode === "lab" && !lobby ? " · 힌트" : "");
+    $("sheet-title").textContent = R.title;
+    $("sheet-alt").hidden = !(mode === "lab" && !lobby && !S.open[room]);
+    for (var k in FRAMES) FRAMES[k].classList.remove("on");
+
+    if (mode === "lab") {
+      $("sheet-doc").hidden = true;
+      $("sheet-loading").hidden = false;
+      frameFor(room).classList.add("on");
+    } else {
+      $("sheet-loading").hidden = true;
+      $("sheet-doc").hidden = false;
+      $("sheet-doc").className = "doc" + (mode === "door" ? " with-lock" : "");
+      var paper = $("sheet-paper");
+      if (mode === "solution") {
+        paper.className = "paper";
+        paper.innerHTML = $("sol-" + room).innerHTML;
+      } else {
+        // 문제는 다시 쓰지 않는다 — 원본 쪽을 잘라 낸 그대로 보여 준다
+        paper.className = "paper orig";
+        paper.innerHTML = '<img src="' + R.q + '" alt="' + R.src + ' 원본 문항">'
+          + '<p class="src">' + R.src + "</p>";
+      }
+      $("lockbox").hidden = mode !== "door";
+      if (mode === "door") prepLock(room);
+      $("sheet-body").scrollTop = 0;
+    }
+    $("sheet").hidden = false;
+    document.documentElement.style.overflow = "hidden";
+    if (mode === "door" && !coarse) $("lock-in").focus({ preventScroll: true });
+    else $("sheet-close").focus({ preventScroll: true });
+  }
+  function closeSheet() {
+    $("sheet").hidden = true;
+    for (var k in FRAMES) FRAMES[k].classList.remove("on");
+    document.documentElement.style.overflow = "";
+    S.busy = null;
+    cv.focus({ preventScroll: true });
+  }
+  $("sheet-close").addEventListener("click", closeSheet);
+  $("sheet-alt").addEventListener("click", function () { openSheet(S.sheetRoom, "door"); });
+  $("lock-lab").addEventListener("click", function () { openSheet(S.lockId, "lab"); });
+
+  /* ---------------- 자물쇠 ---------------- */
+  function prepLock(id) {
+    var R = ROOMS[id];
+    if (S.lockId !== id) S.tries = 0;
+    S.lockId = id;
+    $("lock-q").innerHTML = R.lock.q;
+    $("lock-hint").innerHTML = R.lock.hint;
+    $("lock-hint").hidden = S.tries < 2;
+    $("lock-msg").textContent = "";
+    $("lock-msg").className = "lock-msg";
+    $("lock-in").value = "";
+  }
+  $("lock-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var id = S.lockId, R = ROOMS[id], v = $("lock-in").value.replace(/[^0-9]/g, "");
+    var msg = $("lock-msg");
+    if (!v) { msg.className = "lock-msg"; msg.textContent = "번호를 넣는다."; return; }
+    if (v === R.lock.a) {
+      S.open[id] = true;
+      S.anim[id] = performance.now();
+      save();
+      renderHud();
+      closeSheet();
+      say(["철컥 — 문이 열렸다.", R.name + " 안쪽 칠판에 풀이가 적혀 있다."]);
+      return;
+    }
+    S.tries++;
+    msg.className = "lock-msg bad";
+    msg.textContent = "철컥 — 열리지 않는다.";
+    if (S.tries >= 2) $("lock-hint").hidden = false;
+    var box = $("lockbox");
+    box.classList.remove("shake");
+    void box.offsetWidth;
+    box.classList.add("shake");
+    $("lock-in").select();
+  });
+
+  /* ---------------- 조작 — 방향키와 Space 하나 ---------------- */
+  var held = [], queue = [];
+  // 누르는 순간 한 칸. 걷는 도중 새로 누른 방향은 네 칸까지 줄 세운다 —
+  // 톡톡 빠르게 쳐도 걸음이 빠지지 않는다 (누르고 있어서 되풀이되는 입력은 줄 세우지 않는다)
+  function press(d, fresh) {
+    release(d);
+    held.push(d);
+    if (S.busy) return;
+    if (!me.moving) tryMove(d);
+    else if (fresh && queue.length < 4) queue.push(d);
+  }
+  function release(d) { var i = held.indexOf(d); if (i >= 0) held.splice(i, 1); }
+
+  var KEYDIR = {
+    ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right",
+    KeyW: "up", KeyS: "down", KeyA: "left", KeyD: "right"
+  };
+  // 한글 입력 상태에서도 되도록 글쇠 자리(code)로 읽는다
+  window.addEventListener("keydown", function (ev) {
+    var code = ev.code || ev.key;
+    if (S.busy === "sheet") {
+      if (code === "Escape") { ev.preventDefault(); closeSheet(); }
+      return;
+    }
+    var onCtl = ev.target && ev.target.closest && ev.target.closest("button, input, select, textarea, a");
+    var d = KEYDIR[code];
+    if (d) {
+      if (onCtl && code.indexOf("Key") === 0) return;
+      ev.preventDefault();
+      press(d, !ev.repeat);
+      return;
+    }
+    if (code === "Space" || ev.key === " ") {
+      if (onCtl) return;
+      ev.preventDefault();
+      if (!ev.repeat) act();
+    } else if (code === "Escape" && S.busy === "dialog") {
+      ev.preventDefault();
+      endDialog();
+    }
+  });
+  window.addEventListener("keyup", function (ev) { var d = KEYDIR[ev.code || ev.key]; if (d) release(d); });
+  window.addEventListener("blur", function () { held.length = 0; queue.length = 0; paintTap(); });
+  window.addEventListener("focus", paintTap);
+  cv.addEventListener("pointerdown", function () { cv.focus({ preventScroll: true }); paintTap(); });
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-dir]"), function (b) {
+    var d = b.getAttribute("data-dir");
+    b.addEventListener("pointerdown", function (ev) {
+      ev.preventDefault();
+      if (b.setPointerCapture) b.setPointerCapture(ev.pointerId);
+      press(d, true);
+    });
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach(function (t) {
+      b.addEventListener(t, function () { release(d); });
+    });
+    b.addEventListener("contextmenu", function (ev) { ev.preventDefault(); });
+  });
+  $("b-act").addEventListener("click", act);
+
+  var tapHidden = null;
+  function paintTap() {
+    var h = coarse || document.hasFocus() || !!S.busy;
+    if (h === tapHidden) return;
+    tapHidden = h;
+    $("tapme").hidden = h;
+  }
+
+  /* ---------------- 걷기 ---------------- */
+  var STEP_MS = 150;
+
+  function tryMove(d) {
+    me.dir = d;
+    var v = DIRS[d], tx = me.x + v[0], ty = me.y + v[1];
+    if (!walkable(tx, ty)) return;
+    me.fx = me.x; me.fy = me.y;
+    me.x = tx; me.y = ty;
+    me.t = 0; me.moving = true; me.steps++;
+  }
+  function arrive() {
+    me.moving = false;
+    me.fx = me.x; me.fy = me.y;
+    var z = ZONE[MAP[me.y][me.x]] || "lobby";
+    if (z !== S.zone) { S.zone = z; renderHud(); }
+    save();
+  }
+
+  /* ---------------- 머리띠 · 방 목록 ---------------- */
+  function renderHud() {
+    var R = ROOMS[S.zone];
+    $("where").textContent = R.name + " · " + R.title;
+    $("where").style.setProperty("--zone", "var(" + R.tone + ")");
+    $("keys").textContent = "문 " + openCount() + " / 4";
+    var h = '<li style="--zone:var(--lobby)"><i></i><span class="rn">로비</span>'
+      + '<span class="rt">거리의 합 · 견본</span><span class="st on">열림</span></li>';
+    ORDER.forEach(function (id) {
+      var R2 = ROOMS[id], op = !!S.open[id];
+      h += '<li style="--zone:var(' + R2.tone + ')"><i></i><span class="rn">' + R2.name + "</span>"
+        + '<span class="rt">' + R2.title + '</span><span class="st' + (op ? " on" : "") + '">'
+        + (op ? "열림" : "잠김") + "</span></li>";
+    });
+    $("room-list").innerHTML = h;
+  }
+
+  /* ---------------- 낮 · 밤 ---------------- */
+  function isDark() {
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : mq("(prefers-color-scheme: dark)");
+  }
+  function onTheme() {
+    readTokens();
+    $("b-theme").textContent = isDark() ? "낮" : "밤";
+    for (var k in FRAMES) prepFrame(FRAMES[k]);
+  }
+  $("b-theme").addEventListener("click", function () {
+    document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
+    onTheme();
+  });
+  if (window.matchMedia) {
+    var mql = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mql.addEventListener) mql.addEventListener("change", onTheme);
+    else if (mql.addListener) mql.addListener(onTheme);
+  }
+  new MutationObserver(onTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  $("b-reset").addEventListener("click", function () {
+    if (S.busy === "sheet") closeSheet();
+    S.open = {}; S.anim = {}; S.tries = 0; S.lockId = null;
+    me.x = me.fx = START.x; me.y = me.fy = START.y; me.dir = START.dir; me.moving = false;
+    queue.length = 0;
+    NPC.dir = NPC.home;
+    S.zone = "lobby";
+    save();
+    renderHud();
+    say("문이 다시 잠겼다.");
+  });
+
+  /* ---------------- 시작 ---------------- */
+  var last = 0, resizeQueued = false;
+  window.addEventListener("resize", function () {
+    if (resizeQueued) return;
+    resizeQueued = true;
+    requestAnimationFrame(function () { resizeQueued = false; layout(); });
+  });
+
+  function frame(now) {
+    var dt = last ? Math.min(50, now - last) : 16;
+    last = now;
+    if (me.moving) {
+      me.t += dt / STEP_MS;
+      if (me.t >= 1) { me.t = 1; arrive(); }
+    }
+    if (S.busy) queue.length = 0;
+    else if (!me.moving) {
+      if (queue.length) tryMove(queue.shift());
+      else if (held.length) tryMove(held[held.length - 1]);
+    }
+    stepDialog(dt);
+    setHint(hintNow());
+    paintTap();
+    draw(now);
+    requestAnimationFrame(frame);
+  }
+
+  readTokens();
+  load();
+  S.zone = ZONE[MAP[me.y][me.x]] || "lobby";
+  layout();
+  renderHud();
+  onTheme();
+  paintTap();
+  requestAnimationFrame(frame);
+})();
+</script>

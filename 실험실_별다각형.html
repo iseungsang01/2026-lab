@@ -1,0 +1,2227 @@
+<title>별 다각형 실험실</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ground: #F6F7FA;
+    --surface: #FFFFFF;
+    --surface-2: #EFF2F7;
+    --ink: #22314F;
+    --ink-soft: #5C6B85;
+    --ink-faint: #8A96AC;
+    --rule: #DDE3EC;
+    --accent: #189E5A;
+    --accent-soft: rgba(24, 158, 90, .12);
+    --gold: #F5B301;
+    --gold-soft: rgba(245, 179, 1, .18);
+    --ok: #189E5A;
+    --ok-soft: rgba(24, 158, 90, .12);
+    --warn: #E17B2E;
+    --warn-soft: rgba(225, 123, 46, .12);
+    --head-bg: #22314F;
+    --head-ink: #FFFFFF;
+    --head-dim: #A9B6CE;
+    --head-bar: #1A2740;
+    --shadow: 0 1px 2px rgba(34, 49, 79, .05), 0 6px 18px rgba(34, 49, 79, .05);
+
+    --sans: 'IBM Plex Sans KR', 'Malgun Gothic', '맑은 고딕', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', 'Consolas', ui-monospace, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #141A26;
+      --surface: #1C2433;
+      --surface-2: #232D3F;
+      --ink: #E5EAF2;
+      --ink-soft: #93A0B8;
+      --ink-faint: #6C7A94;
+      --rule: #2E3A50;
+      --accent: #35BE79;
+      --accent-soft: rgba(53, 190, 121, .16);
+      --gold: #F5B301;
+      --gold-soft: rgba(245, 179, 1, .16);
+      --ok: #35BE79;
+      --ok-soft: rgba(53, 190, 121, .15);
+      --warn: #F0954B;
+      --warn-soft: rgba(240, 149, 75, .15);
+      --head-bg: #0F1521;
+      --head-ink: #E5EAF2;
+      --head-dim: #7C8AA4;
+      --head-bar: #0A0F18;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #141A26;
+    --surface: #1C2433;
+    --surface-2: #232D3F;
+    --ink: #E5EAF2;
+    --ink-soft: #93A0B8;
+    --ink-faint: #6C7A94;
+    --rule: #2E3A50;
+    --accent: #35BE79;
+    --accent-soft: rgba(53, 190, 121, .16);
+    --gold: #F5B301;
+    --gold-soft: rgba(245, 179, 1, .16);
+    --ok: #35BE79;
+    --ok-soft: rgba(53, 190, 121, .15);
+    --warn: #F0954B;
+    --warn-soft: rgba(240, 149, 75, .15);
+    --head-bg: #0F1521;
+    --head-ink: #E5EAF2;
+    --head-dim: #7C8AA4;
+    --head-bar: #0A0F18;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- header + tabs ---------- */
+  header {
+    background: var(--head-bg);
+    color: var(--head-ink);
+    padding: 18px 26px 16px;
+  }
+  .kick {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: .14em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  header h1 {
+    margin: 5px 0 3px;
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+  header p {
+    margin: 0;
+    color: var(--head-dim);
+    font-size: 13.5px;
+    max-width: 76ch;
+  }
+  header code {
+    font-family: var(--mono);
+    font-size: .92em;
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 3px;
+    padding: 0 4px;
+  }
+
+  nav {
+    display: flex;
+    background: var(--head-bar);
+    padding: 0 18px;
+    overflow-x: auto;
+  }
+  .tab {
+    flex: none;
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    color: var(--head-dim);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .12s, border-color .12s;
+  }
+  .tab:hover { color: var(--head-ink); }
+  .tab[aria-selected="true"] { color: var(--head-ink); border-bottom-color: var(--gold); }
+  .tab:focus-visible { outline: 2px solid var(--gold); outline-offset: -4px; }
+
+  /* ---------- layout ---------- */
+  .pane { padding: 18px; }
+  .pane[hidden] { display: none; }
+  .grid { display: grid; gap: 14px; align-items: start; }
+  .g-lab { grid-template-columns: 296px minmax(0, 1fr); }
+  .g-proof { grid-template-columns: 236px 288px minmax(0, 1fr); }
+  .g-hunt { grid-template-columns: 296px minmax(0, 1fr); }
+  @media (max-width: 1180px) {
+    .g-proof { grid-template-columns: 236px minmax(0, 1fr); }
+    .g-proof > :nth-child(3) { grid-column: 1 / -1; }
+  }
+  @media (max-width: 820px) {
+    .grid { grid-template-columns: minmax(0, 1fr) !important; }
+    .pane { padding: 14px; }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 14px;
+  }
+  .card > h2 {
+    margin: 0 0 11px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    color: var(--ink-faint);
+  }
+  .card + .card { margin-top: 14px; }
+
+  /* ---------- 문제 ---------- */
+  .card.problem { border-left: 4px solid var(--accent); margin-bottom: 14px; }
+  .problem .ask { margin: 0 0 9px; font-size: 14.5px; line-height: 1.75; color: var(--ink); }
+  .problem .ask:last-child { margin-bottom: 0; }
+  .problem .ask.q { font-weight: 600; }
+  .problem .fx {
+    font-family: var(--mono); font-size: 14.5px; margin: 0 0 9px;
+    overflow-x: auto; white-space: nowrap; color: var(--accent);
+  }
+  .problem ul { margin: 0 0 9px; padding-left: 19px; }
+  .problem li { font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 3px; }
+  .problem li:last-child { margin-bottom: 0; }
+  .problem .src {
+    margin: 11px 0 0; padding-top: 9px; border-top: 1px solid var(--rule);
+    font-size: 12.5px; color: var(--ink-faint); line-height: 1.6;
+  }
+
+  /* ---------- controls ---------- */
+  .row { display: flex; flex-wrap: wrap; gap: 7px; }
+  .row + .row { margin-top: 7px; }
+  button.btn {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 7px 12px;
+    cursor: pointer;
+    transition: border-color .12s, background .12s, color .12s;
+  }
+  button.btn:hover:not(:disabled) { border-color: var(--accent); }
+  button.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.btn:disabled { opacity: .38; cursor: default; }
+  button.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
+  button.btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.btn.grow { flex: 1; }
+
+  select, input[type="range"] {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 6px 8px;
+    width: 100%;
+  }
+  input[type="range"] { padding: 0; accent-color: var(--accent); }
+  select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  label.fld { display: block; margin-bottom: 10px; }
+  label.fld > span {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+  label.fld b { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+
+  /* ---------- canvas ---------- */
+  canvas { display: block; width: 100%; touch-action: none; }
+  canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  #star { height: 458px; cursor: pointer; }
+  #pstar { height: 318px; }
+  .cwrap { max-width: 500px; margin: 0 auto; }
+
+  /* 그림과 수치 판을 나란히 — 넓은 화면에서 캔버스 옆이 비지 않게 */
+  .figrow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 380px); gap: 14px; align-items: start; }
+  @media (max-width: 1080px) { .figrow { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ---------- readout ---------- */
+  .readout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 12px;
+    background: var(--surface-2);
+  }
+  .stat { padding: 9px 12px; border-right: 1px solid var(--rule); }
+  .stat:last-child { border-right: 0; }
+  .stat dt {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .05em;
+    color: var(--ink-faint);
+    margin: 0 0 1px;
+  }
+  .stat dd {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .stat.gold dd { color: var(--gold); }
+  .stat.acc dd { color: var(--accent); }
+
+  /* ---------- status strips ---------- */
+  .strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding: 9px 12px;
+    border-radius: 7px;
+    background: var(--surface-2);
+    border-left: 3px solid var(--rule);
+    font-size: 13px;
+  }
+  .strip.good { background: var(--ok-soft); border-left-color: var(--ok); }
+  .strip.bad { background: var(--warn-soft); border-left-color: var(--warn); }
+  .strip .cnt {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  .strip .cnt.split { border-color: var(--warn); color: var(--warn); }
+  .strip .grad {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .strip .grad b { color: var(--ink); font-weight: 600; }
+  .strip .why { color: var(--ink-soft); }
+  .strip.good .why, .strip.bad .why { color: var(--ink); }
+
+  /* ---------- route table ---------- */
+  table.route {
+    width: 100%;
+    min-width: 316px;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 11.5px;
+    margin-top: 12px;
+  }
+  table.route th {
+    font-size: 9.5px;
+    letter-spacing: .04em;
+    font-weight: 500;
+    color: var(--ink-faint);
+    text-align: right;
+    padding: 0 6px 5px;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  table.route th:first-child, table.route td:first-child { text-align: left; }
+  table.route td {
+    text-align: right;
+    padding: 3px 6px;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  table.route tbody tr { cursor: default; transition: background .1s; }
+  #ksweep { margin-top: 16px; }
+  #ksweep tbody tr { cursor: pointer; }
+  table.route tbody tr:hover, table.route tbody tr.on { background: var(--gold-soft); }
+  table.route tbody tr.cut td { border-bottom: 1px solid var(--warn); }
+  table.route .lap { color: var(--ink-faint); }
+  table.route tfoot td {
+    border-bottom: 0;
+    border-top: 2px solid var(--rule);
+    padding-top: 7px;
+    font-weight: 600;
+  }
+  table.route tfoot .g { color: var(--gold); }
+  .route-note { font-size: 12px; color: var(--ink-faint); margin-top: 7px; }
+  #open-tbl { max-width: 720px; }
+  #open-tbl td:last-child, #open-tbl th:last-child { width: 1%; }
+
+  /* ---------- cases ---------- */
+  .case {
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--rule);
+    border-radius: 8px;
+    padding: 11px 13px;
+    margin-bottom: 9px;
+    background: var(--surface-2);
+  }
+  .case.bad { border-left-color: var(--warn); background: var(--warn-soft); }
+  .case.ok { border-left-color: var(--ok); background: var(--ok-soft); }
+  .case-head { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; flex-wrap: wrap; }
+  .case-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--ink-faint);
+    color: var(--surface);
+  }
+  .case.bad .case-tag { background: var(--warn); }
+  .case.ok .case-tag { background: var(--ok); }
+  .case-n { font-family: var(--mono); font-size: 13.5px; font-weight: 600; }
+  .case-sub2 { font-size: 12.5px; color: var(--ink-soft); }
+  .go {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    padding: 4px 9px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .go:hover { border-color: var(--accent); color: var(--accent); }
+  .go:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .case .go { margin-left: auto; }
+  .case .nogo { margin-left: auto; font-size: 11.5px; color: var(--ink-faint); }
+
+  .case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(94px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .case-grid > div { background: var(--surface); padding: 6px 9px; }
+  .case-grid dt {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: .04em;
+    color: var(--ink-faint);
+    margin: 0;
+  }
+  .case-grid dd {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .case-grid dd.hi { color: var(--warn); }
+  .case-grid dd.lo { color: var(--ok); }
+  .case-why { margin: 9px 0 0; font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); }
+  .case-why b { color: var(--ink); font-weight: 600; }
+  .case-sub {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    margin: 16px 0 8px;
+  }
+
+  /* ---------- missions ---------- */
+  .mission {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    padding: 9px 10px;
+    border-radius: 7px;
+    background: var(--surface-2);
+    font-size: 13px;
+    line-height: 1.5;
+    transition: background .2s;
+  }
+  .mission + .mission { margin-top: 7px; }
+  .mission.done { background: var(--ok-soft); }
+  .mission .box {
+    flex: none;
+    width: 17px; height: 17px;
+    margin-top: 2px;
+    border: 1.5px solid var(--ink-faint);
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: transparent;
+  }
+  .mission.done .box { border-color: var(--ok); background: var(--ok); color: #fff; }
+  .mission.done .txt { color: var(--ink-soft); }
+  .mission b { font-weight: 600; }
+  .progress {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 10px;
+    text-align: right;
+  }
+
+  /* ---------- proof blocks ---------- */
+  .blk {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: var(--sans);
+    background: var(--surface-2);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 7px;
+    padding: 9px 11px;
+    margin-bottom: 7px;
+    cursor: pointer;
+    color: var(--ink);
+    font-size: 13.5px;
+    font-weight: 600;
+    transition: border-color .12s, transform .08s;
+  }
+  .blk:hover:not(:disabled) { border-color: var(--accent); }
+  .blk:active:not(:disabled) { transform: translateY(1px); }
+  .blk:disabled { opacity: .38; cursor: default; }
+  .blk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .blk small {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 1px;
+  }
+  .blk.b-draw  { border-left-color: var(--ink-faint); }
+  .blk.b-turn  { border-left-color: var(--accent); }
+  .blk.b-add   { border-left-color: var(--accent); }
+  .blk.b-total { border-left-color: var(--gold); }
+  .blk.b-swap  { border-left-color: var(--gold); }
+  .blk.b-sum   { border-left-color: var(--ok); }
+
+  .prog-list {
+    min-height: 214px;
+    border: 1px dashed var(--rule);
+    border-radius: 8px;
+    padding: 8px;
+    background: var(--surface-2);
+  }
+  .pitem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    padding: 6px 8px;
+    border-radius: 5px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+  }
+  .pitem + .pitem { margin-top: 5px; }
+  .pitem .n {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 20px; height: 20px;
+    border-radius: 4px;
+    background: var(--ink);
+    color: var(--surface);
+    display: grid;
+    place-items: center;
+  }
+  .pitem.run { border-color: var(--accent); background: var(--accent-soft); }
+  .pitem .rm {
+    margin-left: auto;
+    border: 0; background: none;
+    color: var(--ink-faint);
+    font-size: 16px; line-height: 1;
+    cursor: pointer;
+    padding: 0 2px;
+  }
+  .pitem .rm:hover { color: var(--warn); }
+  .pitem .rm:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .empty {
+    color: var(--ink-faint);
+    font-size: 12.5px;
+    text-align: center;
+    padding: 78px 0;
+    line-height: 1.7;
+  }
+
+  /* ---------- messages + log ---------- */
+  .msg {
+    margin-top: 10px;
+    padding: 9px 11px;
+    border-radius: 7px;
+    font-size: 13px;
+    line-height: 1.55;
+    background: var(--surface-2);
+    color: var(--ink-soft);
+    border-left: 3px solid var(--rule);
+  }
+  .msg.ok   { background: var(--ok-soft);   border-left-color: var(--ok);   color: var(--ink); }
+  .msg.warn { background: var(--warn-soft); border-left-color: var(--warn); color: var(--ink); }
+  .msg b { font-weight: 600; }
+  .msg code, code.k {
+    font-family: var(--mono);
+    font-size: .92em;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0 4px;
+  }
+
+  .log {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 11.5px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+    max-height: 210px;
+    overflow-y: auto;
+    border-top: 1px solid var(--rule);
+    padding-top: 8px;
+  }
+  .log div { display: flex; gap: 8px; }
+  .log .t { color: var(--ink-faint); flex: none; min-width: 14px; }
+  .log b { color: var(--ink); font-weight: 600; }
+  .log .g { color: var(--gold); }
+
+  /* ---------- sweep ---------- */
+  .bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--surface-2);
+    overflow: hidden;
+    margin: 12px 0 10px;
+  }
+  .bar > i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--accent);
+    transition: width .12s linear;
+  }
+  .hits { margin-top: 4px; }
+
+  .table-scroll { overflow-x: auto; }
+
+  .claim-box {
+    border-left: 3px solid var(--gold);
+    background: var(--surface-2);
+    border-radius: 0 7px 7px 0;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .claim-box .f {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 5px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .claim-box .f + .f { margin-top: -2px; color: var(--ink-soft); }
+  .claim-box p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+  .claim-box strong { color: var(--ink); font-weight: 600; }
+  /* 문항 고유 표기는 처음 나올 때 한 줄로 푼다 */
+  .def {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 8px;
+    margin: 0 0 9px;
+  }
+  .def + .def { border-bottom: 0; padding-bottom: 0; }
+  .def b { color: var(--ink); font-weight: 600; }
+
+
+  /* ---------- 프로젝트 층 — 논법 · 아직 안 닫힌 곳 · 직접 확인 ---------- */
+  .open > p { margin: 0 0 12px; font-size: 13.5px; line-height: 1.65; color: var(--ink-soft); }
+  .open > p b, .open > p strong, .qbox strong { color: var(--ink); font-weight: 600; }
+  .qbox {
+    border-left: 3px solid var(--rule);
+    background: var(--surface-2);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+  }
+  .qbox.todo { border-left-color: var(--gold); }
+  .qbox + .qbox { margin-top: 10px; }
+  .qbox h4 {
+    margin: 0 0 7px; font-size: 13.5px; font-weight: 600;
+    display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  }
+  .qbox h4 em {
+    font-family: var(--mono); font-size: 10.5px; font-style: normal;
+    color: var(--gold); flex: none;
+  }
+  .qbox p { margin: 0 0 6px; font-size: 13px; line-height: 1.6; color: var(--ink-soft); }
+  .qbox p:last-child { margin-bottom: 0; }
+  .qbox b { color: var(--ink); font-weight: 600; }
+  .qbox .row { margin: 10px 0 8px; }
+  .qbox .fld { max-width: 320px; }
+  .tag {
+    display: inline-block; font-family: var(--mono); font-size: 9.5px;
+    letter-spacing: .05em; font-weight: 600; padding: 1px 6px;
+    border-radius: 4px; margin-right: 6px; vertical-align: 1px; flex: none;
+  }
+  .tag.seen { background: var(--ok); color: #fff; }
+  .tag.todo { background: var(--gold); color: #3A2B00; }
+  .qbox table {
+    width: 100%; max-width: 620px; border-collapse: collapse;
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    font-size: 12px; margin: 8px 0 6px;
+  }
+  .qbox th {
+    font-size: 9.5px; letter-spacing: .04em; font-weight: 500;
+    color: var(--ink-faint); text-align: right;
+    padding: 0 7px 4px; border-bottom: 1px solid var(--rule);
+  }
+  .qbox th:first-child, .qbox td:first-child { text-align: left; }
+  .qbox td { text-align: right; padding: 3px 7px; border-bottom: 1px solid var(--rule); }
+  .qbox tr:last-child td { border-bottom: 0; }
+
+  pre.sketch {
+    font-family: var(--mono); font-size: 12px; line-height: 1.65;
+    background: var(--surface-2); border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+    padding: 12px 14px; margin: 10px 0 0; overflow-x: auto;
+    white-space: pre; color: var(--ink); tab-size: 4;
+  }
+  pre.sketch b { color: var(--ink-faint); font-weight: 400; }
+  pre.sketch i { font-style: normal; background: var(--gold-soft); }
+  pre.sketch em { font-style: normal; color: var(--ok); font-weight: 600; }
+
+  .card.pyc { margin-top: 14px; }
+
+  footer {
+    padding: 16px 26px 30px;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--rule);
+    margin-top: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<header>
+  <div class="kick">8주차 · 증명 실험실 · 기하</div>
+  <h1>별 다각형 실험실</h1>
+  <p>슬라이더로 별을 바꿔 규칙을 찾고, 증명을 블록으로 쌓고, 반례를 사냥한다.</p>
+</header>
+
+<nav role="tablist" aria-label="실험 모드">
+  <button class="tab" role="tab" id="tab-lab"   aria-controls="pane-lab"   aria-selected="true">실험대 · 조작</button>
+  <button class="tab" role="tab" id="tab-proof" aria-controls="pane-proof" aria-selected="false">증명 조립</button>
+  <button class="tab" role="tab" id="tab-hunt"  aria-controls="pane-hunt"  aria-selected="false">반례 사냥</button>
+  <button class="tab" role="tab" id="tab-move"  aria-controls="pane-move"  aria-selected="false">논법과 남은 것</button>
+</nav>
+
+<!-- =============== 실험대 =============== -->
+<div class="pane" id="pane-lab" role="tabpanel" aria-labelledby="tab-lab">
+  <div class="card problem">
+    <h2>문제</h2>
+    <p class="ask">원 위에 <b>n</b> 개의 점이 같은 간격으로 찍혀 있다. 한 점에서 출발해 <b>k</b> 칸씩
+       건너뛰며 선분으로 이어 나가면 언젠가 출발점으로 돌아온다. 이렇게 그린 도형을 <b>{n/k}</b> 라 쓴다.</p>
+    <ul>
+      <li><b>n</b> 과 <b>k</b> 의 최대공약수가 <b>1</b> 이면 <b>n</b> 개의 점을 하나도 빠짐없이 지나 한 붓으로 그려진다.</li>
+      <li><b>k</b> 와 <b>n − k</b> 는 도는 방향만 반대인 같은 그림이므로 <b>1 ≤ k &lt; n/2</b> 만 본다.</li>
+      <li><b>k = 1</b> 이면 볼록한 <b>n</b> 각형이다.</li>
+    </ul>
+    <p class="ask q">{n/k} 의 꼭짓점 n 개에서 뾰족한 각을 모두 더하면 얼마인가.</p>
+    <p class="src">1·4주차에서 각을 잰 오각별 <code class="k">{5/2}</code> — 각의 합이 <code class="k">180°</code> 였다 —
+       를 모든 <code class="k">{n/k}</code> 로 넓힌 것이다.</p>
+  </div>
+  <div class="grid g-lab">
+
+    <div>
+      <div class="card">
+        <h2>주장</h2>
+        <p class="def"><b>{n/k}</b> — 원 위에 같은 간격으로 찍은 <b>n</b>개 점을
+           <b>k</b>칸씩 건너뛰며 한 붓으로 잇는다.</p>
+        <p class="def"><b>튼 각</b> — 그 붓이 꼭짓점에서 <b>진행 방향이 꺾인 각(외각)</b>.</p>
+        <div class="claim-box">
+          <p class="f">각의 합 = 180(n − 2k)</p>
+          <p class="f">한 각 = 180(n − 2k)/n</p>
+          <p>조건은 <strong>gcd(n, k) = 1</strong>(둘의 최대공약수가 1)과
+             <strong>1 ≤ k &lt; n/2</strong>. <strong>k = 1</strong>이면 볼록 n각형이다.</p>
+        </div>
+
+        <label class="fld">
+          <span>꼭짓점 수 n <b id="v-n">5</b></span>
+          <input type="range" id="i-n" min="5" max="15" step="1" value="5">
+        </label>
+        <label class="fld">
+          <span>건너뛰는 칸 k <b id="v-k">2</b> <span id="v-kmax" style="color:var(--ink-faint)">(1 ~ 2)</span></span>
+          <input type="range" id="i-k" min="1" max="2" step="1" value="2">
+        </label>
+
+        <div class="row">
+          <button class="btn primary grow" id="b-draw">▶ 한 붓 그리기</button>
+          <button class="btn" id="b-stop" disabled>중단</button>
+        </div>
+        <div class="row">
+          <button class="btn grow" id="b-arcs" aria-pressed="true">각 호 보기</button>
+          <button class="btn grow" id="b-reset">처음으로</button>
+        </div>
+        <div class="row">
+          <button class="btn grow" id="b-sweepk">이 n 의 k 를 전부 시험</button>
+        </div>
+        <div class="msg" id="lab-msg">슬라이더로 <code>n</code>과 <code>k</code>를 바꾼다. 캔버스의 꼭짓점을 누르면 그 각을 잰 값이 뜬다. 캔버스에 포커스를 두면 <code>←</code> <code>→</code>가 <code>k</code>를, <code>↑</code> <code>↓</code>가 <code>n</code>을 바꾼다.</div>
+      </div>
+
+      <div class="card">
+        <h2>미션</h2>
+        <div id="missions"></div>
+        <div class="progress" id="mission-progress">0 / 3</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>별 {n/k}와 한 붓 그리기</h2>
+      <div class="figrow">
+        <div class="cwrap">
+          <canvas id="star" tabindex="0" aria-label="별 다각형. 꼭짓점을 눌러 각을 재고, 화살표 키로 n과 k를 바꾼다."></canvas>
+        </div>
+        <div>
+          <dl class="readout" style="margin-top:0">
+            <div class="stat"><dt>꼭짓점 n</dt><dd id="r-n">5</dd></div>
+            <div class="stat"><dt>건너뛰기 k</dt><dd id="r-k">2</dd></div>
+            <div class="stat"><dt>한 각 (잰 값)</dt><dd id="r-ang">36.00°</dd></div>
+            <div class="stat"><dt>각의 합 (잰 값)</dt><dd id="r-sum">180.0°</dd></div>
+            <div class="stat gold"><dt>180(n − 2k)</dt><dd id="r-form">180</dd></div>
+            <div class="stat acc"><dt>바퀴 수</dt><dd id="r-lap">2.00</dd></div>
+          </dl>
+          <div class="strip" id="strip">
+            <span class="cnt" id="s-gcd">gcd = 1</span>
+            <span class="cnt" id="s-piece">한 붓</span>
+            <span class="grad">지금까지 튼 각의 합 <b id="s-acc">0.0°</b></span>
+            <span class="grad">바퀴 <b id="s-lap">0.00</b></span>
+            <span class="why" id="s-why"></span>
+          </div>
+          <div class="strip" id="eq"></div>
+          <div class="table-scroll"><table class="route" id="route"></table></div>
+          <p class="route-note">한 줄에 마우스를 올리면 그 꼭짓점과 튼 각이 캔버스에 표시된다.</p>
+          <div class="table-scroll"><table class="route" id="ksweep"></table></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =============== 증명 조립 =============== -->
+<div class="pane" id="pane-proof" role="tabpanel" aria-labelledby="tab-proof" hidden>
+  <div class="grid g-proof">
+
+    <div class="card">
+      <h2>증명 블록</h2>
+      <button class="blk b-draw"  id="k-draw">한 붓으로 그린다<small>n등분점을 k칸씩 건너뛰어 잇는다</small></button>
+      <button class="blk b-turn"  id="k-turn">꼭짓점마다 방향을 튼 각을 잰다<small>진행 방향이 꺾인 각(외각)</small></button>
+      <button class="blk b-add"   id="k-add">튼 각을 전부 더한다<small>꼭짓점 n개분</small></button>
+      <button class="blk b-total" id="k-total">총합 = 360° × 바퀴 수<small>처음 방향으로 돌아왔다</small></button>
+      <button class="blk b-swap"  id="k-swap">외각과 내각을 바꾼다<small>외각 = 180° − 내각</small></button>
+      <button class="blk b-sum"   id="k-sum">합을 구한다<small>내각 × n</small></button>
+      <div class="msg">블록을 눌러 순서를 쌓고 <b>▶ 실행</b>. 순서가 틀리면 실행이 멈추고 어디가 왜 틀렸는지 알려준다.</div>
+    </div>
+
+    <div class="card">
+      <h2>내 증명</h2>
+      <div class="strip" style="margin-top:0;margin-bottom:12px">
+        <span class="cnt" id="pm-star">{5/2}</span>
+        <span class="grad">꼭짓점 <b id="pm-n">5</b></span>
+        <span class="grad">조각 <b id="pm-d">1</b></span>
+      </div>
+      <div class="prog-list" id="prog-list"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary grow" id="b-run">▶ 실행</button>
+        <button class="btn" id="b-clear">지우기</button>
+      </div>
+      <div class="msg" id="proof-msg">실험대에서 고른 별을 그대로 쓴다. 블록 여섯 개를 순서대로 쌓고 <b>▶ 실행</b>.</div>
+    </div>
+
+    <div class="card">
+      <h2>실행 결과 &middot; 한 붓으로 도는 방향</h2>
+      <div class="cwrap" style="max-width:420px">
+        <canvas id="pstar" aria-label="증명 진행에 따라 별을 한 붓으로 그리고 튼 각을 표시한다."></canvas>
+      </div>
+      <div class="log" id="proof-log"><div><span class="t">—</span><span>아직 실행하지 않았다.</span></div></div>
+    </div>
+  </div>
+
+  <div class="card pyc">
+    <h2>같은 증명을 파이썬으로</h2>
+    <pre class="sketch" id="proof-py"></pre>
+    <div class="msg">블록을 쌓으면 코드도 같이 쌓인다. <b>&#9654; 실행</b> 중에는 지금 도는 줄이 금색으로 표시된다.</div>
+  </div>
+</div>
+
+<!-- =============== 반례 사냥 =============== -->
+<div class="pane" id="pane-hunt" role="tabpanel" aria-labelledby="tab-hunt" hidden>
+  <div class="grid g-hunt">
+
+    <div class="card">
+      <h2>사냥 설정</h2>
+      <label class="fld">
+        <span>검사할 주장</span>
+        <select id="h-claim">
+          <option value="star">각의 합 = 180(n − 2k)</option>
+          <option value="poly">각의 합 = 180(n − 2)</option>
+          <option value="ang">한 각 = 360/n</option>
+          <option value="p180">각의 합 = 180 (오각별처럼)</option>
+        </select>
+      </label>
+      <label class="fld">
+        <span>검사할 n 의 최댓값 <b id="h-nmax-v">40</b></span>
+        <input type="range" id="h-nmax" min="40" max="300" step="10" value="40">
+      </label>
+      <div class="row">
+        <button class="btn primary grow" id="b-hunt">▶ 사냥 시작</button>
+        <button class="btn" id="b-hunt-stop" disabled>중단</button>
+      </div>
+      <div class="msg" style="margin-bottom:7px"><b>각의 합 = 180</b> — 1주차에 잰 오각별의 각의 합이 <code>180°</code> 였다. 별이면 다 그렇겠다는 짐작이다. 반례가 쏟아지고 나면, <b>살아남은 별끼리 무엇이 같은지</b>가 아래에 뜬다.</div>
+      <div class="msg"><code>n = 5</code>부터 위에서 정한 값까지, <code>gcd(n, k) = 1</code>이고 <code>1 ≤ k &lt; n/2</code>인 별을 <b>하나도 빠짐없이</b> 검사한다. 각은 공식이 아니라 <b>좌표에서 잰다</b> — 꼭짓점에서 두 이웃으로 그은 두 선분이 이루는 각.</div>
+    </div>
+
+    <div class="card">
+      <h2>사냥 기록</h2>
+      <div class="bar"><i id="h-bar"></i></div>
+      <dl class="readout" style="margin-top:0">
+        <div class="stat"><dt>검사한 별</dt><dd id="h-done">0</dd></div>
+        <div class="stat gold"><dt>반례</dt><dd id="h-bad">0</dd></div>
+        <div class="stat"><dt>최대 어긋남</dt><dd id="h-worst">0</dd></div>
+        <div class="stat ok"><dt>튼 각의 합이 360 배수 아닌 별</dt><dd id="h-lap">0</dd></div>
+      </dl>
+      <div class="msg" id="h-msg">주장을 고르고 사냥을 시작한다.</div>
+      <div class="hits" id="h-hits"></div>
+    </div>
+  </div>
+
+  <div class="card pyc">
+    <h2>같은 사냥을 파이썬으로</h2>
+    <pre class="sketch" id="hunt-py"></pre>
+    <div class="msg">주장과 슬라이더를 바꾸면 코드도 바뀐다. 그대로 쳐서 돌리면 화면과 같은
+      수가 나온다.</div>
+  </div>
+</div>
+
+<!-- =============== 옮기기 =============== -->
+<div class="pane" id="pane-move" role="tabpanel" aria-labelledby="tab-move" hidden>
+
+  <div class="card open">
+    <h2>몇 바퀴 도는가로 세는 논법</h2>
+    <p>별을 한 붓으로 그릴 때 손은 직선으로 나아가다 꼭짓점에서만 방향을 튼다. 튼 각이 <strong>외각</strong>이고, 꼭짓점의 각은 <code class="k">180° − 외각</code>이다.</p>
+    <p>출발점으로 돌아오면 손이 향한 방향도 출발할 때와 같다. 따라서 튼 각을 전부 더하면 <code class="k">360°</code>의 배수가 되고, 몇 배인지가 곧 <strong>몇 바퀴 돌았는가</strong>다. <code class="k">k</code>칸씩 건너뛰면 한 바퀴 도는 동안 원을 <code class="k">k</code>번 감으므로 그 배수는 <code class="k">k</code>다.</p>
+    <p>그러면 <code class="k">n × 외각 = 360k</code>, 즉 외각은 <code class="k">360k/n</code>이고 한 각은 <code class="k">180 − 360k/n = 180(n − 2k)/n</code>이다. <code class="k">n</code>배 하면 <code class="k">180(n − 2k)</code>. <code class="k">k = 1</code>을 넣으면 <code class="k">180(n − 2)</code> — 볼록 다각형 공식이 이 식의 한 경우다.</p>
+  </div>
+
+  <div class="card open">
+    <h2>아직 안 닫힌 곳</h2>
+    <p>여기부터는 <b>우리가 증명하지 못한 것</b>이다. 잰 수치는 있고 이유가 없다.</p>
+
+    <div class="qbox todo">
+      <h4><em>01</em> 조각으로 갈라져도 합이 그대로인 이유 <span class="tag todo">안 닫힘</span></h4>
+      <p><span class="tag seen">확인함</span><code class="k">gcd(n, k)</code>가 <code class="k">1</code>이 아니면 한 붓으로 안 그려지고 별이 조각으로 갈라진다. 아래는 그런 별을 이 쪽에서 직접 잰 표다.</p>
+      <div class="table-scroll"><table class="route" id="open-tbl"></table></div>
+      <p><span class="tag seen">확인함</span>조각이 몇 개인지는 나머지로 나온다. 꼭짓점 번호는
+      <code class="k">0, k, 2k, 3k, …</code> 로 가며 <code class="k">n</code> 으로 나눈 나머지를 도는데,
+      처음 <code class="k">0</code> 으로 돌아오는 때가 <code class="k">k</code> 를
+      <code class="k">n / gcd(n, k)</code> 번 더했을 때다. 그래서 한 조각에 든 꼭짓점이
+      <code class="k">n / gcd(n, k)</code> 개, 조각이 <code class="k">gcd(n, k)</code> 개다.</p>
+      <p><span class="tag todo">안 닫힘</span>안 닫힌 것은 그다음이다 — 조각으로 갈라져도 각의 합이
+      <code class="k">180(n − 2k)</code> 그대로인 <b>이유</b>. 표에서 재 보기만 했다.
+      우리 증명은 <b>한 붓으로 이어질 때</b>만 다뤘다.</p>
+    </div>
+
+    <div class="qbox todo">
+      <h4><em>02</em> 방향이 왜 처음으로 돌아오는가 <span class="tag todo">안 닫힘</span></h4>
+      <p><span class="tag todo">안 닫힘</span>증명에서 「출발점으로 돌아오면 붓이 향한 방향도 처음과 같다」를 <b>그냥 썼다.</b> 왜 반드시 그런지는 증명하지 않았다. 이것이 무너지면 <code class="k">360k</code>도 같이 무너진다.</p>
+    </div>
+
+    <div class="qbox todo">
+      <h4><em>03</em> 원 위가 아니어도 되는가 <span class="tag todo">안 닫힘</span></h4>
+      <p><span class="tag todo">안 닫힘</span>우리 증명은 <b>같은 간격으로 찍은 점</b>만 다뤘다. 점을 원에서 떼어 흔들면 각의 합이 어떻게 되는지 눌러서 잰다. 차례는 그대로 두고 반지름과 각도만 흔든다.</p>
+      <div class="row">
+        <button class="btn primary" id="b-jitter">▶ 점을 흔들어 400번 재기</button>
+        <button class="btn" id="b-jitter2">약하게 흔들기</button>
+      </div>
+      <div class="msg" id="jitter-msg">눌러서 재 본다. 흔든 별마다 잰 합을 <code class="k">180(n − 2k)</code>와 견준다.</div>
+    </div>
+  </div>
+
+  <div class="card open">
+    <h2>직접 확인해 보시오</h2>
+
+    <div class="qbox">
+      <h4><em>화면 안</em> 범위를 끝까지 밀어 전수로 잰다</h4>
+      <p><b>반례 사냥</b> 탭에서 <code class="k">검사할 n 의 최댓값</code>을 <code class="k">300</code>까지
+      올리고 돌린다. 별 <b>13,696</b>개, 꼭짓점 <b>2,741,751</b>개를 좌표에서 잰다.
+      <code class="k">각의 합 = 180(n − 2k)</code>는 반례 <b>0</b>, 최대 어긋남
+      <code class="k">4.5 × 10⁻¹³</code>도 &mdash; 소수점 아래 열두 자리까지 같다는 뜻이다.</p>
+      <p><b>아직 안 닫힌 곳</b>의 <code class="k">03</code>에서 <b>점을 흔들어 400번 재기</b>를 눌러도
+      같은 값이 나온다. 원 위가 아니어도 합이 버티는지를 그 자리에서 잰다.</p>
+    </div>
+
+    <div class="qbox">
+      <h4><em>밖에서</em> 아홉 줄이면 된다</h4>
+      <p><code class="k">n</code>과 <code class="k">k</code>를 바꿔 가며 두 줄이 같은 수를 찍는지 본다.</p>
+      <pre class="sketch">from math import cos, sin, pi, atan2, degrees
+n, k = 9, 4                                    <b># 별 {9/4}</b>
+P = [(cos(2*pi*j/n), sin(2*pi*j/n)) for j in range(n)]
+def ang(j):                                    <b># 꼭짓점 j 의 각</b>
+    x, y = P[j]; ax, ay = P[(j-k) % n]; bx, by = P[(j+k) % n]
+    ux, uy, vx, vy = ax-x, ay-y, bx-x, by-y
+    return degrees(atan2(abs(ux*vy - uy*vx), ux*vx + uy*vy))
+print(sum(ang(j) for j in range(n)))           <b># 점을 찍어 잰 합</b>
+print(180*(n - 2*k))                           <b># 공식이 말하는 값</b></pre>
+      <p>이 쪽이 쓰는 방법과 같다 &mdash; 공식끼리 견주지 않고 <b>점을 찍어 각을 잰다.</b></p>
+    </div>
+  </div>
+</div>
+
+<footer>1·4주차에서 각을 잰 오각별 <code class="k">{5/2}</code> 는 <code class="k">n = 5</code>, <code class="k">k = 2</code> 인 한 칸이다.</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var $ = function (id) { return document.getElementById(id); };
+  var reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  var S = { n: 5, k: 2, arcs: true, sel: null, hover: null, hoverMove: null,
+            mode: "lab", missions: [false, false, false] };
+
+  /* ---------------- math ----------------
+     각은 전부 좌표에서 잰다. 180(n−2k)/n 은 대조용으로만 쓴다. */
+  function gcd(a, b) { while (b) { var t = a % b; a = b; b = t; } return a; }
+  function kmax(n) { return Math.floor((n - 1) / 2); }
+  function mod(a, m) { return ((a % m) + m) % m; }
+
+  // 단위원 위의 n등분점. 첫 점이 맨 위, 화면 좌표(아래로 +y)를 그대로 쓴다.
+  function unit(n, j) {
+    var a = -Math.PI / 2 + 2 * Math.PI * j / n;
+    return { x: Math.cos(a), y: Math.sin(a) };
+  }
+
+  // 꼭짓점 j 에서 두 이웃(j−k, j+k)으로 그은 두 선분이 이루는 각(도)
+  function angAt(n, k, j) {
+    var p = unit(n, j), a = unit(n, mod(j - k, n)), b = unit(n, mod(j + k, n));
+    var ax = a.x - p.x, ay = a.y - p.y, bx = b.x - p.x, by = b.y - p.y;
+    return Math.atan2(Math.abs(ax * by - ay * bx), ax * bx + ay * by) * 180 / Math.PI;
+  }
+  function angSum(n, k) {
+    var s = 0;
+    for (var j = 0; j < n; j++) s += angAt(n, k, j);
+    return s;
+  }
+  function formula(n, k) { return 180 * (n - 2 * k); }
+
+  /* 한 붓 경로. gcd(n,k) = d 면 조각 d 개로 나뉜다.
+     move 하나 = [a → b 로 나아감] + [b 에서 방향을 틂]. 전부 합쳐 꼭짓점 n 개. */
+  var mvCache = {};
+  function moves(n, k) {
+    var key = n + "/" + k;
+    if (mvCache[key]) return mvCache[key];
+    var d = gcd(n, k), L = n / d, list = [], c, i, e;
+    for (c = 0; c < d; c++) {
+      var comp = [];
+      for (i = 0; i < L; i++) comp.push(mod(c + i * k, n));
+      for (e = 0; e < L; e++) {
+        list.push({
+          a: comp[e], b: comp[(e + 1) % L], nx: comp[(e + 2) % L],
+          piece: c, head: comp[0], lift: (e === 0 && c > 0)
+        });
+      }
+    }
+    var total = 0;
+    for (i = 0; i < list.length; i++) {
+      var A = unit(n, list[i].a), B = unit(n, list[i].b), N = unit(n, list[i].nx);
+      var hin = Math.atan2(B.y - A.y, B.x - A.x);
+      var hout = Math.atan2(N.y - B.y, N.x - B.x);
+      var t = hout - hin;
+      while (t <= -Math.PI) t += 2 * Math.PI;
+      while (t > Math.PI) t -= 2 * Math.PI;
+      list[i].hin = hin; list[i].hout = hout; list[i].turn = t;
+      total += t;   // 별 하나 안에서는 튼 각의 부호가 전부 같다
+    }
+    var r = { d: d, L: L, list: list, total: Math.abs(total) * 180 / Math.PI,
+              ext: Math.abs(list[0].turn) * 180 / Math.PI };
+    mvCache[key] = r;
+    return r;
+  }
+
+  function fmtDeg(v, p) { return v.toFixed(p === undefined ? 2 : p) + "°"; }
+
+  /* ---------------- canvas ---------------- */
+  var C = {};
+  function readTokens() {
+    var cs = getComputedStyle(document.documentElement);
+    ["ink", "ink-soft", "ink-faint", "rule", "accent", "accent-soft",
+     "gold", "gold-soft", "surface", "surface-2", "ok", "warn"].forEach(function (key) {
+      C[key] = cs.getPropertyValue("--" + key).trim();
+    });
+  }
+
+  function fit(cv, ctx) {
+    var dpr = window.devicePixelRatio || 1;
+    var w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return null;
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { w: w, h: h };
+  }
+
+  function geom(w, h) {
+    return { cx: w / 2, cy: h / 2, R: Math.max(34, Math.min(w, h) / 2 - 44) };
+  }
+  function pt(n, j, g) {
+    var u = unit(n, j);
+    return { x: g.cx + u.x * g.R, y: g.cy + u.y * g.R };
+  }
+
+  function lab(ctx, t, px, py, align, color, size, weight) {
+    ctx.fillStyle = color;
+    ctx.font = (weight || 400) + " " + (size || 11) + "px 'IBM Plex Mono', Consolas, monospace";
+    ctx.textAlign = align || "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(t, px, py);
+  }
+  function chip(ctx, t, px, py, color, size) {
+    ctx.font = "500 " + size + "px 'IBM Plex Mono', Consolas, monospace";
+    var w = ctx.measureText(t).width;
+    ctx.fillStyle = C.surface;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(px - w / 2 - 5, py - size / 2 - 4, w + 10, size + 8, 4);
+    else ctx.rect(px - w / 2 - 5, py - size / 2 - 4, w + 10, size + 8);
+    ctx.fill();
+    ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.stroke();
+    lab(ctx, t, px, py, "center", color, size, 500);
+  }
+
+  // 꼭짓점 j 의 각을 호로 그린다. 좁은 각일수록 반지름을 키워 눈에 보이게 한다.
+  function vertexArc(ctx, n, k, j, g, color, lw) {
+    var p = pt(n, j, g);
+    var pa = pt(n, mod(j - k, n), g), pb = pt(n, mod(j + k, n), g);
+    var a1 = Math.atan2(pa.y - p.y, pa.x - p.x);
+    var a2 = Math.atan2(pb.y - p.y, pb.x - p.x);
+    var dif = a2 - a1;
+    while (dif <= -Math.PI) dif += 2 * Math.PI;
+    while (dif > Math.PI) dif -= 2 * Math.PI;
+    var deg = Math.abs(dif) * 180 / Math.PI;
+    var r = deg < 46 ? 26 : (deg < 90 ? 20 : 15);
+    ctx.strokeStyle = color; ctx.lineWidth = lw;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, r, a1, a1 + dif, dif < 0);
+    ctx.stroke();
+    return { p: p, mid: a1 + dif / 2, r: r, deg: deg };
+  }
+
+  function penArrow(ctx, x, y, heading, color) {
+    ctx.save();
+    ctx.translate(x, y); ctx.rotate(heading);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(12, 0); ctx.lineTo(-7, 7); ctx.lineTo(-3, 0); ctx.lineTo(-7, -7);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  /* V = { n, k, arcs, sel, hover, path: -1(없음)|edges 수|Infinity, anim } */
+  function drawStar(ctx, w, h, V) {
+    ctx.clearRect(0, 0, w, h);
+    var n = V.n, k = V.k, g = geom(w, h), M = moves(n, k), i, p;
+
+    // 바탕 원
+    ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(g.cx, g.cy, g.R, 0, Math.PI * 2); ctx.stroke();
+
+    var drawn = (V.path === undefined) ? M.list.length : V.path;
+    var partial = V.anim && V.anim.phase === "move" ? V.anim.t : 0;
+
+    // 조각 사이의 건너뜀 — 이어지지 않는다는 것을 점선으로 보인다
+    ctx.setLineDash([4, 5]); ctx.lineWidth = 1.2; ctx.strokeStyle = C.warn;
+    for (i = 0; i < Math.min(drawn + 1, M.list.length); i++) {
+      if (!M.list[i].lift) continue;
+      var prevHead = pt(n, M.list[i - 1].b, g), here = pt(n, M.list[i].a, g);
+      ctx.beginPath(); ctx.moveTo(prevHead.x, prevHead.y); ctx.lineTo(here.x, here.y); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    // 별의 변
+    ctx.strokeStyle = C.accent; ctx.lineWidth = 2; ctx.lineJoin = "round"; ctx.lineCap = "round";
+    for (i = 0; i < Math.min(drawn, M.list.length); i++) {
+      var A = pt(n, M.list[i].a, g), B = pt(n, M.list[i].b, g);
+      ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
+    }
+    if (V.anim && V.anim.mi < M.list.length && partial > 0) {
+      var m0 = M.list[V.anim.mi];
+      var A2 = pt(n, m0.a, g), B2 = pt(n, m0.b, g);
+      ctx.beginPath(); ctx.moveTo(A2.x, A2.y);
+      ctx.lineTo(A2.x + (B2.x - A2.x) * partial, A2.y + (B2.y - A2.y) * partial);
+      ctx.stroke();
+    }
+
+    // 꼭짓점의 각 (호)
+    if (V.arcs && drawn >= M.list.length) {
+      for (i = 0; i < n; i++) {
+        var on = (V.sel === i || V.hover === i);
+        vertexArc(ctx, n, k, i, g, on ? C.gold : C["ink-faint"], on ? 2.4 : 1.2);
+      }
+    }
+
+    // 점과 번호
+    for (i = 0; i < n; i++) {
+      p = pt(n, i, g);
+      var hot = (V.sel === i || V.hover === i);
+      ctx.fillStyle = hot ? C.gold : C.accent;
+      ctx.beginPath(); ctx.arc(p.x, p.y, hot ? 6 : 4.5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = C.surface; ctx.lineWidth = 1.6; ctx.stroke();
+      var u = unit(n, i);
+      lab(ctx, String(i), g.cx + u.x * (g.R + 17), g.cy + u.y * (g.R + 17),
+          "center", hot ? C.gold : C["ink-faint"], 10.5, hot ? 600 : 400);
+    }
+
+    // 고른 꼭짓점에서 잰 각
+    if (V.sel !== null && V.sel !== undefined && drawn >= M.list.length) {
+      var a = vertexArc(ctx, n, k, V.sel, g, C.gold, 2.4);
+      chip(ctx, fmtDeg(angAt(n, k, V.sel)),
+           a.p.x + Math.cos(a.mid) * (a.r + 20), a.p.y + Math.sin(a.mid) * (a.r + 20), C.gold, 11.5);
+    }
+
+    // 진행 중인 펜과 튼 각
+    if (V.anim && V.anim.mi < M.list.length) {
+      var m = M.list[V.anim.mi];
+      var Pa = pt(n, m.a, g), Pb = pt(n, m.b, g), px, py, head;
+      if (V.anim.phase === "move") {
+        px = Pa.x + (Pb.x - Pa.x) * V.anim.t;
+        py = Pa.y + (Pb.y - Pa.y) * V.anim.t;
+        head = m.hin;
+      } else {
+        px = Pb.x; py = Pb.y;
+        head = m.hin + m.turn * V.anim.t;
+        // 튼 각을 부채꼴로
+        ctx.strokeStyle = C.gold; ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(Pb.x, Pb.y);
+        ctx.lineTo(Pb.x + Math.cos(m.hin) * 40, Pb.y + Math.sin(m.hin) * 40);
+        ctx.stroke();
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        ctx.arc(Pb.x, Pb.y, 32, m.hin, m.hin + m.turn * V.anim.t, m.turn < 0);
+        ctx.stroke();
+      }
+      penArrow(ctx, px, py, head, C.gold);
+    }
+
+    // 호버한 줄의 튼 각
+    if (V.hoverMove !== null && V.hoverMove !== undefined) {
+      var hm = M.list[V.hoverMove], Ph = pt(n, hm.b, g);
+      ctx.strokeStyle = C.gold; ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.arc(Ph.x, Ph.y, 32, hm.hin, hm.hin + hm.turn, hm.turn < 0);
+      ctx.stroke();
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(Ph.x, Ph.y);
+      ctx.lineTo(Ph.x + Math.cos(hm.hin) * 40, Ph.y + Math.sin(hm.hin) * 40);
+      ctx.stroke();
+    }
+  }
+
+  /* ---------------- 한 붓 애니메이션 ---------------- */
+  var MOVE_MS = 200, TURN_MS = 190;
+  var A = { on: false, target: "lab", mi: 0, phase: "move", t: 0, el: 0, acc: 0, done: false,
+            onTurn: null, onDone: null, n: 5, k: 2 };
+  var raf = 0, lastTs = 0;
+
+  function accNow() {
+    if (!A.on && !A.done) return 0;
+    var M = moves(A.n, A.k), extra = 0;
+    if (A.on && A.phase === "turn" && A.mi < M.list.length) extra = M.list[A.mi].turn * A.t;
+    return Math.abs((A.acc + extra) * 180 / Math.PI);
+  }
+
+  function animStart(target, opts) {
+    animStop();
+    A = { on: true, target: target, mi: 0, phase: "move", t: 0, el: 0, acc: 0, done: false,
+          onTurn: (opts && opts.onTurn) || null, onDone: (opts && opts.onDone) || null,
+          n: S.n, k: S.k };
+    if (reduce) {
+      var M = moves(A.n, A.k);
+      for (var i = 0; i < M.list.length; i++) {
+        A.acc += M.list[i].turn; A.mi = i + 1;
+        if (A.onTurn) A.onTurn(i, Math.abs(A.acc * 180 / Math.PI));
+      }
+      A.on = false; A.done = true;
+      redrawTarget();
+      if (A.onDone) A.onDone(Math.abs(A.acc * 180 / Math.PI));
+      return;
+    }
+    lastTs = 0;
+    raf = requestAnimationFrame(animStep);
+  }
+
+  function animStop() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    A.on = false;
+  }
+
+  function animStep(ts) {
+    if (!A.on) return;
+    if (!lastTs) lastTs = ts;
+    var dt = Math.min(90, ts - lastTs);
+    lastTs = ts;
+    var M = moves(A.n, A.k);
+    A.el += dt;
+    var dur = A.phase === "move" ? MOVE_MS : TURN_MS;
+    while (A.el >= dur) {
+      A.el -= dur;
+      if (A.phase === "move") {
+        A.phase = "turn";
+      } else {
+        A.acc += M.list[A.mi].turn;
+        if (A.onTurn) A.onTurn(A.mi, Math.abs(A.acc * 180 / Math.PI));
+        A.mi++;
+        if (A.mi >= M.list.length) {
+          A.on = false; A.done = true; A.t = 0; A.el = 0;
+          redrawTarget();
+          if (A.onDone) A.onDone(Math.abs(A.acc * 180 / Math.PI));
+          return;
+        }
+        A.phase = "move";
+      }
+      dur = A.phase === "move" ? MOVE_MS : TURN_MS;
+    }
+    A.t = A.el / dur;
+    redrawTarget();
+    raf = requestAnimationFrame(animStep);
+  }
+
+  function redrawTarget() {
+    if (A.target === "lab") { drawLab(); paintStrip(); markRoute(); }
+    else drawProof();
+  }
+
+  /* ---------------- 실험대 ---------------- */
+  var starC = $("star"), starX = starC.getContext("2d");
+
+  function drawLab() {
+    var d = fit(starC, starX);
+    if (!d) return;
+    var running = (A.target === "lab" && A.on);
+    drawStar(starX, d.w, d.h, {
+      n: S.n, k: S.k, arcs: S.arcs, sel: S.sel, hover: S.hover, hoverMove: S.hoverMove,
+      path: running ? A.mi : moves(S.n, S.k).list.length,
+      anim: running ? A : null
+    });
+  }
+
+  function setTxt(id, v) { $(id).textContent = v; }
+
+  function paintStrip() {
+    var M = moves(S.n, S.k), d = M.d;
+    var live = (A.target === "lab" && (A.on || A.done));
+    var acc = live ? accNow() : M.total;
+    setTxt("s-gcd", "gcd(" + S.n + ", " + S.k + ") = " + d);
+    var piece = $("s-piece");
+    piece.textContent = d === 1 ? "한 붓" : ("조각 " + d + "개");
+    piece.className = "cnt" + (d === 1 ? "" : " split");
+    setTxt("s-acc", acc.toFixed(1) + "°");
+    setTxt("s-lap", (acc / 360).toFixed(2));
+    var strip = $("strip");
+    strip.className = "strip" + (d === 1 ? "" : " bad");
+    $("s-why").innerHTML = d === 1
+      ? (A.on && A.target === "lab"
+          ? "꼭짓점 <b>" + A.mi + " / " + S.n + "</b>개를 지났다."
+          : "꼭짓점 " + S.n + "개를 지나며 방향이 <b>" + M.total.toFixed(0) + "°</b> — <b>" + S.k + "바퀴</b> 돈다.")
+      : "<b>한 붓으로 안 그려진다.</b> 같은 별이 " + d + "조각으로 나뉘고, 조각마다 "
+        + (S.k / d) + "바퀴씩 돌아 합쳐 " + S.k + "바퀴다.";
+  }
+
+  function paintEq() {
+    var sum = angSum(S.n, S.k), want = formula(S.n, S.k);
+    var same = Math.abs(sum - want) < 1e-6;
+    // 슬라이더를 아무리 움직여도 안 변하는 것 — 꼭짓점 n 개의 각이 서로 같다
+    var lo = Infinity, hi = -Infinity;
+    for (var j = 0; j < S.n; j++) {
+      var a = angAt(S.n, S.k, j);
+      if (a < lo) lo = a;
+      if (a > hi) hi = a;
+    }
+    var el = $("eq");
+    el.className = "strip " + (same ? "good" : "bad");
+    el.innerHTML = "<span class='cnt'>잰 합 " + sum.toFixed(2) + "°</span>"
+      + "<span class='cnt'>180(" + S.n + " − 2·" + S.k + ") = " + want + "°</span>"
+      + "<span class='why'>" + (same
+          ? "일치한다. 꼭짓점 " + S.n + "개의 각이 서로 같고(최대 − 최소 = <b>"
+            + (hi - lo).toFixed(3) + "°</b>) 그 각이 <b>" + fmtDeg(angAt(S.n, S.k, 0)) + "</b>."
+          : "어긋난다.") + "</span>";
+  }
+
+  function renderRoute() {
+    var M = moves(S.n, S.k), acc = 0;
+    var h = "<thead><tr><th>순서</th><th>꼭짓점</th><th>튼 각</th><th>튼 각의 합</th><th>바퀴</th></tr></thead><tbody>";
+    for (var i = 0; i < M.list.length; i++) {
+      var m = M.list[i];
+      acc += Math.abs(m.turn) * 180 / Math.PI;
+      var cut = (i + 1 < M.list.length && M.list[i + 1].lift);
+      h += "<tr data-i='" + i + "'" + (cut ? " class='cut'" : "") + ">"
+         + "<td>" + (i + 1) + "</td>"
+         + "<td>" + m.a + " → " + m.b + "</td>"
+         + "<td>" + (Math.abs(m.turn) * 180 / Math.PI).toFixed(2) + "°</td>"
+         + "<td>" + acc.toFixed(1) + "°</td>"
+         + "<td class='lap'>" + (acc / 360).toFixed(2) + "</td></tr>";
+    }
+    h += "</tbody><tfoot><tr><td>총합</td><td></td><td></td>"
+       + "<td class='g'>" + M.total.toFixed(1) + "°</td>"
+       + "<td class='g'>" + (M.total / 360).toFixed(2) + "</td></tr></tfoot>";
+    var el = $("route");
+    el.innerHTML = h;
+    Array.prototype.forEach.call(el.querySelectorAll("tbody tr"), function (tr) {
+      var i = parseInt(tr.getAttribute("data-i"), 10);
+      tr.addEventListener("mouseenter", function () {
+        S.hoverMove = i; S.hover = moves(S.n, S.k).list[i].b; drawLab();
+      });
+      tr.addEventListener("mouseleave", function () {
+        S.hoverMove = null; S.hover = null; drawLab();
+      });
+    });
+  }
+
+  function markRoute() {
+    if (!(A.target === "lab" && A.on)) return;
+    Array.prototype.forEach.call($("route").querySelectorAll("tbody tr"), function (tr) {
+      var i = parseInt(tr.getAttribute("data-i"), 10);
+      var cls = tr.className.replace(/\bon\b/, "").trim();
+      tr.className = (i === A.mi) ? (cls + " on").trim() : cls;
+    });
+  }
+
+  function syncK() {
+    var mx = kmax(S.n);
+    $("i-k").max = mx;
+    if (S.k > mx) S.k = mx;
+    $("i-k").value = S.k;
+    $("v-kmax").textContent = "(1 ~ " + mx + ")";
+  }
+
+  function refreshLab() {
+    syncK();
+    setTxt("v-n", S.n); setTxt("v-k", S.k);
+    setTxt("r-n", S.n); setTxt("r-k", S.k);
+    setTxt("r-ang", fmtDeg(angAt(S.n, S.k, 0)));
+    setTxt("r-sum", angSum(S.n, S.k).toFixed(1) + "°");
+    setTxt("r-form", formula(S.n, S.k));
+    setTxt("r-lap", (moves(S.n, S.k).total / 360).toFixed(2));
+    paintStrip();
+    paintEq();
+    renderRoute();
+    checkMissions();
+    syncProofHeader();
+    drawLab();
+  }
+
+  function setMsg(id, html, kind) {
+    var el = $(id);
+    el.className = "msg" + (kind ? " " + kind : "");
+    el.innerHTML = html;
+  }
+
+  /* ---------------- 미션 ---------------- */
+  var MISSIONS = [
+    { t: "각의 합이 <b>180°</b>인 별을 <code>{5/2}</code> 말고 하나 더 찾는다." },
+    { t: "각의 합이 <b>가장 큰 별</b>(<code>k ≥ 2</code>)을 찾는다. <code>n</code>은 15까지 올라간다." },
+    { t: "<code>k = 1</code>로 두고 합이 <code>180(n − 2)</code> — 교과서 공식과 같아지는 것을 확인한다." }
+  ];
+  var BEST_SUM = 1980;   // n ≤ 15, k ≥ 2 에서 180(n − 2k) 의 최댓값 = {15/2}
+
+  function renderMissions() {
+    var html = "";
+    for (var i = 0; i < MISSIONS.length; i++) {
+      html += '<div class="mission' + (S.missions[i] ? " done" : "") + '">'
+            + '<span class="box">✓</span><span class="txt">' + MISSIONS[i].t + "</span></div>";
+    }
+    $("missions").innerHTML = html;
+    $("mission-progress").textContent = S.missions.filter(Boolean).length + " / " + MISSIONS.length;
+  }
+
+  function checkMissions() {
+    var before = S.missions.slice();
+    var sum = angSum(S.n, S.k), n = S.n, k = S.k;
+    if (k >= 2 && gcd(n, k) === 1 && Math.abs(sum - 180) < 1e-6 && !(n === 5 && k === 2)) S.missions[0] = true;
+    if (k >= 2 && gcd(n, k) === 1 && Math.abs(sum - BEST_SUM) < 1e-6) S.missions[1] = true;
+    if (k === 1) S.missions[2] = true;
+    if (S.missions.join() !== before.join()) {
+      renderMissions();
+      var done = -1;
+      for (var i = 0; i < S.missions.length; i++) if (!before[i] && S.missions[i]) done = i;
+      if (done === 0) setMsg("lab-msg", "미션 1 달성. <code>{" + n + "/" + k + "}</code> — <code>n − 2k = 1</code>이면 합은 언제나 <b>180°</b>다.", "ok");
+      else if (done === 1) setMsg("lab-msg", "미션 2 달성. 합 <code>180(n − 2k)</code>는 <code>n</code>이 클수록, <code>k</code>가 작을수록 크다.", "ok");
+      else if (done === 2) setMsg("lab-msg", "미션 3 달성. <code>k = 1</code>이면 한 바퀴만 돌아 <code>180(n − 2)</code> — 볼록 다각형 공식이다.", "ok");
+    }
+  }
+
+  /* ---------------- 실험대 조작 ---------------- */
+  function setNK(n, k, quiet) {
+    S.n = Math.max(5, Math.min(15, n));
+    S.k = Math.max(1, Math.min(kmax(S.n), k));
+    $("i-n").value = S.n;
+    S.sel = null; S.hover = null; S.hoverMove = null;
+    stopDraw();
+    A.done = false;
+    // 별이 바뀌면 진행 중이던 증명 실행은 다른 별의 것이 된다 — 접는다
+    if (pr.running) {
+      resetRun(); renderProg(); clearLog();
+      logLine("—", "별이 바뀌어 실행을 접었다.");
+      setMsg("proof-msg", "실험대에서 별이 바뀌었다. 다시 <b>▶ 실행</b>.", "");
+    }
+    refreshLab();
+    if (!quiet) setMsg("lab-msg", "별 <code>{" + S.n + "/" + S.k + "}</code> — <b>▶ 한 붓 그리기</b>로 방향이 몇 바퀴 도는지 본다.", "");
+  }
+
+  $("i-n").addEventListener("input", function () { setNK(parseInt(this.value, 10), S.k, true); });
+  $("i-k").addEventListener("input", function () { setNK(S.n, parseInt(this.value, 10), true); });
+
+  starC.addEventListener("click", function (ev) {
+    var r = starC.getBoundingClientRect();
+    var px = ev.clientX - r.left, py = ev.clientY - r.top;
+    var g = geom(starC.clientWidth, starC.clientHeight);
+    var best = -1, bd = 22;
+    for (var j = 0; j < S.n; j++) {
+      var p = pt(S.n, j, g);
+      var dd = Math.hypot(px - p.x, py - p.y);
+      if (dd < bd) { bd = dd; best = j; }
+    }
+    if (best < 0) { S.sel = null; drawLab(); return; }
+    S.sel = (S.sel === best) ? null : best;
+    drawLab();
+    if (S.sel !== null) {
+      setMsg("lab-msg", "꼭짓점 <b>" + best + "</b>의 각 — 두 이웃(<b>" + mod(best - S.k, S.n) + "</b>, <b>"
+        + mod(best + S.k, S.n) + "</b>) 방향으로 그은 두 선분이 이루는 각을 좌표에서 재면 <b>"
+        + fmtDeg(angAt(S.n, S.k, best), 3) + "</b>. 공식값은 <code>180(" + S.n + " − 2·" + S.k + ")/"
+        + S.n + " = " + fmtDeg(formula(S.n, S.k) / S.n, 3) + "</code>.", "ok");
+    }
+  });
+
+  starC.addEventListener("keydown", function (ev) {
+    if (ev.key === "ArrowLeft") { setNK(S.n, S.k - 1, true); ev.preventDefault(); }
+    else if (ev.key === "ArrowRight") { setNK(S.n, S.k + 1, true); ev.preventDefault(); }
+    else if (ev.key === "ArrowDown") { setNK(S.n - 1, S.k, true); ev.preventDefault(); }
+    else if (ev.key === "ArrowUp") { setNK(S.n + 1, S.k, true); ev.preventDefault(); }
+  });
+
+  function stopDraw() {
+    if (A.target === "lab") { animStop(); }
+    $("b-draw").disabled = false;
+    $("b-stop").disabled = true;
+  }
+
+  $("b-draw").addEventListener("click", function () {
+    $("b-draw").disabled = true;
+    $("b-stop").disabled = false;
+    var M = moves(S.n, S.k);
+    setMsg("lab-msg", M.d === 1
+      ? "한 붓으로 돈다. 화살표가 꼭짓점마다 튼 각만큼 돌아간다 — 튼 각의 합이 쌓이는 것을 본다."
+      : "<b>gcd(" + S.n + ", " + S.k + ") = " + M.d + "</b> — 한 붓으로 안 그려진다. 점선은 붓을 뗀 자리다.",
+      M.d === 1 ? "" : "warn");
+    animStart("lab", {
+      onDone: function (acc) {
+        stopDraw();
+        var e = moves(S.n, S.k).ext;
+        setMsg("lab-msg", "지금까지 튼 각의 합 <b>" + acc.toFixed(1) + "°</b> = 360° × <b>" + S.k
+          + "</b>" + (M.d > 1 ? " (조각 " + M.d + "개를 합쳐서)" : "")
+          + ". 꼭짓점 " + S.n + "개로 나누면 한 번에 튼 각이 <b>" + fmtDeg(e)
+          + "</b>, 꼭짓점의 각은 <code>180° − " + e.toFixed(2) + "° = "
+          + fmtDeg(angAt(S.n, S.k, 0)) + "</code>.", "ok");
+        paintStrip();
+      }
+    });
+  });
+
+  $("b-stop").addEventListener("click", function () {
+    stopDraw();
+    A.done = false;
+    refreshLab();
+    setMsg("lab-msg", "중단했다.", "");
+  });
+
+  $("b-arcs").addEventListener("click", function () {
+    S.arcs = !S.arcs;
+    this.setAttribute("aria-pressed", String(S.arcs));
+    drawLab();
+  });
+
+  $("b-reset").addEventListener("click", function () {
+    setNK(5, 2, true);
+    setMsg("lab-msg", "오각별 <code>{5/2}</code>로 돌아왔다.", "");
+  });
+
+  /* ---------------- 증명 조립 ---------------- */
+  var pstarC = $("pstar"), pstarX = pstarC.getContext("2d");
+  var prog = [], pr = { step: -1, drawn: false, arcs: false, running: false };
+  var STEP_MS = reduce ? 0 : 620;
+
+  var KIND = {
+    draw:  { label: "한 붓으로 그린다" },
+    turn:  { label: "꼭짓점마다 방향을 튼 각을 잰다" },
+    add:   { label: "튼 각을 전부 더한다" },
+    total: { label: "총합 = 360° × 바퀴 수" },
+    swap:  { label: "외각과 내각을 바꾼다" },
+    sum:   { label: "합을 구한다" }
+  };
+  var ORDER = ["draw", "turn", "add", "total", "swap", "sum"];
+
+  function drawProof() {
+    var d = fit(pstarC, pstarX);
+    if (!d) return;
+    drawStar(pstarX, d.w, d.h, {
+      n: S.n, k: S.k, arcs: pr.arcs, sel: null, hover: null, hoverMove: null,
+      path: (A.target === "proof" && A.on) ? A.mi : (pr.drawn ? moves(S.n, S.k).list.length : 0),
+      anim: (A.target === "proof" && A.on) ? A : null
+    });
+  }
+
+  function renderProg() {
+    if (!prog.length) {
+      $("prog-list").innerHTML = '<div class="empty">왼쪽 블록을 눌러<br>증명의 순서를 쌓는다</div>';
+    } else {
+      var h = "";
+      for (var i = 0; i < prog.length; i++) {
+        h += '<div class="pitem' + (pr.running && pr.step === i ? " run" : "") + '">'
+           + '<span class="n">' + (i + 1) + "</span><span>" + KIND[prog[i]].label + "</span>"
+           + '<button class="rm" data-i="' + i + '" aria-label="' + (i + 1) + '번 블록 제거">×</button></div>';
+      }
+      $("prog-list").innerHTML = h;
+      Array.prototype.forEach.call($("prog-list").querySelectorAll(".rm"), function (b) {
+        b.addEventListener("click", function () {
+          prog.splice(parseInt(b.getAttribute("data-i"), 10), 1);
+          resetRun(); renderProg();
+        });
+      });
+    }
+    $("b-run").disabled = prog.length === 0 || pr.running;
+    ORDER.forEach(function (key) { $("k-" + key).disabled = pr.running; });
+  }
+
+  function syncProofHeader() {
+    var M = moves(S.n, S.k);
+    $("pm-star").textContent = "{" + S.n + "/" + S.k + "}";
+    $("pm-n").textContent = S.n;
+    $("pm-d").textContent = M.d;
+    drawProof();
+  }
+
+  function resetRun() {
+    if (A.target === "proof") animStop();
+    pr = { step: -1, drawn: false, arcs: false, running: false };
+    A.done = false;
+    drawProof();
+  }
+
+  function logLine(t, html) {
+    var el = $("proof-log");
+    var d = document.createElement("div");
+    d.innerHTML = '<span class="t">' + t + "</span><span>" + html + "</span>";
+    el.appendChild(d);
+    el.scrollTop = el.scrollHeight;
+  }
+  function clearLog() { $("proof-log").innerHTML = ""; }
+
+  ORDER.forEach(function (key) {
+    $("k-" + key).addEventListener("click", function () {
+      prog.push(key); resetRun(); renderProg();
+    });
+  });
+
+  $("b-clear").addEventListener("click", function () {
+    prog = []; resetRun(); renderProg(); clearLog();
+    logLine("—", "지웠다.");
+    setMsg("proof-msg", "블록 여섯 개를 순서대로 쌓고 <b>▶ 실행</b>.", "");
+  });
+
+  function firstIndex(key) { return prog.indexOf(key); }
+
+  // 진짜 검사 — 빠지거나 겹치거나 순서가 뒤집히면 멈춘다
+  function validate() {
+    var i, key, cnt;
+    for (i = 0; i < ORDER.length; i++) {
+      key = ORDER[i];
+      cnt = prog.filter(function (x) { return x === key; }).length;
+      if (cnt === 0) return { msg: "<b>" + KIND[key].label + "</b> 블록이 빠졌다.", log: "빠진 블록 — " + KIND[key].label };
+      if (cnt > 1) return { msg: "<b>" + KIND[key].label + "</b>이 " + cnt + "번 들어갔다. 각 블록은 한 번씩 쓴다.", log: "중복 블록 — " + KIND[key].label };
+    }
+    if (prog[0] !== "draw") {
+      return { msg: "<b>한 붓으로 그린다</b>가 먼저다. 잇는 순서가 정해지지 않으면 어느 꼭짓점에서 어느 방향으로 트는지가 없어 잴 각이 없다.",
+               log: "멈춤 — 첫 블록이 한 붓 그리기가 아니다." };
+    }
+    if (firstIndex("add") < firstIndex("turn")) {
+      return { msg: "<b>튼 각을 전부 더한다</b>가 <b>방향을 튼 각을 잰다</b>보다 앞에 있다. 재지 않은 것을 더할 수 없다.",
+               log: "멈춤 — 더하기가 재기보다 앞이다." };
+    }
+    if (firstIndex("total") < firstIndex("add")) {
+      return { msg: "<b>총합 = 360° × 바퀴 수</b>는 <b>n개를 다 더한 뒤</b>에 온다. 한 꼭짓점의 각 하나를 두고 360°의 배수라고 할 수 없다.",
+               log: "멈춤 — 총합 주장이 더하기보다 앞이다." };
+    }
+    if (firstIndex("swap") < firstIndex("total")) {
+      return { msg: "<b>외각과 내각을 바꾼다</b>가 <b>총합 = 360k</b>보다 앞에 있다. 더한 값이 무엇과 같은지 못 박기 전에 바꾸면, 바꾼 식이 <code>360k</code>와 이어지지 않는다.",
+               log: "멈춤 — 내각 바꾸기가 360k 보다 앞이다." };
+    }
+    if (prog[prog.length - 1] !== "sum") {
+      return { msg: "<b>합을 구한다</b>가 마지막이다. 결론 뒤에 단계가 더 붙으면 그 단계는 증명에 쓰이지 않는다.",
+               log: "멈춤 — 마지막 블록이 결론이 아니다." };
+    }
+    return null;
+  }
+
+  $("b-run").addEventListener("click", function () {
+    clearLog(); resetRun();
+    var bad = validate();
+    if (bad) {
+      setMsg("proof-msg", bad.msg, "warn");
+      logLine("!", "<b>" + bad.log + "</b>");
+      renderProg();
+      return;
+    }
+
+    var n = S.n, k = S.k, M = moves(n, k);
+    var ext = M.ext, ang = angAt(n, k, 0), sum = angSum(n, k), want = formula(n, k);
+    pr.running = true;
+    setMsg("proof-msg", "실행 중…", "");
+    renderProg();
+
+    function next() { setTimeout(tick, STEP_MS); }
+
+    function tick() {
+      if (!pr.running) return;   // 별이 바뀌어 접힌 실행의 예약된 tick 은 버린다
+      pr.step++;
+      renderProg();
+      if (pr.step >= prog.length) {
+        pr.running = false;
+        var same = Math.abs(sum - want) < 1e-6;
+        setMsg("proof-msg", "잰 합 <b>" + sum.toFixed(2) + "°</b> · <code>180(" + n + " − 2·" + k
+          + ") = " + want + "°</code>" + (same ? " — 일치한다." : " — 어긋난다."), same ? "ok" : "warn");
+        renderProg();
+        return;
+      }
+      var key = prog[pr.step], no = String(pr.step + 1);
+
+      if (key === "draw") {
+        pr.drawn = true;
+        var seq = [], m0 = moves(n, k);
+        for (var i = 0; i < Math.min(m0.list.length, n); i++) seq.push(m0.list[i].a);
+        logLine(no, "한 붓 — " + seq.join(" → ") + " → " + m0.list[0].a);
+        if (m0.d > 1) {
+          logLine("", "<b>gcd(" + n + ", " + k + ") = " + m0.d + "</b> — 한 붓이 아니라 <b>" + m0.d
+            + "조각</b>. 조각마다 " + (k / m0.d) + "바퀴씩 돈다.");
+        }
+        animStart("proof", {
+          onDone: function (acc) {
+            logLine("", "출발점으로 돌아왔다 — 튼 각의 합 <b class='g'>" + acc.toFixed(2) + "°</b>");
+            next();
+          }
+        });
+        return;
+      }
+
+      if (key === "turn") {
+        pr.arcs = true;
+        drawProof();
+        logLine(no, "튼 각(진행 방향이 꺾인 각) <b>" + ext.toFixed(3) + "°</b> — 꼭짓점 " + n + "개 모두 같다.");
+      } else if (key === "add") {
+        logLine(no, n + " × " + ext.toFixed(3) + "° = <b>" + (ext * n).toFixed(2) + "°</b>");
+      } else if (key === "total") {
+        logLine(no, "처음 방향으로 돌아왔으므로 총합은 360°의 배수 — " + (ext * n).toFixed(2)
+          + "° ÷ 360° = <b class='g'>" + (ext * n / 360).toFixed(2) + " 바퀴</b> — 바퀴 수 = k = <b>" + k + "</b>");
+        logLine("", "따라서 <b>n × 외각 = 360k</b> → 외각 = 360·" + k + "/" + n + " = <b>"
+          + (360 * k / n).toFixed(3) + "°</b>");
+      } else if (key === "swap") {
+        logLine(no, "내각 = 180° − 외각 = 180° − " + (360 * k / n).toFixed(3) + "° = <b>"
+          + ang.toFixed(3) + "°</b> = 180(" + n + " − 2·" + k + ")/" + n);
+      } else if (key === "sum") {
+        logLine(no, "합 = " + n + " × " + ang.toFixed(3) + "° = <b class='g'>" + sum.toFixed(2)
+          + "°</b> = 180(" + n + " − 2·" + k + ") = <b>" + want + "°</b>");
+      }
+      next();
+    }
+    tick();
+  });
+
+  /* ---------------- 이 n 의 k 를 전부 시험 ---------------- */
+  $("b-sweepk").addEventListener("click", function () {
+    var n = S.n, rows = [], k;
+    for (k = 1; k <= kmax(n); k++) {
+      if (gcd(n, k) !== 1) continue;
+      rows.push({ k: k, sum: angSum(n, k), pred: formula(n, k) });
+    }
+    var h = "<thead><tr><th>k</th><th>잰 각의 합</th><th>180(n − 2k)</th><th>앞 줄과의 차</th></tr></thead><tbody>";
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var d = i ? (rows[i - 1].sum - r.sum) : null;
+      h += "<tr data-k='" + r.k + "'" + (r.k === S.k ? " class='on'" : "") + ">"
+         + "<td>" + r.k + "</td>"
+         + "<td>" + r.sum.toFixed(1) + "°</td>"
+         + "<td>" + r.pred + "°</td>"
+         + "<td>" + (d === null ? "—" : d.toFixed(1) + "°") + "</td></tr>";
+    }
+    h += "</tbody>";
+    var el = $("ksweep");
+    el.innerHTML = h;
+    Array.prototype.forEach.call(el.querySelectorAll("tbody tr"), function (tr) {
+      tr.addEventListener("click", function () {
+        setNK(n, parseInt(tr.getAttribute("data-k"), 10));
+      });
+    });
+    setMsg("lab-msg", "<code>n = " + n + "</code> 에서 <code>gcd(n, k) = 1</code> 인 별이 <b>"
+      + rows.length + "</b>개다. 표의 줄을 누르면 그 별을 그린다. 마지막 칸이 전부 <b>360.0°</b>면 "
+      + "<code>k</code> 를 하나 올릴 때마다 각의 합이 <code>360°</code> 씩 줄어든다는 뜻이다 — "
+      + "<code>k</code> 가 건너뛴 자리에서는 그만큼 배로 뛴다.", "ok");
+  });
+
+  /* ---------------- 반례 사냥 ---------------- */
+  var H = { running: false, i: 0, pairs: [], claim: "star", bad: 0, worst: 0, worstAt: null,
+            checked: 0, lap: 0, hits: [], probe: [], probeN: [] };
+
+  var CLAIM = {
+    star: { name: "합 = 180(n − 2k)", sum: function (n, k) { return 180 * (n - 2 * k); } },
+    poly: { name: "합 = 180(n − 2)",  sum: function (n) { return 180 * (n - 2); } },
+    ang:  { name: "한 각 = 360/n",     sum: function () { return 360; } },
+    p180: { name: "합 = 180",          sum: function () { return 180; } }
+  };
+
+  function buildPairs(nmax) {
+    var out = [];
+    for (var n = 5; n <= nmax; n++) {
+      for (var k = 1; k <= kmax(n); k++) if (gcd(n, k) === 1) out.push([n, k]);
+    }
+    return out;
+  }
+
+  // 숫자 뒤에 조사를 붙이지 않는다 — 읽는 음(일·이·삼…)마다 조사가 달라진다
+  function whyLine(claim, n, k, sum, pred) {
+    if (claim === "p180") {
+      if (n - 2 * k === 1) return "<b>n − 2k = 1</b> — 오각별과 같은 자리다. 이 별에서만 합이 180 이 된다.";
+      return "<b>n − 2k = " + (n - 2 * k) + "</b> — 오각별은 <code>5 − 2·2 = 1</code> 이었다. "
+           + "합은 <code>180 · " + (n - 2 * k) + " = " + (180 * (n - 2 * k))
+           + "°</code> 라 <b>" + (n - 2 * k) + " 배</b> 어긋난다.";
+    }
+    if (claim === "poly") {
+      if (k === 1) return "<b>k = 1</b> — 한 바퀴짜리 볼록 다각형. 두 식이 같아진다.";
+      return "<b>k = " + k + "</b> — 방향이 <b>" + k + "바퀴</b> 돈다. 볼록 공식은 한 바퀴(<code>k = 1</code>)만 "
+           + "가정하므로 <code>360(k − 1) = " + (360 * (k - 1)) + "°</code>만큼 어긋난다.";
+    }
+    if (claim === "ang") {
+      if (Math.abs(sum - pred) < 1e-6) return "<b>n − 2k = 2</b>인 별. 이 경우에만 우연히 맞는다.";
+      return "<code>한 각 = 360/n</code>은 <code>n − 2k = 2</code>인 별에서만 맞는다. 여기는 <b>n − 2k = "
+           + (n - 2 * k) + "</b> — 어긋난다.";
+    }
+    return "<b>k = " + k + "</b> — <b>" + k + "바퀴</b>. 외각 <code>360·" + k + "/" + n + " = "
+         + (360 * k / n).toFixed(2) + "°</code>, 한 각 <code>180 − " + (360 * k / n).toFixed(2) + " = "
+         + (sum / n).toFixed(2) + "°</code>, " + n + "배 하면 <code>" + pred.toFixed(0) + "°</code>.";
+  }
+
+  $("h-nmax").addEventListener("input", function () { $("h-nmax-v").textContent = this.value; });
+
+  $("b-hunt").addEventListener("click", function () {
+    var nmax = parseInt($("h-nmax").value, 10);
+    var pairs = buildPairs(nmax);
+    // 골라 보일 별은 목록 위치가 아니라 n 값으로 고른다 — 목록은 큰 n 쪽에 몰려 있다
+    var probeN = [5, 9, Math.max(13, Math.round(nmax / 3)), nmax - 1];
+    H = { running: true, i: 0, pairs: pairs, claim: $("h-claim").value, bad: 0, worst: 0,
+          worstAt: null, checked: 0, lap: 0, hits: [], probe: [], probeN: probeN,
+          pass: 0, kOne: null, kAll: true, gOne: null, gAll: true };
+    $("b-hunt").disabled = true;
+    $("b-hunt-stop").disabled = false;
+    $("h-hits").innerHTML = "";
+    setMsg("h-msg", "사냥 중… 별 " + pairs.length.toLocaleString() + "개를 하나도 빠짐없이 검사한다.", "");
+    requestAnimationFrame(huntChunk);
+  });
+
+  $("b-hunt-stop").addEventListener("click", function () {
+    H.running = false;
+    finishHunt(true);
+  });
+
+  function nowMs() { return (window.performance && performance.now) ? performance.now() : Date.now(); }
+
+  function huntChunk() {
+    if (!H.running) return;
+    // 프레임마다 14ms 어치만 — 화면이 멈추지 않으면서 최대한 빨리 끝난다.
+    // 한 프레임에 최소 하나는 처리한다: 앞 프레임이 길었으면 예산 검사가 i=0 에서
+    // 걸려 아무것도 못 하고 같은 자리를 맴돌 수 있다.
+    var t0 = nowMs(), start = H.i;
+    for (; H.i < H.pairs.length; H.i++) {
+      if (H.i - start >= 32 && (H.i & 7) === 0 && nowMs() - t0 > 14) break;
+      var n = H.pairs[H.i][0], k = H.pairs[H.i][1];
+      var s = 0;
+      for (var j = 0; j < n; j++) { s += angAt(n, k, j); H.checked++; }
+      // 급소를 같이 잰다 — 튼 각의 합은 360 의 배수여야 한다.
+      // 꼭짓점 각이 180 − 외각 이므로 외각의 합 = 180n − (각의 합).
+      var lap = (180 * n - s) / 360;
+      if (Math.abs(lap - Math.round(lap)) > 1e-6) H.lap++;
+      var pred = CLAIM[H.claim].sum(n, k);
+      var dif = s - pred;
+      var rec = { n: n, k: k, sum: s, pred: pred, dif: dif };
+      if (Math.abs(dif) > 1e-6) {
+        H.bad++;
+        if (Math.abs(dif) > H.worst) { H.worst = Math.abs(dif); H.worstAt = rec; }
+        if (H.hits.length < 4) H.hits.push(rec);
+      } else {
+        // 살아남은 별에 공통점이 있는지 — 있으면 그것이 주장이 언제 맞는지의 답이다
+        H.pass++;
+        if (H.kOne === null) H.kOne = k; else if (H.kOne !== k) H.kAll = false;
+        if (H.gOne === null) H.gOne = n - 2 * k; else if (H.gOne !== n - 2 * k) H.gAll = false;
+        if (H.probe.length < H.probeN.length && n >= H.probeN[H.probe.length]) H.probe.push(rec);
+      }
+    }
+    paintHunt();
+    if (H.i < H.pairs.length) requestAnimationFrame(huntChunk);
+    else { H.running = false; finishHunt(false); }
+  }
+
+  function paintHunt() {
+    $("h-bar").style.width = (H.i / Math.max(1, H.pairs.length) * 100).toFixed(1) + "%";
+    setTxt("h-done", H.i.toLocaleString());
+    setTxt("h-lap", H.lap.toLocaleString());
+    setTxt("h-bad", H.bad.toLocaleString());
+    setTxt("h-worst", H.worst === 0 ? "0" : H.worst.toFixed(1) + "°");
+  }
+
+  function finishHunt(stopped) {
+    $("b-hunt").disabled = false;
+    $("b-hunt-stop").disabled = true;
+    paintHunt();
+    var nm = CLAIM[H.claim].name;
+    if (H.bad === 0) {
+      setMsg("h-msg", "별 <b>" + H.i.toLocaleString() + "</b>개 · 꼭짓점 <b>" + H.checked.toLocaleString()
+        + "</b>개를 재서 반례 <b>없음</b>. <code>" + nm + "</code>이 살아남았다. 같은 사냥에서 튼 각의 합이 "
+        + "<code>360</code>의 배수가 아닌 별은 <b>" + H.lap.toLocaleString() + "</b>개다 — 증명이 기대고 있는 "
+        + "「방향이 처음으로 돌아온다」가 여기서는 한 번도 안 무너졌다. 빠짐없이 다 해 봐도 증명은 아니다."
+        + (stopped ? " (중단됨)" : ""), "ok");
+    } else {
+      var pat = "";
+      if (H.pass > 0 && H.kAll) pat = " 살아남은 <b>" + H.pass + "</b>개는 전부 <code>k = " + H.kOne + "</code>.";
+      else if (H.pass > 0 && H.gAll) pat = " 살아남은 <b>" + H.pass + "</b>개는 전부 <code>n − 2k = " + H.gOne + "</code>.";
+      setMsg("h-msg", "<code>" + nm + "</code>의 반례 <b>" + H.bad.toLocaleString() + "</b>개 / 검사 "
+        + H.i.toLocaleString() + "개. 최대 어긋남 <b>" + H.worst.toFixed(1) + "°</b>"
+        + (H.worstAt ? " (<code>{" + H.worstAt.n + "/" + H.worstAt.k + "}</code>)" : "") + "." + pat
+        + " 그래도 튼 각의 합은 <b>" + H.i.toLocaleString() + "</b>개 별에서 모두 <code>360</code>의 배수다 ("
+        + "어긋난 별 <b>" + H.lap.toLocaleString() + "</b>개) — <b>주장이 틀려도 그 밑의 사실은 그대로다.</b>", "warn");
+    }
+    var h = "";
+    if (H.hits.length) {
+      h += '<p class="case-sub">반례 — 주장이 준 값과 잰 값이 다르다</p>';
+      for (var i = 0; i < H.hits.length; i++) h += caseCard(H.hits[i], "hits", i);
+    }
+    // 반례가 있는 주장은 통과한 별을 두 개만 — 같은 이유가 반복되므로
+    var shown = H.hits.length ? Math.min(2, H.probe.length) : H.probe.length;
+    if (shown) {
+      h += '<p class="case-sub">' + (H.hits.length ? "통과 — 주장이 맞은 별" : "검사한 별 가운데 네 개") + "</p>";
+      for (var j = 0; j < shown; j++) h += caseCard(H.probe[j], "probe", j);
+    }
+    $("h-hits").innerHTML = h;
+  }
+
+  function caseCard(t, src, i) {
+    var isBad = Math.abs(t.dif) > 1e-6;
+    var go = (t.n <= 15)
+      ? '<button class="go" data-src="' + src + '" data-i="' + i + '">실험대로 →</button>'
+      : '<span class="nogo">실험대는 n ≤ 15</span>';
+    return '<div class="case ' + (isBad ? "bad" : "ok") + '">'
+      + '<div class="case-head">'
+      +   '<span class="case-tag">' + (isBad ? "반례" : "통과") + "</span>"
+      +   '<span class="case-n">{' + t.n + "/" + t.k + "}</span>"
+      +   '<span class="case-sub2">꼭짓점 ' + t.n + "개 · " + t.k + "칸씩 건너뜀</span>"
+      +   go
+      + "</div>"
+      + '<div class="case-grid">'
+      +   "<div><dt>주장의 합</dt><dd>" + t.pred.toFixed(1) + "°</dd></div>"
+      +   "<div><dt>잰 합</dt><dd class='" + (isBad ? "hi" : "lo") + "'>" + t.sum.toFixed(2) + "°</dd></div>"
+      +   "<div><dt>차이</dt><dd class='" + (isBad ? "hi" : "lo") + "'>"
+      +     (t.dif > 1e-6 ? "+" : (t.dif < -1e-6 ? "−" : "")) + Math.abs(t.dif).toFixed(2) + "°</dd></div>"
+      +   "<div><dt>주장의 한 각</dt><dd>" + (t.pred / t.n).toFixed(2) + "°</dd></div>"
+      +   "<div><dt>잰 한 각</dt><dd>" + (t.sum / t.n).toFixed(2) + "°</dd></div>"
+      + "</div>"
+      + '<p class="case-why">' + whyLine(H.claim, t.n, t.k, t.sum, t.pred) + "</p>"
+      + "</div>";
+  }
+
+  $("h-hits").addEventListener("click", function (ev) {
+    var b = ev.target.closest ? ev.target.closest(".go") : null;
+    if (!b) return;
+    var list = (b.getAttribute("data-src") === "hits") ? H.hits : H.probe;
+    var t = list[parseInt(b.getAttribute("data-i"), 10)];
+    if (!t) return;
+    setMode("lab");
+    setNK(t.n, t.k, true);
+    setMsg("lab-msg", "사냥에서 넘어온 별 <code>{" + t.n + "/" + t.k + "}</code>. 주장 <code>"
+      + CLAIM[H.claim].name + "</code>이 내놓은 값은 <b>" + t.pred.toFixed(1) + "°</b>, 잰 값은 <b>"
+      + t.sum.toFixed(2) + "°</b>. <b>▶ 한 붓 그리기</b>로 몇 바퀴 도는지 센다.",
+      Math.abs(t.dif) > 1e-6 ? "warn" : "ok");
+  });
+
+  /* ---------------- 아직 안 닫힌 곳 ---------------- */
+  var OPEN_ROWS = [[6, 2], [8, 2], [9, 3], [10, 4], [12, 3], [12, 4], [14, 4], [15, 3]];
+
+  // 조각 수는 gcd 를 쓰지 않고 길을 실제로 걸어서 센다
+  function countPieces(n, k) {
+    var seen = [], pieces = 0, s, j;
+    for (s = 0; s < n; s++) {
+      if (seen[s]) continue;
+      pieces++;
+      j = s;
+      while (!seen[j]) { seen[j] = 1; j = (j + k) % n; }
+    }
+    return pieces;
+  }
+
+  function renderOpenTable() {
+    var h = "<thead><tr><th>별</th><th>gcd(n, k)</th><th>조각</th><th>잰 합</th>"
+          + "<th>180(n − 2k)</th><th></th></tr></thead><tbody>";
+    for (var i = 0; i < OPEN_ROWS.length; i++) {
+      var n = OPEN_ROWS[i][0], k = OPEN_ROWS[i][1];
+      h += "<tr><td>{" + n + "/" + k + "}</td>"
+         + "<td>" + gcd(n, k) + "</td>"
+         + "<td>" + countPieces(n, k) + "</td>"
+         + "<td>" + angSum(n, k).toFixed(2) + "°</td>"
+         + "<td>" + formula(n, k) + "°</td>"
+         + "<td><button class='go' data-n='" + n + "' data-k='" + k + "'>실험대로 →</button></td></tr>";
+    }
+    h += "</tbody>";
+    var el = $("open-tbl");
+    el.innerHTML = h;
+    el.addEventListener("click", function (ev) {
+      var b = ev.target.closest ? ev.target.closest(".go") : null;
+      if (!b) return;
+      setMode("lab");
+      setNK(parseInt(b.getAttribute("data-n"), 10), parseInt(b.getAttribute("data-k"), 10), true);
+      setMsg("lab-msg", "한 붓으로 안 그려지는 별이다. <b>▶ 한 붓 그리기</b>로 붓을 뗀 자리(점선)를 본다.", "warn");
+    });
+  }
+
+  /* 점을 원에서 떼어 흔들어 본다. 차례는 그대로 두려고 각도는 간격의 절반 미만으로만 흔든다. */
+  function jitterOnce(n, k, rJit, aJit) {
+    var P = [], j, t, r;
+    for (j = 0; j < n; j++) {
+      t = 2 * Math.PI * j / n + (Math.random() * 2 - 1) * aJit * (2 * Math.PI / n);
+      r = 1 + (Math.random() * 2 - 1) * rJit;
+      P.push({ x: r * Math.cos(t), y: r * Math.sin(t) });
+    }
+    var sum = 0, left = 0, right = 0;
+    for (j = 0; j < n; j++) {
+      var p = P[j], a = P[mod(j - k, n)], b = P[mod(j + k, n)];
+      var ux = a.x - p.x, uy = a.y - p.y, vx = b.x - p.x, vy = b.y - p.y;
+      sum += Math.atan2(Math.abs(ux * vy - uy * vx), ux * vx + uy * vy) * 180 / Math.PI;
+      // 들어온 방향에서 나가는 방향으로 어느 쪽으로 꺾였는가
+      var ix = p.x - a.x, iy = p.y - a.y, ox = b.x - p.x, oy = b.y - p.y;
+      if (ix * oy - iy * ox > 0) left++; else right++;
+    }
+    return { sum: sum, want: formula(n, k), mixed: (left > 0 && right > 0), left: left, right: right };
+  }
+
+  function runJitter(rJit, aJit, label) {
+    var same = 0, mixed = 0, worst = 0, ex = null, i, n, k, ks;
+    for (i = 0; i < 400; i++) {
+      n = 5 + Math.floor(Math.random() * 16);
+      ks = [];
+      for (var q = 1; q <= kmax(n); q++) if (gcd(n, q) === 1) ks.push(q);
+      k = ks[Math.floor(Math.random() * ks.length)];
+      var r = jitterOnce(n, k, rJit, aJit);
+      if (r.mixed) {
+        mixed++;
+        // 보기는 별(k ≥ 2)을 먼저 쓴다 — k = 1 은 볼록 다각형이라 흔들면 쉽게 깨진다
+        if (!ex || (ex.k === 1 && k >= 2)) {
+          ex = { n: n, k: k, sum: r.sum, want: r.want, left: r.left, right: r.right };
+        }
+      } else {
+        same++;
+        worst = Math.max(worst, Math.abs(r.sum - r.want));
+      }
+    }
+    setMsg("jitter-msg",
+      "<b>" + label + "</b> · 별 400개를 흔들어 쟀다.<br>"
+      + "꺾인 방향이 <b>전부 한쪽</b>인 것 <b>" + same + "</b>개 — 잰 합이 <code>180(n − 2k)</code>와 같았다"
+      + " (가장 큰 차이 <b>" + worst.toExponential(1) + "°</b>).<br>"
+      + "방향이 <b>섞인</b> 것 <b>" + mixed + "</b>개 — 잰 합이 달라졌다"
+      + (ex ? " (보기 <code>{" + ex.n + "/" + ex.k + "}</code> — 잰 합 <b>" + ex.sum.toFixed(1)
+              + "°</b>, 공식 <b>" + ex.want + "°</b>, 한쪽으로 꺾인 곳 " + Math.min(ex.left, ex.right) + "군데)" : "")
+      + ".<br>같은 쪽으로만 꺾이면 원 위가 아니어도 합이 그대로다. <b>그 경계가 어디인지는 안 닫혀 있다.</b>",
+      mixed > 0 ? "warn" : "ok");
+  }
+
+  $("b-jitter").addEventListener("click", function () { runJitter(0.45, 0.35, "세게 흔들기"); });
+  $("b-jitter2").addEventListener("click", function () { runJitter(0.15, 0.12, "약하게 흔들기"); });
+
+  /* ---------------- 탭 ---------------- */
+  var TABS = ["lab", "proof", "hunt", "move"];
+  function setMode(m) {
+    if (m !== "lab" && A.target === "lab" && A.on) stopDraw();
+    S.mode = m;
+    TABS.forEach(function (t) {
+      $("tab-" + t).setAttribute("aria-selected", String(t === m));
+      $("pane-" + t).hidden = (t !== m);
+    });
+    readTokens();
+    if (m === "lab") drawLab();
+    if (m === "proof") { syncProofHeader(); renderProg(); }
+  }
+  TABS.forEach(function (t) {
+    $("tab-" + t).addEventListener("click", function () { setMode(t); });
+  });
+
+  /* ---------------- boot ---------------- */
+  function redrawAll() {
+    readTokens();
+    if (S.mode === "lab") drawLab();
+    if (S.mode === "proof") drawProof();
+  }
+  window.addEventListener("resize", redrawAll);
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mq.addEventListener) mq.addEventListener("change", redrawAll);
+    else if (mq.addListener) mq.addListener(redrawAll);
+  }
+  new MutationObserver(redrawAll).observe(document.documentElement, {
+    attributes: true, attributeFilter: ["data-theme"]
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(redrawAll);
+
+  readTokens();
+  renderMissions();
+  renderProg();
+  renderOpenTable();
+  refreshLab();
+
+  var PY_PROOF = {
+    draw: ["order = [(i * k) % n for i in range(n + 1)]", "한 붓으로 그린다", ""],
+    turn: ["turn = 360 * k / n", "꼭짓점마다 방향을 튼 각", ""],
+    add: ["total = turn * n", "튼 각을 전부 더한다", ""],
+    total: ["assert total == 360 * k", "총합 = 360 x 바퀴 수", ""],
+    swap: ["inner = 180 - turn", "외각과 내각을 바꾼다", ""],
+    sum: ["print(inner * n)", "합을 구한다", ""]
+  };
+  var PY_CTRL = ["h-claim", "h-nmax"];
+
+  function pyStepNow() { return pr.running ? pr.step : -1; }
+  function pyProofHead() {
+    return "<b># 별 {n/k} 의 뾰족한 각을 다 더하면 얼마인가</b>\n"
+      + "n, k = " + S.n + ", " + S.k + "\n\n";
+  }
+  function pyProofTail() {
+    if (pr.running || pr.step < prog.length || prog.length < 6) return "";
+    return "\n<em># " + (180 * (S.n - 2 * S.k)).toFixed(1) + "</em>";
+  }
+
+  var PY_CLAIM = {
+    star: ["return 180 * (n - 2 * k)", "각의 합 = 180(n - 2k)"],
+    poly: ["return 180 * (n - 2)", "각의 합 = 180(n - 2)"],
+    ang: ["return 360", "한 각 = 360/n (합으로는 360)"],
+    p180: ["return 180", "각의 합 = 180 (오각별처럼)"]
+  };
+  function pyHuntCode() {
+    var st = PY_CLAIM[$("h-claim").value];
+    return "<b># 별 하나하나의 각을 직접 재서 주장과 맞춰 본다</b>\n"
+      + "from math import gcd, atan2, cos, sin, pi\n\n"
+      + "NMAX = " + $("h-nmax").value + "\n\n"
+      + pyPad("def point(n, j):", 48) + "<b># 원 위의 n 등분점</b>\n"
+      + "    return cos(2 * pi * j / n), sin(2 * pi * j / n)\n\n"
+      + pyPad("def angle(n, k, j):", 48) + "<b># j 번째 꼭짓점의 뾰족한 각</b>\n"
+      + "    px, py = point(n, j)\n"
+      + "    ux, uy = [c - d for c, d in zip(point(n, (j - k) % n), (px, py))]\n"
+      + "    vx, vy = [c - d for c, d in zip(point(n, (j + k) % n), (px, py))]\n"
+      + "    return atan2(abs(ux * vy - uy * vx), ux * vx + uy * vy) * 180 / pi\n\n"
+      + pyPad("def claim(n, k):", 48) + "<b># 검사할 주장 - " + st[1] + "</b>\n"
+      + "    " + st[0] + "\n\n"
+      + "bad = 0\n"
+      + "for n in range(5, NMAX + 1):\n"
+      + "    for k in range(1, (n - 1) // 2 + 1):\n"
+      + pyPad("        if gcd(n, k) != 1:", 48) + "<b># 한 붓으로 안 그려지면 건너뛴다</b>\n"
+      + "            continue\n"
+      + pyPad("        real = sum(angle(n, k, j) for j in range(n))", 48)
+      + "<b># 주장을 믿지 않고 직접 잰다</b>\n"
+      + "        if abs(real - claim(n, k)) > 1e-6:\n"
+      + "            bad += 1\n\n"
+      + "print(bad)";
+  }
+  function pyHuntResult() { return H.bad; }
+
+  /* ---------------- 파이썬 병기 ---------------- */
+  function pyPad(t, n) {
+    while (t.length < n) t += " ";
+    return t.length > n ? t + "  " : t;   // 48 칸을 넘으면 주석이 코드에 붙지 않게 띄운다
+  }
+  var pyHuntDone = false;
+
+  function renderProofPy() {
+    var el = document.getElementById("proof-py");
+    if (!el) return;
+    var out = pyProofHead();
+    if (!prog.length) {
+      out += "<b># 왼쪽 블록을 누르면 여기에 줄이 하나씩 쌓인다</b>";
+    } else {
+      var cur = pyStepNow();
+      for (var i = 0; i < prog.length; i++) {
+        var st = PY_PROOF[prog[i]];
+        if (!st) continue;
+        var ln = st[3]
+          ? st[2] + "<b># " + st[1] + " - " + st[0] + "</b>"
+          : pyPad(st[2] + st[0], 48) + "<b># " + st[1] + "</b>";
+        out += (i === cur ? "<i>" + ln + "</i>" : ln) + "\n";
+      }
+      out += pyProofTail();
+    }
+    el.innerHTML = out;
+  }
+
+  function renderHuntPy() {
+    var el = document.getElementById("hunt-py");
+    if (!el) return;
+    var out = pyHuntCode();
+    if (pyHuntDone) out += "\n<em># " + pyHuntResult() + "</em>";
+    el.innerHTML = out;
+  }
+
+  (function () {
+    var rp = renderProg, fh = finishHunt;
+    renderProg = function () { rp.apply(this, arguments); renderProofPy(); };
+    finishHunt = function () { fh.apply(this, arguments); pyHuntDone = true; renderHuntPy(); };
+    PY_CTRL.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("input", renderHuntPy);
+      el.addEventListener("change", renderHuntPy);
+    });
+    var bh = document.getElementById("b-hunt");
+    if (bh) bh.addEventListener("click", function () {
+      pyHuntDone = false;
+      setTimeout(renderHuntPy, 0);
+    });
+  })();
+  renderProofPy();
+  renderHuntPy();
+})();
+</script>
