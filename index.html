@@ -246,6 +246,7 @@
     cursor: pointer;
     word-break: keep-all;
   }
+  #d-text { white-space: pre-line; }
   .dialog .who {
     position: absolute;
     top: -13px;
@@ -1342,20 +1343,7 @@
 
   function talk() {
     NPC.dir = BACK[me.dir];
-    var n = openCount(), pages;
-    if (n === 0) {
-      pages = [
-        "증명의 집이다.",
-        "문마다 문제가 한 장씩 붙어 있다. 답이 곧 자물쇠 번호다.",
-        "문 옆 단말기에는 그 문제의 실험실이 있다. 막히면 켜 본다.",
-        "문을 열고 들어가면 칠판에 풀이가 적혀 있다.",
-        "가운데 책상은 견본이다 — 문제, 실험실, 풀이가 한 벌로 놓여 있다."
-      ];
-    } else if (n < 4) {
-      pages = ["문이 " + n + " 개 열렸다. 남은 문은 " + (4 - n) + " 개다.", "막히면 문 옆 단말기를 켠다."];
-    } else {
-      pages = ["문이 전부 열렸다.", "방마다 칠판에 풀이가 있다."];
-    }
+    var pages = ["멘토 - 이승상\n멘티 - 곽서희, 송태윤, 정수현, 박태규"];
     say(pages, "관리인", function () { NPC.dir = NPC.home; });
   }
 
