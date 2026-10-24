@@ -2,14 +2,14 @@
 <html lang="ko">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>오각별 실험대</title>
+<title>별 {n/k} 실험대</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
 
 <!--
-  오각별 실험대. 디자인 틀을 바탕으로 만들었다.
-  꼭짓점 다섯 개를 끌면 파이썬이 다섯 각을 다시 잰다.
+  별 {n/k} 실험대. 실험대 디자인 틀로 만들었다.
+  style 과 「고치지 않는 부분」 스크립트는 틀 그대로다.
 -->
 
 <style>
@@ -139,33 +139,30 @@
 
 <header>
   <div class="kick">9주차 · 실험대 · 기하</div>
-  <h1>오각별의 뾰족한 다섯 각</h1>
-  <p>꼭짓점 A, B, C, D, E 를 끌어 별을 찌그러뜨리고, 뾰족한 다섯 각이 어떻게 바뀌는지 본다.</p>
+  <h1>별 {n/k} 의 뾰족한 각</h1>
+  <p>점 수 n 과 건너뛰는 칸 k 를 바꿔 별을 그리고, 뾰족한 각과 한 붓으로 도는 바퀴 수를 파이썬으로 잰다.</p>
 </header>
 
 <main>
   <section class="card problem">
     <h2>문제</h2>
-    <p class="ask">오각별 ABCDE 에서 뾰족한 다섯 꼭짓점의 각 ∠A, ∠B, ∠C, ∠D, ∠E 의 합을 구한다.</p>
-    <p class="src">[그림 2] B3</p>
+    <p class="ask">원 위에 같은 간격으로 찍은 점 n 개를 k 칸씩 건너뛰며 한 붓으로 이으면 별 {n/k} 가 된다. 이 별의 뾰족한 꼭짓점 n 개의 각을 모두 더하면 얼마인가? 오각별은 {5/2} 다.</p>
+    <p class="src">출처 · B3 [그림 2] 오각별의 뾰족한 다섯 꼭짓점 각의 합을 n, k 로 넓혔다.</p>
   </section>
 
   <div class="grid">
     <section class="card">
       <h2>조작</h2>
-      <p class="msg" style="margin:0 0 12px">그림의 꼭짓점을 끌면 그 점의 좌표 줄이 바뀌고 파이썬이 다시 돈다.</p>
-      <!-- 흔들기: 전체 케이스 보기에서 지금 별의 꼭짓점을 얼마나 크게 흔들어 볼지 -->
-      <label class="fld"><span>흔들기 <b data-show="흔들기">15</b></span><input type="range" data-var="흔들기" min="0" max="40" value="15"></label>
-      <div class="row">
-        <button class="btn" type="button" id="b-reset">정오각별로 되돌리기</button>
-        <button class="btn" type="button" id="b-clear">↻ 표 비우기</button>
-      </div>
+      <!-- 슬라이더. data-var 는 파이썬 맨 윗줄의 변수 이름이다. 움직이면 그 줄이 바뀌고 파이썬이 다시 돈다. -->
+      <label class="fld"><span>점 수 n <b data-show="n">5</b></span><input type="range" data-var="n" min="5" max="12" value="5"></label>
+      <label class="fld"><span>건너뛰는 칸 k <b data-show="k">2</b></span><input type="range" data-var="k" min="1" max="5" value="2"></label>
+      <div class="row"><button class="btn" type="button" id="b-clear">↻ 표 비우기</button></div>
       <dl class="readout" id="readout"></dl>
     </section>
 
     <section class="card">
       <h2>그림</h2>
-      <canvas id="fig" data-h="400"></canvas>
+      <canvas id="fig" data-h="380"></canvas>
       <p class="msg" id="fig-msg"></p>
     </section>
   </div>
@@ -200,195 +197,200 @@
   </details>
 </main>
 
-<!-- 파이썬. 맨 위는 끄는 점 다섯 줄과 슬라이더 줄이다. 각은 두 선분의 방향으로 하나씩 잰다. -->
+<!-- 파이썬. 맨 위는 슬라이더 변수 줄이다.
+     공식 없이 점을 찍고 하나씩 이어 가며 잰다. 표준 라이브러리만 쓴다. 마지막에 result 사전에 화면에 쓸 값을 넣는다. -->
 <script type="text/plain" id="py-src">
-A = (50, 10)
-B = (92, 40)
-C = (76, 90)
-D = (24, 90)
-E = (8, 40)
-흔들기 = 15
+n = 5
+k = 2
 
 import math
 
-# 별을 한 붓으로 그리는 순서: A → C → E → B → D → A
-순서 = ["A", "C", "E", "B", "D"]
+def 보기(x):
+    # 소수 계산의 아주 작은 오차는 지우고 보여 준다
+    if abs(x - round(x)) < 1e-6:
+        return int(round(x))
+    return round(x, 2)
 
-def 방향(p, q):
-    # p 에서 q 쪽을 보는 방향(도). 화면 좌표라 아래쪽이 + 이다.
-    return math.degrees(math.atan2(q[1] - p[1], q[0] - p[0]))
+# 원(가운데 (50, 50), 반지름 40) 위에 같은 간격으로 점 n 개를 찍는다. 0 번 점은 맨 위다
+R = 40
+점들 = []
+이름자리 = []
+for i in range(n):
+    t = -math.pi / 2 + 2 * math.pi * i / n
+    점들.append((50 + R * math.cos(t), 50 + R * math.sin(t)))
+    이름자리.append([50 + (R + 6) * math.cos(t), 50 + (R + 6) * math.sin(t)])
 
-def 꼭짓점_각(P, k):
-    # 한 붓 순서에서 k 의 앞 점과 뒤 점을 잇는 두 선분 사이의 각
-    i = 순서.index(k)
-    앞, 뒤 = 순서[(i - 1) % 5], 순서[(i + 1) % 5]
-    a0, a1 = 방향(P[k], P[앞]), 방향(P[k], P[뒤])
-    벌어짐 = (a1 - a0) % 360
-    if 벌어짐 > 180:
-        a0, 벌어짐 = a1, 360 - 벌어짐
-    return 벌어짐, a0
+def 각(꼭, p, q):
+    # 꼭짓점 꼭 에서 p 쪽과 q 쪽으로 뻗은 두 선이 만드는 각 (도)
+    ux, uy = p[0] - 꼭[0], p[1] - 꼭[1]
+    vx, vy = q[0] - 꼭[0], q[1] - 꼭[1]
+    c = (ux * vx + uy * vy) / (math.hypot(ux, uy) * math.hypot(vx, vy))
+    return math.degrees(math.acos(max(-1.0, min(1.0, c))))
 
-def 엇갈림(p1, p2, q1, q2):
-    # 두 선분이 서로 가로지르면 True
-    def 돌기(a, b, c):
-        return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
-    d1, d2 = 돌기(q1, q2, p1), 돌기(q1, q2, p2)
-    d3, d4 = 돌기(p1, p2, q1), 돌기(p1, p2, q2)
-    return d1 * d2 < 0 and d3 * d4 < 0
+ok_k = 1 <= k and 2 * k < n
 
-def 교차점_수(P):
-    선 = [(순서[i], 순서[(i + 1) % 5]) for i in range(5)]
-    n = 0
-    for i in range(5):
-        for j in range(i + 1, 5):
-            if 엇갈림(P[선[i][0]], P[선[i][1]], P[선[j][0]], P[선[j][1]]):
-                n += 1
-    return n
+# 0 번 점에서 출발해 k 칸씩 건너뛰며 처음 점으로 돌아올 때까지 잇는다
+길 = [0]
+while ok_k:
+    다음 = (길[-1] + k) % n
+    if 다음 == 0:
+        break
+    길.append(다음)
+한붓 = ok_k and len(길) == n
 
-P = {"A": A, "B": B, "C": C, "D": D, "E": E}
+# n 과 k 를 둘 다 나누는 수 가운데 가장 큰 것을 하나씩 나눠 보며 찾는다
+최대공약수 = max(d for d in range(1, n + 1) if n % d == 0 and k % d == 0) if ok_k else 0
 
-각, 호, 글자, 각글자 = {}, {}, {}, {}
-for k in "ABCDE":
-    t, a0 = 꼭짓점_각(P, k)
-    각[k] = t
-    호[k] = [a0, a0 + t]
-    가운데 = math.radians(a0 + t / 2)
-    # 글자는 각을 반으로 나누는 선의 반대쪽, 별 바깥에 둔다
-    ux, uy = -math.cos(가운데), -math.sin(가운데)
-    # 그림 밖으로 나가지 않게 세로 0 ~ 100 안에 둔다
-    글자[k] = [P[k][0] + 5 * ux, min(100, max(0, P[k][1] + 5 * uy))]
-    각글자[k] = [P[k][0] + 12.5 * ux, min(100, max(0, P[k][1] + 12.5 * uy))]
+# 지나간 꼭짓점마다 뾰족한 각을 하나씩 잰다
+각들 = []
+호 = []
+for i in 길:
+    앞, 뒤 = 점들[(i - k) % n], 점들[(i + k) % n]
+    각들.append(각(점들[i], 앞, 뒤))
+    a0 = math.atan2(앞[1] - 점들[i][1], 앞[0] - 점들[i][0])
+    a1 = math.atan2(뒤[1] - 점들[i][1], 뒤[0] - 점들[i][0])
+    d = (a1 - a0) % (2 * math.pi)
+    if d > math.pi:
+        a0, d = a1, 2 * math.pi - d
+    호.append([점들[i][0], 점들[i][1], a0, a0 + d])
 
-합 = 0
-for k in "ABCDE":
-    print("∠" + k, "=", round(각[k], 2), "도")
-    합 += 각[k]
-print("다섯 각의 합 =", round(합, 2), "도")
-교차 = 교차점_수(P)
-print("선분끼리 가로지르는 곳:", 교차, "개")
+# 한 붓으로 그리며 꼭짓점마다 꺾은 각을 더한다
+꺾은합 = 0.0
+m = len(길)
+for j in range(m):
+    a, b, c = 점들[길[j - 1]], 점들[길[j]], 점들[길[(j + 1) % m]]
+    방향1 = math.atan2(b[1] - a[1], b[0] - a[0])
+    방향2 = math.atan2(c[1] - b[1], c[0] - b[0])
+    꺾음 = (방향2 - 방향1 + math.pi) % (2 * math.pi) - math.pi
+    꺾은합 += math.degrees(꺾음)
 
-result = {"∠" + k: round(각[k], 1) for k in "ABCDE"}
-result["합"] = round(합, 1)
-result["교차점"] = 교차
-result["점"] = {k: list(P[k]) for k in "ABCDE"}
-result["선"] = [[순서[i], 순서[(i + 1) % 5]] for i in range(5)]
-result["호"] = 호
-result["글자"] = 글자
-result["각글자"] = 각글자
+print("n =", n, ", k =", k)
+if not ok_k:
+    print("k 는 1 이상이고 n 의 절반보다 작아야 한다")
+else:
+    print("이은 순서:", " → ".join(str(i) for i in 길 + [0]))
+    for i, a in zip(길, 각들):
+        print("꼭짓점", i, "의 각:", 보기(a))
+    if 한붓:
+        print("각을 더한 값:", 보기(sum(각들)))
+        print("꺾은 각을 더한 값:", 보기(꺾은합))
+    else:
+        print("n 과 k 의 최대공약수:", 최대공약수)
+        print("점", m, "개만 돌고 처음 점으로 돌아왔다. 한 붓으로 점 n 개를 다 지나지 못한다")
+
+result = {
+    "n": n,
+    "k": k,
+    "한 각": 보기(각들[0]) if ok_k else "–",
+    "각의 합": 보기(sum(각들)) if 한붓 else "–",
+    "몇 바퀴": 보기(abs(꺾은합) / 360) if 한붓 else "–",
+    "ok_k": ok_k,
+    "한붓": 한붓,
+    "돈 점": m,
+    "최대공약수": 최대공약수,
+    "점들": [list(p) for p in 점들],
+    "길": 길,
+    "호": 호,
+    "이름자리": 이름자리,
+    "반지름": R,
+}
 </script>
 
-<!-- 전체 케이스 파이썬. 맨 윗줄 변수는 위 코드와 같다. 별은 모양이 끝없이 많으므로 흔든 별 40 개를 찍는다. -->
+<!-- 전체 케이스 파이썬. 맨 윗줄 변수는 위 코드와 같다(슬라이더가 둘 다 바꾼다).
+     n = 5 ~ 12, k 는 n 의 절반보다 작은 수까지 별을 하나씩 그려 한 줄에 하나씩 print 하고, 끝에 모두 몇 개인지 찍는다. -->
 <script type="text/plain" id="py-all">
-A = (50, 10)
-B = (92, 40)
-C = (76, 90)
-D = (24, 90)
-E = (8, 40)
-흔들기 = 15
+n = 5
+k = 2
 
 import math
 
-# 별을 한 붓으로 그리는 순서: A → C → E → B → D → A
-순서 = ["A", "C", "E", "B", "D"]
+def 보기(x):
+    if abs(x - round(x)) < 1e-6:
+        return int(round(x))
+    return round(x, 2)
 
-def 방향(p, q):
-    # p 에서 q 쪽을 보는 방향(도). 화면 좌표라 아래쪽이 + 이다.
-    return math.degrees(math.atan2(q[1] - p[1], q[0] - p[0]))
+def 별(N, K):
+    # 원 위에 점 N 개를 찍고 0 번 점에서 K 칸씩 건너뛰며 잇는다
+    점들 = []
+    for i in range(N):
+        t = -math.pi / 2 + 2 * math.pi * i / N
+        점들.append((50 + 40 * math.cos(t), 50 + 40 * math.sin(t)))
+    길 = [0]
+    while (길[-1] + K) % N != 0:
+        길.append((길[-1] + K) % N)
+    각합 = 0.0
+    꺾은합 = 0.0
+    m = len(길)
+    for j in range(m):
+        a, b, c = 점들[길[j - 1]], 점들[길[j]], 점들[길[(j + 1) % m]]
+        ux, uy, vx, vy = a[0] - b[0], a[1] - b[1], c[0] - b[0], c[1] - b[1]
+        cos = (ux * vx + uy * vy) / (math.hypot(ux, uy) * math.hypot(vx, vy))
+        각합 += math.degrees(math.acos(max(-1.0, min(1.0, cos))))
+        d = math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(b[1] - a[1], b[0] - a[0])
+        꺾은합 += math.degrees((d + math.pi) % (2 * math.pi) - math.pi)
+    return m, 각합, abs(꺾은합)
 
-def 꼭짓점_각(P, k):
-    # 한 붓 순서에서 k 의 앞 점과 뒤 점을 잇는 두 선분 사이의 각
-    i = 순서.index(k)
-    앞, 뒤 = 순서[(i - 1) % 5], 순서[(i + 1) % 5]
-    a0, a1 = 방향(P[k], P[앞]), 방향(P[k], P[뒤])
-    벌어짐 = (a1 - a0) % 360
-    if 벌어짐 > 180:
-        a0, 벌어짐 = a1, 360 - 벌어짐
-    return 벌어짐, a0
-
-def 엇갈림(p1, p2, q1, q2):
-    # 두 선분이 서로 가로지르면 True
-    def 돌기(a, b, c):
-        return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
-    d1, d2 = 돌기(q1, q2, p1), 돌기(q1, q2, p2)
-    d3, d4 = 돌기(p1, p2, q1), 돌기(p1, p2, q2)
-    return d1 * d2 < 0 and d3 * d4 < 0
-
-def 교차점_수(P):
-    선 = [(순서[i], 순서[(i + 1) % 5]) for i in range(5)]
-    n = 0
-    for i in range(5):
-        for j in range(i + 1, 5):
-            if 엇갈림(P[선[i][0]], P[선[i][1]], P[선[j][0]], P[선[j][1]]):
-                n += 1
-    return n
-
-import random
-
-# 지금 별의 꼭짓점을 ±흔들기 만큼 아무렇게나 흔든 별을 40 개 만들어 하나씩 잰다
-random.seed(2026)
-지금 = {"A": A, "B": B, "C": C, "D": D, "E": E}
-print("번호   ∠A     ∠B     ∠C     ∠D     ∠E      합     교차점")
-for 번호 in range(1, 41):
-    P = {}
-    for k, (x, y) in 지금.items():
-        P[k] = (min(100, max(0, x + random.randint(-흔들기, 흔들기))),
-                min(100, max(0, y + random.randint(-흔들기, 흔들기))))
-    각 = [꼭짓점_각(P, k)[0] for k in "ABCDE"]
-    print("%3d " % 번호 + " ".join("%6.1f" % t for t in 각) + "  %6.1f" % sum(각) + "  %4d" % 교차점_수(P))
-print("모두 40 개")
+print(" n  k  한붓  각의합  몇바퀴")
+count = 0
+for N in range(5, 13):
+    for K in range(1, N):
+        if 2 * K >= N:
+            break
+        m, 각합, 꺾은합 = 별(N, K)
+        count += 1
+        표시 = "  ◀ 지금" if (N, K) == (n, k) else ""
+        if m == N:
+            print(f"{N:2} {K:2}   O   {보기(각합):>6}  {보기(꺾은합 / 360):>4}{표시}")
+        else:
+            print(f"{N:2} {K:2}   X   (점 {m} 개만 돌고 돌아온다){표시}")
+print("모두", count, "개")
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/pyodide@0.26.4/pyodide.js"></script>
 <script>
-/* ===== 이 문제에 맞게 바꾼 부분 ===== */
+/* ===== 이 문제에 맞게 바꾸는 부분 ===== */
 
 // 수치 판과 표에 보일 열. result 사전의 키 이름이다.
-var COLUMNS = ["∠A", "∠B", "∠C", "∠D", "∠E", "합", "교차점"];
+var COLUMNS = ["n", "k", "한 각", "각의 합", "몇 바퀴"];
 
-// 그림에서 끌 수 있는 점. 파이썬 맨 윗줄의 이름과 같다.
-var DRAG = ["A", "B", "C", "D", "E"];
+// 점 수와 칸 수는 슬라이더로 바꾸므로 끄는 점은 없다.
+var DRAG = [];
 
-// 그림. 파이썬이 준 점 · 선 · 호 · 글자 자리만 그린다.
+// 그림. 원, 점 n 개, 파이썬이 이은 순서대로의 선, 뾰족한 각의 호를 그린다.
+// 계산은 하지 않고 r 에 있는 값만 그린다.
 function draw(ctx, w, h, r) {
   if (!r) return;
-  var P = r["점"];
-  ctx.lineJoin = "round";
-  ctx.strokeStyle = css("--ink"); ctx.lineWidth = 2;
-  ctx.beginPath();
-  r["선"].forEach(function (s) {
-    var a = px(P[s[0]]), b = px(P[s[1]]);
-    ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]);
-  });
-  ctx.stroke();
-  Object.keys(r["호"]).forEach(function (k) {
-    var q = px(P[k]), a = r["호"][k];
-    ctx.beginPath(); ctx.moveTo(q[0], q[1]);
-    ctx.arc(q[0], q[1], 34, a[0] * Math.PI / 180, a[1] * Math.PI / 180);
-    ctx.closePath();
-    ctx.fillStyle = css("--gold"); ctx.globalAlpha = .35; ctx.fill(); ctx.globalAlpha = 1;
-  });
-  ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  Object.keys(r["각글자"]).forEach(function (k) {
-    var q = px(r["각글자"][k]);
-    ctx.font = "600 12px " + css("--mono"); ctx.fillStyle = css("--warn");
-    ctx.fillText(r["∠" + k] + "°", q[0], q[1]);
-  });
-  Object.keys(r["글자"]).forEach(function (k) {
-    var q = px(r["글자"][k]), p = px(P[k]);
-    ctx.font = "600 15px " + css("--sans"); ctx.fillStyle = css("--ink");
-    ctx.fillText(k, q[0], q[1]);
-    ctx.beginPath(); ctx.arc(p[0], p[1], 4, 0, 2 * Math.PI);
-    ctx.fillStyle = css("--accent"); ctx.fill();
-  });
-  msg("다섯 각의 합 " + r["합"] + "° · 선분끼리 가로지르는 곳 " + r["교차점"] + " 개다.");
-}
+  var c = px([50, 50]);
+  ctx.strokeStyle = css("--rule"); ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.arc(c[0], c[1], r["반지름"] * view.s, 0, 2 * Math.PI); ctx.stroke();
 
-// 정오각별로 되돌리기: 다섯 점 줄을 처음 값으로 바꾸고 다시 돌린다.
-document.getElementById("b-reset").addEventListener("click", function () {
-  var start = { A: "(50, 10)", B: "(92, 40)", C: "(76, 90)", D: "(24, 90)", E: "(8, 40)" };
-  Object.keys(start).forEach(function (k) { setVar(k, start[k]); });
-  run();
-});
+  var P = r["점들"], path = r["길"];
+  if (r.ok_k && path.length > 1) {
+    ctx.strokeStyle = css("--ink"); ctx.lineWidth = 1.8; ctx.lineJoin = "round";
+    ctx.beginPath();
+    path.forEach(function (i, j) { var q = px(P[i]); if (j) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); });
+    ctx.closePath(); ctx.stroke();
+    ctx.fillStyle = css("--accent"); ctx.globalAlpha = .3;
+    r["호"].forEach(function (a) {
+      var q = px([a[0], a[1]]);
+      ctx.beginPath(); ctx.moveTo(q[0], q[1]); ctx.arc(q[0], q[1], 9 * view.s, a[2], a[3]); ctx.closePath(); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  var on = {}; path.forEach(function (i) { on[i] = true; });
+  ctx.font = "500 12px " + css("--mono"); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  P.forEach(function (p, i) {
+    var q = px(p), t = px(r["이름자리"][i]);
+    ctx.beginPath(); ctx.arc(q[0], q[1], 4, 0, 2 * Math.PI);
+    ctx.fillStyle = on[i] && r.ok_k ? css("--accent") : css("--ink-faint"); ctx.fill();
+    ctx.fillStyle = css("--ink-soft"); ctx.fillText(String(i), t[0], t[1]);
+  });
+
+  if (!r.ok_k) msg("k 는 1 이상이고 n 의 절반보다 작아야 한다. n = " + r.n + " 이면 k 를 더 줄인다.", "bad");
+  else if (!r["한붓"]) msg("n 과 k 의 최대공약수가 1 이 아니다 (최대공약수 " + r["최대공약수"] + "). 한 붓으로 다 못 그리고, 점 " + r["돈 점"] + " 개만 돌고 0 번 점으로 돌아온다.", "bad");
+  else msg("별 {" + r.n + "/" + r.k + "} 다. 0 번 점에서 출발해 " + r.k + " 칸씩 건너뛰며 점 " + r.n + " 개를 모두 지나고 돌아온다.", "ok");
+}
 
 /* ===== 고치지 않는 부분: 파이썬 실행 · 슬라이더 · 점 끌기 · 수치 판 · 표 · 전체 케이스 ===== */
 var $ = function (id) { return document.getElementById(id); };
