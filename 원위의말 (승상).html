@@ -26,7 +26,7 @@
 <nav role="tablist">
     <button type="button" role="tab" data-tab="0" aria-selected="true">질문 2 · n = 10</button>
     <button type="button" role="tab" data-tab="1" aria-selected="false">질문 3 · 짝수 n</button>
-    <button type="button" role="tab" data-tab="2" aria-selected="false">더 나아가 · n 에 따라</button>
+    <button type="button" role="tab" data-tab="2" aria-selected="false">더 나아가 · 해설</button>
 </nav>
   <iframe data-tab="0" title="질문 2 · n = 10" data-src="&lt;!doctype html&gt;
 &lt;html lang=&quot;ko&quot;&gt;
@@ -952,7 +952,7 @@ loadPyodide().then(function (p) {
 }).catch(function () { $(&quot;py-state&quot;).textContent = &quot;파이썬을 불러오지 못했다. 인터넷 연결을 확인한다.&quot;; });
 &lt;/script&gt;
 " hidden></iframe>
-  <iframe data-tab="2" title="더 나아가 · n 에 따라" data-src="&lt;!doctype html&gt;
+  <iframe data-tab="2" title="더 나아가 · 해설" data-src="&lt;!doctype html&gt;
 &lt;html lang=&quot;ko&quot;&gt;
 &lt;meta charset=&quot;utf-8&quot;&gt;
 &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
@@ -1090,15 +1090,18 @@ loadPyodide().then(function (p) {
 &lt;header&gt;
   &lt;div class=&quot;kick&quot;&gt;9주차 · 실험대 · 더 나아가&lt;/div&gt;
   &lt;h1&gt;원 위의 말&lt;/h1&gt;
-  &lt;p&gt;n 을 4 부터 늘려 가며, n 마다 말이 가장 많이 밟는 점이 몇 개인지 본다.&lt;/p&gt;
+  &lt;p&gt;질문 3 을 홀수 n 으로 넓혀, n 마다 말이 가장 많이 밟는 점이 몇 개인지 본다.&lt;/p&gt;
 &lt;/header&gt;
 
 &lt;main&gt;
   &lt;section class=&quot;card problem&quot;&gt;
-    &lt;h2&gt;문제&lt;/h2&gt;
-    &lt;p class=&quot;ask&quot;&gt;둘레가 nπ 인 원 위에 점 n 개가 같은 간격으로 있고, 시계 방향으로 0, 1, …, n − 1 번이다. 0 번 점의 말을 먼저 mπ 만큼 옮기고, 그다음부터는 직전 점의 번호 × mπ 만큼 시계 방향으로 옮긴다. 출발점이나 이미 놓았던 점에 다시 놓이면 멈춘다.&lt;/p&gt;
-    &lt;p class=&quot;ask&quot;&gt;&lt;b&gt;더 나아가&lt;/b&gt; n 이 홀수여도 모든 점을 밟게 하는 m 이 없을 수 있는가. 어떤 n 에서 그런 m 이 있는가.&lt;/p&gt;
-    &lt;p class=&quot;src&quot;&gt;대전과학고 2026 문항 2&lt;/p&gt;
+    &lt;h2&gt;더 나아가 · 해설&lt;/h2&gt;
+    &lt;p class=&quot;ask&quot;&gt;질문 3 은 n 이 짝수일 때다. 그 논법에서 2 가 하는 일은 &lt;b&gt;n 을 나눈다&lt;/b&gt;는 것 하나뿐이라,
+      n 의 아무 소인수 p 를 2 자리에 넣어도 같은 말이 돈다. m 이 p 의 배수면 p 의 배수 점에 갇히고,
+      1 + m 이 p 의 배수면 둘째 점부터 갇히고, 둘 다 아니면 0 말고 p 의 배수 점을 하나도 못 밟는다.&lt;/p&gt;
+    &lt;p class=&quot;ask&quot;&gt;그래서 n 이 합성수면 홀수여도 모든 점을 밟지 못한다. 아래 막대에서 테두리는 점 n 개 전체이고,
+      채운 높이는 m 을 모두 굴려 가장 많이 밟은 점 수다. 꽉 차는 막대는 소수 n 뿐이다.&lt;/p&gt;
+    &lt;p class=&quot;src&quot;&gt;대전과학고 2026 문항 2 · 원본 질문 3 을 넓혀 본 것&lt;/p&gt;
   &lt;/section&gt;
 
   &lt;div class=&quot;grid&quot;&gt;
