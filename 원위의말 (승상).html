@@ -1,0 +1,1421 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>원 위의 말 실험대</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;600&display=swap">
+<!--
+  실험대 여러 쪽을 탭으로 묶은 파일. 탭마다 _디자인_틀.html 로 만든 한 쪽이 통째로 들어 있고,
+  탭을 처음 열 때 그 쪽을 띄운다. 방향키 ← → 로도 탭을 옮긴다.
+-->
+<style>
+  :root { --ground: #F6F7FA; --head-bg: #22314F; --head-dim: #A9B6CE; --accent: #189E5A; --gold: #F5B301; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ground: #141A26; --head-bg: #0F1521; --head-dim: #7C8AA4; } }
+  :root[data-theme="dark"] { --ground: #141A26; --head-bg: #0F1521; --head-dim: #7C8AA4; }
+  body { margin: 0; background: var(--ground); font-family: 'IBM Plex Sans KR', 'Malgun Gothic', sans-serif; }
+  nav { position: sticky; top: 0; z-index: 1; display: flex; flex-wrap: wrap; gap: 4px; padding: 10px 18px 0; background: var(--head-bg); }
+  nav button {
+    font: inherit; font-size: 14px; font-weight: 500; color: var(--head-dim); background: transparent;
+    border: 0; border-bottom: 3px solid transparent; padding: 8px 14px 9px; cursor: pointer;
+  }
+  nav button[aria-selected="true"] { color: #fff; border-bottom-color: var(--accent); font-weight: 600; }
+  nav button:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  iframe { display: block; width: 100%; border: 0; height: 100vh; }
+  iframe[hidden] { display: none; }
+</style>
+<nav role="tablist">
+    <button type="button" role="tab" data-tab="0" aria-selected="true">질문 2 · n = 10</button>
+    <button type="button" role="tab" data-tab="1" aria-selected="false">질문 3 · 짝수 n</button>
+    <button type="button" role="tab" data-tab="2" aria-selected="false">더 나아가 · 모든 점</button>
+</nav>
+  <iframe data-tab="0" title="질문 2 · n = 10" data-src="&lt;!doctype html&gt;
+&lt;html lang=&quot;ko&quot;&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;title&gt;원 위의 말 질문 2 실험대&lt;/title&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap&quot;&gt;
+
+
+&lt;style&gt;
+  :root {
+    --accent: #189E5A;
+    --ground: #F6F7FA;
+    --surface: #FFFFFF;
+    --surface-2: #EFF2F7;
+    --ink: #22314F;
+    --ink-soft: #5C6B85;
+    --ink-faint: #8A96AC;
+    --rule: #DDE3EC;
+    --gold: #F5B301;
+    --ok: #189E5A;
+    --warn: #E17B2E;
+    --head-bg: #22314F;
+    --head-ink: #FFFFFF;
+    --head-dim: #A9B6CE;
+    --code-bg: #1C2433;
+    --code-ink: #E5EAF2;
+    --shadow: 0 1px 2px rgba(34, 49, 79, .05), 0 6px 18px rgba(34, 49, 79, .05);
+    --sans: &#x27;IBM Plex Sans KR&#x27;, &#x27;Malgun Gothic&#x27;, &#x27;맑은 고딕&#x27;, system-ui, sans-serif;
+    --mono: &#x27;IBM Plex Mono&#x27;, &#x27;Consolas&#x27;, ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme=&quot;light&quot;]) {
+      --ground: #141A26; --surface: #1C2433; --surface-2: #232D3F;
+      --ink: #E5EAF2; --ink-soft: #93A0B8; --ink-faint: #6C7A94; --rule: #2E3A50;
+      --ok: #35BE79; --warn: #F0954B;
+      --head-bg: #0F1521; --head-ink: #E5EAF2; --head-dim: #7C8AA4;
+      --code-bg: #0F1521;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+    }
+  }
+  :root[data-theme=&quot;dark&quot;] {
+    --ground: #141A26; --surface: #1C2433; --surface-2: #232D3F;
+    --ink: #E5EAF2; --ink-soft: #93A0B8; --ink-faint: #6C7A94; --rule: #2E3A50;
+    --ok: #35BE79; --warn: #F0954B;
+    --head-bg: #0F1521; --head-ink: #E5EAF2; --head-dim: #7C8AA4;
+    --code-bg: #0F1521;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header { background: var(--head-bg); color: var(--head-ink); padding: 18px 26px 16px; border-bottom: 3px solid var(--accent); }
+  .kick { font-family: var(--mono); font-size: 11.5px; font-weight: 500; letter-spacing: .14em; color: var(--gold); }
+  header h1 { margin: 5px 0 3px; font-size: 25px; font-weight: 700; letter-spacing: -.02em; }
+  header p { margin: 0; color: var(--head-dim); font-size: 13.5px; max-width: 76ch; }
+
+  main { max-width: 1240px; margin: 0 auto; padding: 18px; }
+  .grid { display: grid; gap: 14px; align-items: start; grid-template-columns: 300px minmax(0, 1fr); margin-top: 14px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: minmax(0, 1fr); } main { padding: 14px; } }
+
+  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; box-shadow: var(--shadow); padding: 14px; min-width: 0; }
+  .card &gt; h2 { margin: 0 0 11px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--ink-faint); }
+  main &gt; .card { margin-top: 14px; }
+  .card.problem { border-left: 4px solid var(--accent); margin-top: 0; }
+  .problem .ask { margin: 0 0 9px; font-size: 14.5px; line-height: 1.75; }
+  .problem .src { margin: 11px 0 0; padding-top: 9px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-faint); }
+
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+  .row + .row { margin-top: 7px; }
+  button.btn {
+    font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 7px 12px; cursor: pointer;
+  }
+  button.btn:hover:not(:disabled) { border-color: var(--accent); }
+  button.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.btn:disabled { opacity: .38; cursor: default; }
+  button.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  label.fld { display: block; margin-bottom: 12px; }
+  label.fld &gt; span { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-faint); margin-bottom: 4px; }
+  label.fld b { color: var(--accent); font-size: 14px; }
+  input[type=&quot;range&quot;] { width: 100%; accent-color: var(--accent); }
+
+  canvas { display: block; width: 100%; touch-action: none; }
+  .msg { font-size: 13px; color: var(--ink-soft); margin: 8px 0 0; }
+  .msg.ok { color: var(--ok); font-weight: 600; }
+  .msg.bad { color: var(--warn); font-weight: 600; }
+
+  .readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; margin: 12px 0 0; background: var(--surface-2); }
+  .stat { padding: 9px 12px; border-right: 1px solid var(--rule); }
+  .stat:last-child { border-right: 0; }
+  .stat dt { font-family: var(--mono); font-size: 10px; letter-spacing: .05em; color: var(--ink-faint); margin: 0 0 1px; }
+  .stat dd { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 17px; font-weight: 500; margin: 0; color: var(--accent); }
+
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13px; }
+  th, td { padding: 6px 10px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
+  th { font-size: 10.5px; letter-spacing: .05em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  tbody tr:first-child td { background: rgba(245, 179, 1, .12); }
+
+  textarea.code {
+    width: 100%; min-height: 260px; resize: vertical;
+    font-family: var(--mono); font-size: 13px; line-height: 1.6; tab-size: 4;
+    color: var(--code-ink); background: var(--code-bg);
+    border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+    padding: 12px 14px; white-space: pre; overflow: auto;
+  }
+  textarea.code:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  pre.out {
+    margin: 10px 0 0; min-height: 3em; max-height: 320px; overflow: auto;
+    font-family: var(--mono); font-size: 13px; line-height: 1.6; white-space: pre-wrap;
+    background: var(--surface-2); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 14px;
+  }
+  pre.out.err { color: var(--warn); }
+  canvas.drag { cursor: grab; }
+  details.card &gt; summary {
+    cursor: pointer; list-style: none;
+    font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--ink-faint);
+  }
+  details.card &gt; summary::-webkit-details-marker { display: none; }
+  details.card &gt; summary::before { content: &quot;▶ &quot;; color: var(--accent); }
+  details.card[open] &gt; summary::before { content: &quot;▼ &quot;; }
+  details.card[open] &gt; summary { margin-bottom: 11px; }
+  details.sub { margin-top: 10px; }
+  details.sub &gt; summary { cursor: pointer; font-size: 13px; color: var(--ink-soft); }
+&lt;/style&gt;
+
+&lt;header&gt;
+  &lt;div class=&quot;kick&quot;&gt;9주차 · 실험대 · 질문 2&lt;/div&gt;
+  &lt;h1&gt;원 위의 말&lt;/h1&gt;
+  &lt;p&gt;점 수 n 과 m 을 바꾸며, 말이 밟는 점과 그 번호의 합을 본다.&lt;/p&gt;
+&lt;/header&gt;
+
+&lt;main&gt;
+  &lt;section class=&quot;card problem&quot;&gt;
+    &lt;h2&gt;문제&lt;/h2&gt;
+    &lt;p class=&quot;ask&quot;&gt;둘레가 nπ 인 원 위에 점 n 개가 같은 간격으로 있고, 시계 방향으로 0, 1, …, n − 1 번이다. 0 번 점의 말을 먼저 mπ 만큼 옮기고, 그다음부터는 직전 점의 번호 × mπ 만큼 시계 방향으로 옮긴다. 출발점이나 이미 놓았던 점에 다시 놓이면 멈춘다.&lt;/p&gt;
+    &lt;p class=&quot;ask&quot;&gt;&lt;b&gt;질문 2&lt;/b&gt; n = 10 일 때, 말이 놓이는 서로 다른 점들의 번호의 합이 가장 큰 m 을 구한다.&lt;/p&gt;
+    &lt;p class=&quot;src&quot;&gt;대전과학고 2026 문항 2&lt;/p&gt;
+  &lt;/section&gt;
+
+  &lt;div class=&quot;grid&quot;&gt;
+    &lt;section class=&quot;card&quot;&gt;
+      &lt;h2&gt;조작&lt;/h2&gt;
+      &lt;label class=&quot;fld&quot;&gt;&lt;span&gt;점 n &lt;b data-show=&quot;n&quot;&gt;10&lt;/b&gt;&lt;/span&gt;&lt;input type=&quot;range&quot; data-var=&quot;n&quot; min=&quot;4&quot; max=&quot;20&quot; value=&quot;10&quot;&gt;&lt;/label&gt;
+      &lt;label class=&quot;fld&quot;&gt;&lt;span&gt;m &lt;b data-show=&quot;m&quot;&gt;1&lt;/b&gt;&lt;/span&gt;&lt;input type=&quot;range&quot; data-var=&quot;m&quot; min=&quot;1&quot; max=&quot;9&quot; value=&quot;1&quot;&gt;&lt;/label&gt;
+      &lt;div class=&quot;row&quot;&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;b-clear&quot;&gt;↻ 표 비우기&lt;/button&gt;&lt;/div&gt;
+      &lt;dl class=&quot;readout&quot; id=&quot;readout&quot;&gt;&lt;/dl&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;card&quot;&gt;
+      &lt;h2&gt;그림&lt;/h2&gt;
+      &lt;canvas id=&quot;fig&quot; data-h=&quot;380&quot;&gt;&lt;/canvas&gt;
+      &lt;p class=&quot;msg&quot; id=&quot;fig-msg&quot;&gt;&lt;/p&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+  &lt;section class=&quot;card&quot;&gt;
+    &lt;h2&gt;표 · 파이썬이 돌 때마다 한 줄씩 쌓인다&lt;/h2&gt;
+    &lt;div class=&quot;table-scroll&quot;&gt;&lt;table id=&quot;log&quot;&gt;&lt;thead&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section class=&quot;card&quot;&gt;
+    &lt;h2&gt;파이썬 · 이 코드가 실제로 돈다&lt;/h2&gt;
+    &lt;textarea class=&quot;code&quot; id=&quot;code&quot; spellcheck=&quot;false&quot; aria-label=&quot;파이썬 코드&quot;&gt;&lt;/textarea&gt;
+    &lt;div class=&quot;row&quot; style=&quot;margin-top:8px&quot;&gt;
+      &lt;button class=&quot;btn primary&quot; type=&quot;button&quot; id=&quot;b-run&quot; disabled&gt;▶ 실행&lt;/button&gt;
+      &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-copy=&quot;code&quot;&gt;복사&lt;/button&gt;
+      &lt;span class=&quot;msg&quot; id=&quot;py-state&quot; style=&quot;margin:0&quot;&gt;파이썬 불러오는 중&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;pre class=&quot;out&quot; id=&quot;out&quot;&gt;&lt;/pre&gt;
+  &lt;/section&gt;
+
+  &lt;details class=&quot;card&quot; id=&quot;all&quot;&gt;
+    &lt;summary&gt;전체 케이스 보기 · 눌러서 펼친다&lt;/summary&gt;
+    &lt;pre class=&quot;out&quot; id=&quot;all-out&quot;&gt;&lt;/pre&gt;
+    &lt;details class=&quot;sub&quot;&gt;
+      &lt;summary&gt;전체 케이스를 찍는 파이썬 코드&lt;/summary&gt;
+      &lt;textarea class=&quot;code&quot; id=&quot;code-all&quot; spellcheck=&quot;false&quot; aria-label=&quot;전체 케이스 파이썬 코드&quot;&gt;&lt;/textarea&gt;
+      &lt;div class=&quot;row&quot; style=&quot;margin-top:8px&quot;&gt;
+        &lt;button class=&quot;btn primary&quot; type=&quot;button&quot; id=&quot;b-run-all&quot; disabled&gt;▶ 실행&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-copy=&quot;code-all&quot;&gt;복사&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/details&gt;
+  &lt;/details&gt;
+&lt;/main&gt;
+
+&lt;script type=&quot;text/plain&quot; id=&quot;py-src&quot;&gt;
+n = 10
+m = 1
+
+def walk(n, m):
+    # 이웃한 두 점 사이가 π 이므로 kπ 만큼 옮기는 것은 k 칸 옮기는 것이다
+    path = [0]
+    a = m % n                          # 1단계: 0 번 점에서 m 칸
+    while a not in path:
+        path.append(a)
+        a = (a + a * m) % n            # 다음 단계: 지금 번호 × m 칸
+    path.append(a)                     # 다시 놓인 점에서 멈춘다
+    return path
+
+m = min(max(m, 1), n - 1)              # m 은 n 미만의 자연수
+path = walk(n, m)
+seen = set(path)
+
+print(&quot;말이 놓인 차례 :&quot;, &quot; → &quot;.join(map(str, path)))
+print(&quot;서로 다른 점&quot;, len(seen), &quot;개 · 번호의 합&quot;, sum(seen))
+
+result = {&quot;n&quot;: n, &quot;m&quot;: m, &quot;밟은 점 수&quot;: len(seen), &quot;번호의 합&quot;: sum(seen), &quot;path&quot;: path}
+&lt;/script&gt;
+
+&lt;script type=&quot;text/plain&quot; id=&quot;py-all&quot;&gt;
+n = 10
+
+def walk(n, m):
+    # 이웃한 두 점 사이가 π 이므로 kπ 만큼 옮기는 것은 k 칸 옮기는 것이다
+    path = [0]
+    a = m % n                          # 1단계: 0 번 점에서 m 칸
+    while a not in path:
+        path.append(a)
+        a = (a + a * m) % n            # 다음 단계: 지금 번호 × m 칸
+    path.append(a)                     # 다시 놓인 점에서 멈춘다
+    return path
+
+# m 을 1 부터 n - 1 까지 모두 굴려 본다
+for m in range(1, n):
+    path = walk(n, m)
+    print(f&quot;m = {m:&gt;2}  합 {sum(set(path)):&gt;3}  &quot;, &quot; → &quot;.join(map(str, path)))
+&lt;/script&gt;
+
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/pyodide@0.26.4/pyodide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+/* ===== 이 문제에 맞게 바꾼 부분 ===== */
+// 수치 판과 표에 보일 열. result 사전의 키 이름이다.
+var COLUMNS = [&quot;n&quot;, &quot;m&quot;, &quot;밟은 점 수&quot;, &quot;번호의 합&quot;];
+
+// 끌 점이 없는 문제다.
+var DRAG = [];
+
+function circle(ctx, w, h, n, path, odd) {
+  var cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 30;
+  function P(i) { var t = -Math.PI / 2 + 2 * Math.PI * i / n; return [cx + R * Math.cos(t), cy + R * Math.sin(t)]; }
+  ctx.strokeStyle = css(&quot;--rule&quot;); ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI); ctx.stroke();
+  var seen = {};
+  for (var k = 0; k &lt; path.length - 1; k++) seen[path[k]] = true;
+  // 지나간 길 — 마지막 한 걸음(다시 놓인 점)은 점선
+  ctx.strokeStyle = css(&quot;--accent&quot;); ctx.lineWidth = 2;
+  for (k = 0; k + 1 &lt; path.length; k++) {
+    var a = P(path[k]), b = P(path[k + 1]);
+    ctx.setLineDash(k + 2 === path.length ? [5, 4] : []);
+    ctx.globalAlpha = 0.35 + 0.65 * (k + 1) / path.length;
+    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+  }
+  ctx.setLineDash([]); ctx.globalAlpha = 1;
+  var r = Math.max(7, Math.min(13, 120 / n));
+  ctx.font = &quot;600 &quot; + Math.round(r * 1.1) + &quot;px &quot; + css(&quot;--mono&quot;);
+  ctx.textAlign = &quot;center&quot;; ctx.textBaseline = &quot;middle&quot;;
+  for (var i = 0; i &lt; n; i++) {
+    var q = P(i);
+    if (odd &amp;&amp; i % 2) {
+      ctx.strokeStyle = css(&quot;--gold&quot;); ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(q[0], q[1], r + 4, 0, 2 * Math.PI); ctx.stroke();
+    }
+    ctx.fillStyle = seen[i] ? css(&quot;--accent&quot;) : css(&quot;--surface&quot;);
+    ctx.strokeStyle = css(&quot;--ink-faint&quot;); ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(q[0], q[1], r, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = seen[i] ? &quot;#fff&quot; : css(&quot;--ink&quot;);
+    ctx.fillText(String(i), q[0], q[1] + 0.5);
+  }
+}
+
+// n 이 바뀌면 m 슬라이더의 끝을 n - 1 에 맞춘다
+(function () {
+  var nS = document.querySelector(&#x27;input[data-var=&quot;n&quot;]&#x27;), mS = document.querySelector(&#x27;input[data-var=&quot;m&quot;]&#x27;);
+  if (!nS || !mS) return;
+  nS.addEventListener(&quot;input&quot;, function () {
+    var top = +nS.value - 1, old = +mS.value;
+    mS.max = top;
+    if (old &gt; top) { mS.value = top; mS.dispatchEvent(new Event(&quot;input&quot;)); }
+  });
+})();
+
+function draw(ctx, w, h, r) {
+  if (!r) return;
+  circle(ctx, w, h, r.n, r.path, false);
+  msg(&quot;색칠한 점이 말이 놓인 점이다. 점선은 다시 놓여 멈춘 마지막 걸음이다.&quot;);
+}
+
+/* ===== 고치지 않는 부분: 파이썬 실행 · 슬라이더 · 점 끌기 · 수치 판 · 표 · 전체 케이스 ===== */
+var $ = function (id) { return document.getElementById(id); };
+function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function msg(text, kind) { var m = $(&quot;fig-msg&quot;); m.textContent = text || &quot;&quot;; m.className = &quot;msg&quot; + (kind ? &quot; &quot; + kind : &quot;&quot;); }
+
+var code = $(&quot;code&quot;), codeAll = $(&quot;code-all&quot;), py = null, last = null, timer = null, lastRow = &quot;&quot;;
+var queue = Promise.resolve();
+code.value = $(&quot;py-src&quot;).textContent.replace(/^\s*\n/, &quot;&quot;);
+codeAll.value = $(&quot;py-all&quot;).textContent.replace(/^\s*\n/, &quot;&quot;);
+
+var view = { s: 1, ox: 0, oy: 0 };
+function px(p) { return [view.ox + p[0] * view.s, view.oy + p[1] * view.s]; }
+function unpx(x, y) { return [(x - view.ox) / view.s, (y - view.oy) / view.s]; }
+
+function setVar(name, val) {
+  var re = new RegExp(&quot;^&quot; + name + &quot;\\s*=.*$&quot;, &quot;m&quot;);
+  [code, codeAll].forEach(function (box) {
+    box.value = re.test(box.value) ? box.value.replace(re, name + &quot; = &quot; + val) : name + &quot; = &quot; + val + &quot;\n&quot; + box.value;
+  });
+}
+
+// 파이썬 한 번 돌리기. 두 코드가 겹쳐 돌지 않게 차례로 줄 세운다.
+function exec(src) {
+  var job = queue.then(async function () {
+    var buf = [];
+    py.setStdout({ batched: function (s) { buf.push(s); } });
+    py.setStderr({ batched: function (s) { buf.push(s); } });
+    try {
+      py.runPython(&quot;result = None&quot;);
+      await py.runPythonAsync(src);
+      var r = py.globals.get(&quot;result&quot;);
+      var val = r &amp;&amp; r.toJs ? r.toJs({ dict_converter: Object.fromEntries }) : null;
+      if (r &amp;&amp; r.destroy) r.destroy();
+      return { ok: true, text: buf.join(&quot;\n&quot;), result: val };
+    } catch (e) {
+      var lines = String(e.message || e).trim().split(&quot;\n&quot;);
+      return { ok: false, text: buf.concat([lines[lines.length - 1]]).join(&quot;\n&quot;), result: null };
+    }
+  });
+  queue = job.catch(function () {});
+  return job;
+}
+
+async function run() {
+  if (!py) return;
+  var r = await exec(code.value);
+  $(&quot;out&quot;).textContent = r.text;
+  $(&quot;out&quot;).classList.toggle(&quot;err&quot;, !r.ok);
+  last = r.result;
+  if (r.ok) logRow();
+  paint();
+  if ($(&quot;all&quot;).open) runAll();
+}
+async function runAll() {
+  if (!py) return;
+  $(&quot;all-out&quot;).textContent = &quot;세는 중&quot;;
+  var r = await exec(codeAll.value);
+  $(&quot;all-out&quot;).textContent = r.text;
+  $(&quot;all-out&quot;).classList.toggle(&quot;err&quot;, !r.ok);
+}
+function runSoon() { clearTimeout(timer); timer = setTimeout(run, 120); }
+
+function paint() {
+  $(&quot;readout&quot;).innerHTML = COLUMNS.map(function (k) {
+    var v = last &amp;&amp; k in last ? last[k] : &quot;–&quot;;
+    return &#x27;&lt;div class=&quot;stat&quot;&gt;&lt;dt&gt;&#x27; + k + &quot;&lt;/dt&gt;&lt;dd&gt;&quot; + v + &quot;&lt;/dd&gt;&lt;/div&gt;&quot;;
+  }).join(&quot;&quot;);
+  var cv = $(&quot;fig&quot;), dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = +cv.dataset.h || 220;
+  cv.style.height = h + &quot;px&quot;;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  var m = 16;
+  view.s = Math.min(w - 2 * m, h - 2 * m) / 100;
+  view.ox = (w - 100 * view.s) / 2; view.oy = (h - 100 * view.s) / 2;
+  var ctx = cv.getContext(&quot;2d&quot;);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  msg(&quot;&quot;);
+  draw(ctx, w, h, last);
+  if (DRAG.length &amp;&amp; last &amp;&amp; last[&quot;점&quot;]) {
+    DRAG.forEach(function (k) {
+      var p = last[&quot;점&quot;][k]; if (!p) return;
+      var q = px(p);
+      ctx.beginPath(); ctx.arc(q[0], q[1], 9, 0, 2 * Math.PI);
+      ctx.fillStyle = css(&quot;--accent&quot;); ctx.globalAlpha = .22; ctx.fill(); ctx.globalAlpha = 1;
+    });
+  }
+}
+
+function logRow() {
+  if (!last) return;
+  var thead = $(&quot;log&quot;).tHead, tbody = $(&quot;log&quot;).tBodies[0];
+  if (!thead.rows.length) thead.innerHTML = &quot;&lt;tr&gt;&lt;th&gt;#&lt;/th&gt;&quot; + COLUMNS.map(function (k) { return &quot;&lt;th&gt;&quot; + k + &quot;&lt;/th&gt;&quot;; }).join(&quot;&quot;) + &quot;&lt;/tr&gt;&quot;;
+  var cells = COLUMNS.map(function (k) { return k in last ? last[k] : &quot;&quot;; });
+  var key = cells.join(&quot;|&quot;);
+  if (key === lastRow) return;
+  lastRow = key;
+  var tr = document.createElement(&quot;tr&quot;);
+  tr.innerHTML = &quot;&lt;td&gt;&quot; + (tbody.rows.length + 1) + &quot;&lt;/td&gt;&quot; + cells.map(function (c) { return &quot;&lt;td&gt;&quot; + c + &quot;&lt;/td&gt;&quot;; }).join(&quot;&quot;);
+  tbody.insertBefore(tr, tbody.firstChild);
+}
+
+// 점 끌기 — 끄는 동안 점 줄을 바꾸고 파이썬을 다시 돌린다
+(function () {
+  var cv = $(&quot;fig&quot;), held = null;
+  if (DRAG.length) cv.classList.add(&quot;drag&quot;);
+  function at(e) { var b = cv.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; }
+  cv.addEventListener(&quot;pointerdown&quot;, function (e) {
+    if (!DRAG.length || !last || !last[&quot;점&quot;]) return;
+    var m = at(e), best = 22;
+    DRAG.forEach(function (k) {
+      var p = last[&quot;점&quot;][k]; if (!p) return;
+      var q = px(p), d = Math.hypot(q[0] - m[0], q[1] - m[1]);
+      if (d &lt; best) { best = d; held = k; }
+    });
+    if (held) { cv.setPointerCapture(e.pointerId); e.preventDefault(); }
+  });
+  cv.addEventListener(&quot;pointermove&quot;, function (e) {
+    if (!held) return;
+    var m = at(e), p = unpx(m[0], m[1]);
+    var x = Math.max(0, Math.min(100, Math.round(p[0]))), y = Math.max(0, Math.min(100, Math.round(p[1])));
+    last[&quot;점&quot;][held] = [x, y];
+    setVar(held, &quot;(&quot; + x + &quot;, &quot; + y + &quot;)&quot;);
+    paint();
+    runSoon();
+  });
+  function drop() { held = null; }
+  cv.addEventListener(&quot;pointerup&quot;, drop);
+  cv.addEventListener(&quot;pointercancel&quot;, drop);
+})();
+
+document.querySelectorAll(&quot;input[data-var]&quot;).forEach(function (el) {
+  el.addEventListener(&quot;input&quot;, function () {
+    var show = document.querySelector(&#x27;[data-show=&quot;&#x27; + el.dataset.var + &#x27;&quot;]&#x27;);
+    if (show) show.textContent = el.value;
+    setVar(el.dataset.var, el.value);
+    runSoon();
+  });
+});
+$(&quot;b-run&quot;).addEventListener(&quot;click&quot;, run);
+$(&quot;b-run-all&quot;).addEventListener(&quot;click&quot;, runAll);
+$(&quot;all&quot;).addEventListener(&quot;toggle&quot;, function () { if ($(&quot;all&quot;).open) runAll(); });
+$(&quot;b-clear&quot;).addEventListener(&quot;click&quot;, function () { $(&quot;log&quot;).tBodies[0].innerHTML = &quot;&quot;; lastRow = &quot;&quot;; });
+document.querySelectorAll(&quot;[data-copy]&quot;).forEach(function (b) {
+  b.addEventListener(&quot;click&quot;, function () {
+    var box = $(b.dataset.copy);
+    try { navigator.clipboard.writeText(box.value); $(&quot;py-state&quot;).textContent = &quot;복사했다&quot;; }
+    catch (e) { box.select(); }
+  });
+});
+window.addEventListener(&quot;resize&quot;, paint);
+if (window.matchMedia) window.matchMedia(&quot;(prefers-color-scheme: dark)&quot;).addEventListener(&quot;change&quot;, paint);
+
+paint();
+loadPyodide().then(function (p) {
+  py = p;
+  $(&quot;b-run&quot;).disabled = false;
+  $(&quot;b-run-all&quot;).disabled = false;
+  $(&quot;py-state&quot;).textContent = &quot;파이썬 준비됨&quot;;
+  run();
+}).catch(function () { $(&quot;py-state&quot;).textContent = &quot;파이썬을 불러오지 못했다. 인터넷 연결을 확인한다.&quot;; });
+&lt;/script&gt;
+"></iframe>
+  <iframe data-tab="1" title="질문 3 · 짝수 n" data-src="&lt;!doctype html&gt;
+&lt;html lang=&quot;ko&quot;&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;title&gt;원 위의 말 질문 3 실험대&lt;/title&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap&quot;&gt;
+
+
+&lt;style&gt;
+  :root {
+    --accent: #189E5A;
+    --ground: #F6F7FA;
+    --surface: #FFFFFF;
+    --surface-2: #EFF2F7;
+    --ink: #22314F;
+    --ink-soft: #5C6B85;
+    --ink-faint: #8A96AC;
+    --rule: #DDE3EC;
+    --gold: #F5B301;
+    --ok: #189E5A;
+    --warn: #E17B2E;
+    --head-bg: #22314F;
+    --head-ink: #FFFFFF;
+    --head-dim: #A9B6CE;
+    --code-bg: #1C2433;
+    --code-ink: #E5EAF2;
+    --shadow: 0 1px 2px rgba(34, 49, 79, .05), 0 6px 18px rgba(34, 49, 79, .05);
+    --sans: &#x27;IBM Plex Sans KR&#x27;, &#x27;Malgun Gothic&#x27;, &#x27;맑은 고딕&#x27;, system-ui, sans-serif;
+    --mono: &#x27;IBM Plex Mono&#x27;, &#x27;Consolas&#x27;, ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme=&quot;light&quot;]) {
+      --ground: #141A26; --surface: #1C2433; --surface-2: #232D3F;
+      --ink: #E5EAF2; --ink-soft: #93A0B8; --ink-faint: #6C7A94; --rule: #2E3A50;
+      --ok: #35BE79; --warn: #F0954B;
+      --head-bg: #0F1521; --head-ink: #E5EAF2; --head-dim: #7C8AA4;
+      --code-bg: #0F1521;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+    }
+  }
+  :root[data-theme=&quot;dark&quot;] {
+    --ground: #141A26; --surface: #1C2433; --surface-2: #232D3F;
+    --ink: #E5EAF2; --ink-soft: #93A0B8; --ink-faint: #6C7A94; --rule: #2E3A50;
+    --ok: #35BE79; --warn: #F0954B;
+    --head-bg: #0F1521; --head-ink: #E5EAF2; --head-dim: #7C8AA4;
+    --code-bg: #0F1521;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header { background: var(--head-bg); color: var(--head-ink); padding: 18px 26px 16px; border-bottom: 3px solid var(--accent); }
+  .kick { font-family: var(--mono); font-size: 11.5px; font-weight: 500; letter-spacing: .14em; color: var(--gold); }
+  header h1 { margin: 5px 0 3px; font-size: 25px; font-weight: 700; letter-spacing: -.02em; }
+  header p { margin: 0; color: var(--head-dim); font-size: 13.5px; max-width: 76ch; }
+
+  main { max-width: 1240px; margin: 0 auto; padding: 18px; }
+  .grid { display: grid; gap: 14px; align-items: start; grid-template-columns: 300px minmax(0, 1fr); margin-top: 14px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: minmax(0, 1fr); } main { padding: 14px; } }
+
+  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; box-shadow: var(--shadow); padding: 14px; min-width: 0; }
+  .card &gt; h2 { margin: 0 0 11px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--ink-faint); }
+  main &gt; .card { margin-top: 14px; }
+  .card.problem { border-left: 4px solid var(--accent); margin-top: 0; }
+  .problem .ask { margin: 0 0 9px; font-size: 14.5px; line-height: 1.75; }
+  .problem .src { margin: 11px 0 0; padding-top: 9px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-faint); }
+
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+  .row + .row { margin-top: 7px; }
+  button.btn {
+    font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 7px 12px; cursor: pointer;
+  }
+  button.btn:hover:not(:disabled) { border-color: var(--accent); }
+  button.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.btn:disabled { opacity: .38; cursor: default; }
+  button.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  label.fld { display: block; margin-bottom: 12px; }
+  label.fld &gt; span { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-faint); margin-bottom: 4px; }
+  label.fld b { color: var(--accent); font-size: 14px; }
+  input[type=&quot;range&quot;] { width: 100%; accent-color: var(--accent); }
+
+  canvas { display: block; width: 100%; touch-action: none; }
+  .msg { font-size: 13px; color: var(--ink-soft); margin: 8px 0 0; }
+  .msg.ok { color: var(--ok); font-weight: 600; }
+  .msg.bad { color: var(--warn); font-weight: 600; }
+
+  .readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; margin: 12px 0 0; background: var(--surface-2); }
+  .stat { padding: 9px 12px; border-right: 1px solid var(--rule); }
+  .stat:last-child { border-right: 0; }
+  .stat dt { font-family: var(--mono); font-size: 10px; letter-spacing: .05em; color: var(--ink-faint); margin: 0 0 1px; }
+  .stat dd { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 17px; font-weight: 500; margin: 0; color: var(--accent); }
+
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13px; }
+  th, td { padding: 6px 10px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
+  th { font-size: 10.5px; letter-spacing: .05em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  tbody tr:first-child td { background: rgba(245, 179, 1, .12); }
+
+  textarea.code {
+    width: 100%; min-height: 260px; resize: vertical;
+    font-family: var(--mono); font-size: 13px; line-height: 1.6; tab-size: 4;
+    color: var(--code-ink); background: var(--code-bg);
+    border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+    padding: 12px 14px; white-space: pre; overflow: auto;
+  }
+  textarea.code:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  pre.out {
+    margin: 10px 0 0; min-height: 3em; max-height: 320px; overflow: auto;
+    font-family: var(--mono); font-size: 13px; line-height: 1.6; white-space: pre-wrap;
+    background: var(--surface-2); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 14px;
+  }
+  pre.out.err { color: var(--warn); }
+  canvas.drag { cursor: grab; }
+  details.card &gt; summary {
+    cursor: pointer; list-style: none;
+    font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--ink-faint);
+  }
+  details.card &gt; summary::-webkit-details-marker { display: none; }
+  details.card &gt; summary::before { content: &quot;▶ &quot;; color: var(--accent); }
+  details.card[open] &gt; summary::before { content: &quot;▼ &quot;; }
+  details.card[open] &gt; summary { margin-bottom: 11px; }
+  details.sub { margin-top: 10px; }
+  details.sub &gt; summary { cursor: pointer; font-size: 13px; color: var(--ink-soft); }
+&lt;/style&gt;
+
+&lt;header&gt;
+  &lt;div class=&quot;kick&quot;&gt;9주차 · 실험대 · 질문 3&lt;/div&gt;
+  &lt;h1&gt;원 위의 말&lt;/h1&gt;
+  &lt;p&gt;n 과 m 을 바꾸며, 못 밟는 점이 어디에 남는지 본다. 금색 고리는 홀수 번호 점이다.&lt;/p&gt;
+&lt;/header&gt;
+
+&lt;main&gt;
+  &lt;section class=&quot;card problem&quot;&gt;
+    &lt;h2&gt;문제&lt;/h2&gt;
+    &lt;p class=&quot;ask&quot;&gt;둘레가 nπ 인 원 위에 점 n 개가 같은 간격으로 있고, 시계 방향으로 0, 1, …, n − 1 번이다. 0 번 점의 말을 먼저 mπ 만큼 옮기고, 그다음부터는 직전 점의 번호 × mπ 만큼 시계 방향으로 옮긴다. 출발점이나 이미 놓았던 점에 다시 놓이면 멈춘다.&lt;/p&gt;
+    &lt;p class=&quot;ask&quot;&gt;&lt;b&gt;질문 3&lt;/b&gt; n 이 4 이상의 짝수일 때, 말이 모든 점에 적어도 한 번씩 놓이도록 하는 m 이 없음을 설명한다.&lt;/p&gt;
+    &lt;p class=&quot;src&quot;&gt;대전과학고 2026 문항 2&lt;/p&gt;
+  &lt;/section&gt;
+
+  &lt;div class=&quot;grid&quot;&gt;
+    &lt;section class=&quot;card&quot;&gt;
+      &lt;h2&gt;조작&lt;/h2&gt;
+      &lt;label class=&quot;fld&quot;&gt;&lt;span&gt;점 n &lt;b data-show=&quot;n&quot;&gt;10&lt;/b&gt;&lt;/span&gt;&lt;input type=&quot;range&quot; data-var=&quot;n&quot; min=&quot;4&quot; max=&quot;20&quot; value=&quot;10&quot;&gt;&lt;/label&gt;
+      &lt;label class=&quot;fld&quot;&gt;&lt;span&gt;m &lt;b data-show=&quot;m&quot;&gt;1&lt;/b&gt;&lt;/span&gt;&lt;input type=&quot;range&quot; data-var=&quot;m&quot; min=&quot;1&quot; max=&quot;9&quot; value=&quot;1&quot;&gt;&lt;/label&gt;
+      &lt;div class=&quot;row&quot;&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;b-clear&quot;&gt;↻ 표 비우기&lt;/button&gt;&lt;/div&gt;
+      &lt;dl class=&quot;readout&quot; id=&quot;readout&quot;&gt;&lt;/dl&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;card&quot;&gt;
+      &lt;h2&gt;그림&lt;/h2&gt;
+      &lt;canvas id=&quot;fig&quot; data-h=&quot;380&quot;&gt;&lt;/canvas&gt;
+      &lt;p class=&quot;msg&quot; id=&quot;fig-msg&quot;&gt;&lt;/p&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+  &lt;section class=&quot;card&quot;&gt;
+    &lt;h2&gt;표 · 파이썬이 돌 때마다 한 줄씩 쌓인다&lt;/h2&gt;
+    &lt;div class=&quot;table-scroll&quot;&gt;&lt;table id=&quot;log&quot;&gt;&lt;thead&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section class=&quot;card&quot;&gt;
+    &lt;h2&gt;파이썬 · 이 코드가 실제로 돈다&lt;/h2&gt;
+    &lt;textarea class=&quot;code&quot; id=&quot;code&quot; spellcheck=&quot;false&quot; aria-label=&quot;파이썬 코드&quot;&gt;&lt;/textarea&gt;
+    &lt;div class=&quot;row&quot; style=&quot;margin-top:8px&quot;&gt;
+      &lt;button class=&quot;btn primary&quot; type=&quot;button&quot; id=&quot;b-run&quot; disabled&gt;▶ 실행&lt;/button&gt;
+      &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-copy=&quot;code&quot;&gt;복사&lt;/button&gt;
+      &lt;span class=&quot;msg&quot; id=&quot;py-state&quot; style=&quot;margin:0&quot;&gt;파이썬 불러오는 중&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;pre class=&quot;out&quot; id=&quot;out&quot;&gt;&lt;/pre&gt;
+  &lt;/section&gt;
+
+  &lt;details class=&quot;card&quot; id=&quot;all&quot;&gt;
+    &lt;summary&gt;전체 케이스 보기 · 눌러서 펼친다&lt;/summary&gt;
+    &lt;pre class=&quot;out&quot; id=&quot;all-out&quot;&gt;&lt;/pre&gt;
+    &lt;details class=&quot;sub&quot;&gt;
+      &lt;summary&gt;전체 케이스를 찍는 파이썬 코드&lt;/summary&gt;
+      &lt;textarea class=&quot;code&quot; id=&quot;code-all&quot; spellcheck=&quot;false&quot; aria-label=&quot;전체 케이스 파이썬 코드&quot;&gt;&lt;/textarea&gt;
+      &lt;div class=&quot;row&quot; style=&quot;margin-top:8px&quot;&gt;
+        &lt;button class=&quot;btn primary&quot; type=&quot;button&quot; id=&quot;b-run-all&quot; disabled&gt;▶ 실행&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-copy=&quot;code-all&quot;&gt;복사&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/details&gt;
+  &lt;/details&gt;
+&lt;/main&gt;
+
+&lt;script type=&quot;text/plain&quot; id=&quot;py-src&quot;&gt;
+n = 10
+m = 1
+
+def walk(n, m):
+    # 이웃한 두 점 사이가 π 이므로 kπ 만큼 옮기는 것은 k 칸 옮기는 것이다
+    path = [0]
+    a = m % n                          # 1단계: 0 번 점에서 m 칸
+    while a not in path:
+        path.append(a)
+        a = (a + a * m) % n            # 다음 단계: 지금 번호 × m 칸
+    path.append(a)                     # 다시 놓인 점에서 멈춘다
+    return path
+
+m = min(max(m, 1), n - 1)
+path = walk(n, m)
+seen = set(path)
+missed = [i for i in range(n) if i not in seen]
+odd_seen = [i for i in seen if i % 2 == 1]
+
+print(&quot;말이 놓인 차례 :&quot;, &quot; → &quot;.join(map(str, path)))
+print(&quot;못 밟은 점 :&quot;, missed if missed else &quot;없다&quot;)
+print(&quot;밟은 홀수 번호 점 :&quot;, sorted(odd_seen))
+
+result = {&quot;n&quot;: n, &quot;m&quot;: m, &quot;밟은 점 수&quot;: len(seen), &quot;못 밟은 점 수&quot;: len(missed),
+          &quot;밟은 홀수 점 수&quot;: len(odd_seen), &quot;path&quot;: path}
+&lt;/script&gt;
+
+&lt;script type=&quot;text/plain&quot; id=&quot;py-all&quot;&gt;
+n = 10
+
+def walk(n, m):
+    # 이웃한 두 점 사이가 π 이므로 kπ 만큼 옮기는 것은 k 칸 옮기는 것이다
+    path = [0]
+    a = m % n                          # 1단계: 0 번 점에서 m 칸
+    while a not in path:
+        path.append(a)
+        a = (a + a * m) % n            # 다음 단계: 지금 번호 × m 칸
+    path.append(a)                     # 다시 놓인 점에서 멈춘다
+    return path
+
+# m 을 모두 굴려, 모든 점을 밟는 m 이 있는지 본다
+for m in range(1, n):
+    seen = set(walk(n, m))
+    missed = [i for i in range(n) if i not in seen]
+    odd = sorted(i for i in seen if i % 2 == 1)
+    print(f&quot;m = {m:&gt;2}  못 밟은 점 {len(missed):&gt;2} 개   밟은 홀수 점 {odd}&quot;)
+&lt;/script&gt;
+
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/pyodide@0.26.4/pyodide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+/* ===== 이 문제에 맞게 바꾼 부분 ===== */
+// 수치 판과 표에 보일 열. result 사전의 키 이름이다.
+var COLUMNS = [&quot;n&quot;, &quot;m&quot;, &quot;밟은 점 수&quot;, &quot;못 밟은 점 수&quot;, &quot;밟은 홀수 점 수&quot;];
+
+// 끌 점이 없는 문제다.
+var DRAG = [];
+
+function circle(ctx, w, h, n, path, odd) {
+  var cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 30;
+  function P(i) { var t = -Math.PI / 2 + 2 * Math.PI * i / n; return [cx + R * Math.cos(t), cy + R * Math.sin(t)]; }
+  ctx.strokeStyle = css(&quot;--rule&quot;); ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI); ctx.stroke();
+  var seen = {};
+  for (var k = 0; k &lt; path.length - 1; k++) seen[path[k]] = true;
+  // 지나간 길 — 마지막 한 걸음(다시 놓인 점)은 점선
+  ctx.strokeStyle = css(&quot;--accent&quot;); ctx.lineWidth = 2;
+  for (k = 0; k + 1 &lt; path.length; k++) {
+    var a = P(path[k]), b = P(path[k + 1]);
+    ctx.setLineDash(k + 2 === path.length ? [5, 4] : []);
+    ctx.globalAlpha = 0.35 + 0.65 * (k + 1) / path.length;
+    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+  }
+  ctx.setLineDash([]); ctx.globalAlpha = 1;
+  var r = Math.max(7, Math.min(13, 120 / n));
+  ctx.font = &quot;600 &quot; + Math.round(r * 1.1) + &quot;px &quot; + css(&quot;--mono&quot;);
+  ctx.textAlign = &quot;center&quot;; ctx.textBaseline = &quot;middle&quot;;
+  for (var i = 0; i &lt; n; i++) {
+    var q = P(i);
+    if (odd &amp;&amp; i % 2) {
+      ctx.strokeStyle = css(&quot;--gold&quot;); ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(q[0], q[1], r + 4, 0, 2 * Math.PI); ctx.stroke();
+    }
+    ctx.fillStyle = seen[i] ? css(&quot;--accent&quot;) : css(&quot;--surface&quot;);
+    ctx.strokeStyle = css(&quot;--ink-faint&quot;); ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(q[0], q[1], r, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = seen[i] ? &quot;#fff&quot; : css(&quot;--ink&quot;);
+    ctx.fillText(String(i), q[0], q[1] + 0.5);
+  }
+}
+
+// n 이 바뀌면 m 슬라이더의 끝을 n - 1 에 맞춘다
+(function () {
+  var nS = document.querySelector(&#x27;input[data-var=&quot;n&quot;]&#x27;), mS = document.querySelector(&#x27;input[data-var=&quot;m&quot;]&#x27;);
+  if (!nS || !mS) return;
+  nS.addEventListener(&quot;input&quot;, function () {
+    var top = +nS.value - 1, old = +mS.value;
+    mS.max = top;
+    if (old &gt; top) { mS.value = top; mS.dispatchEvent(new Event(&quot;input&quot;)); }
+  });
+})();
+
+function draw(ctx, w, h, r) {
+  if (!r) return;
+  circle(ctx, w, h, r.n, r.path, true);
+  msg(r[&quot;못 밟은 점 수&quot;] ? &quot;못 밟은 점이 &quot; + r[&quot;못 밟은 점 수&quot;] + &quot; 개 남았다.&quot; : &quot;모든 점을 밟았다.&quot;);
+}
+
+/* ===== 고치지 않는 부분: 파이썬 실행 · 슬라이더 · 점 끌기 · 수치 판 · 표 · 전체 케이스 ===== */
+var $ = function (id) { return document.getElementById(id); };
+function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function msg(text, kind) { var m = $(&quot;fig-msg&quot;); m.textContent = text || &quot;&quot;; m.className = &quot;msg&quot; + (kind ? &quot; &quot; + kind : &quot;&quot;); }
+
+var code = $(&quot;code&quot;), codeAll = $(&quot;code-all&quot;), py = null, last = null, timer = null, lastRow = &quot;&quot;;
+var queue = Promise.resolve();
+code.value = $(&quot;py-src&quot;).textContent.replace(/^\s*\n/, &quot;&quot;);
+codeAll.value = $(&quot;py-all&quot;).textContent.replace(/^\s*\n/, &quot;&quot;);
+
+var view = { s: 1, ox: 0, oy: 0 };
+function px(p) { return [view.ox + p[0] * view.s, view.oy + p[1] * view.s]; }
+function unpx(x, y) { return [(x - view.ox) / view.s, (y - view.oy) / view.s]; }
+
+function setVar(name, val) {
+  var re = new RegExp(&quot;^&quot; + name + &quot;\\s*=.*$&quot;, &quot;m&quot;);
+  [code, codeAll].forEach(function (box) {
+    box.value = re.test(box.value) ? box.value.replace(re, name + &quot; = &quot; + val) : name + &quot; = &quot; + val + &quot;\n&quot; + box.value;
+  });
+}
+
+// 파이썬 한 번 돌리기. 두 코드가 겹쳐 돌지 않게 차례로 줄 세운다.
+function exec(src) {
+  var job = queue.then(async function () {
+    var buf = [];
+    py.setStdout({ batched: function (s) { buf.push(s); } });
+    py.setStderr({ batched: function (s) { buf.push(s); } });
+    try {
+      py.runPython(&quot;result = None&quot;);
+      await py.runPythonAsync(src);
+      var r = py.globals.get(&quot;result&quot;);
+      var val = r &amp;&amp; r.toJs ? r.toJs({ dict_converter: Object.fromEntries }) : null;
+      if (r &amp;&amp; r.destroy) r.destroy();
+      return { ok: true, text: buf.join(&quot;\n&quot;), result: val };
+    } catch (e) {
+      var lines = String(e.message || e).trim().split(&quot;\n&quot;);
+      return { ok: false, text: buf.concat([lines[lines.length - 1]]).join(&quot;\n&quot;), result: null };
+    }
+  });
+  queue = job.catch(function () {});
+  return job;
+}
+
+async function run() {
+  if (!py) return;
+  var r = await exec(code.value);
+  $(&quot;out&quot;).textContent = r.text;
+  $(&quot;out&quot;).classList.toggle(&quot;err&quot;, !r.ok);
+  last = r.result;
+  if (r.ok) logRow();
+  paint();
+  if ($(&quot;all&quot;).open) runAll();
+}
+async function runAll() {
+  if (!py) return;
+  $(&quot;all-out&quot;).textContent = &quot;세는 중&quot;;
+  var r = await exec(codeAll.value);
+  $(&quot;all-out&quot;).textContent = r.text;
+  $(&quot;all-out&quot;).classList.toggle(&quot;err&quot;, !r.ok);
+}
+function runSoon() { clearTimeout(timer); timer = setTimeout(run, 120); }
+
+function paint() {
+  $(&quot;readout&quot;).innerHTML = COLUMNS.map(function (k) {
+    var v = last &amp;&amp; k in last ? last[k] : &quot;–&quot;;
+    return &#x27;&lt;div class=&quot;stat&quot;&gt;&lt;dt&gt;&#x27; + k + &quot;&lt;/dt&gt;&lt;dd&gt;&quot; + v + &quot;&lt;/dd&gt;&lt;/div&gt;&quot;;
+  }).join(&quot;&quot;);
+  var cv = $(&quot;fig&quot;), dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = +cv.dataset.h || 220;
+  cv.style.height = h + &quot;px&quot;;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  var m = 16;
+  view.s = Math.min(w - 2 * m, h - 2 * m) / 100;
+  view.ox = (w - 100 * view.s) / 2; view.oy = (h - 100 * view.s) / 2;
+  var ctx = cv.getContext(&quot;2d&quot;);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  msg(&quot;&quot;);
+  draw(ctx, w, h, last);
+  if (DRAG.length &amp;&amp; last &amp;&amp; last[&quot;점&quot;]) {
+    DRAG.forEach(function (k) {
+      var p = last[&quot;점&quot;][k]; if (!p) return;
+      var q = px(p);
+      ctx.beginPath(); ctx.arc(q[0], q[1], 9, 0, 2 * Math.PI);
+      ctx.fillStyle = css(&quot;--accent&quot;); ctx.globalAlpha = .22; ctx.fill(); ctx.globalAlpha = 1;
+    });
+  }
+}
+
+function logRow() {
+  if (!last) return;
+  var thead = $(&quot;log&quot;).tHead, tbody = $(&quot;log&quot;).tBodies[0];
+  if (!thead.rows.length) thead.innerHTML = &quot;&lt;tr&gt;&lt;th&gt;#&lt;/th&gt;&quot; + COLUMNS.map(function (k) { return &quot;&lt;th&gt;&quot; + k + &quot;&lt;/th&gt;&quot;; }).join(&quot;&quot;) + &quot;&lt;/tr&gt;&quot;;
+  var cells = COLUMNS.map(function (k) { return k in last ? last[k] : &quot;&quot;; });
+  var key = cells.join(&quot;|&quot;);
+  if (key === lastRow) return;
+  lastRow = key;
+  var tr = document.createElement(&quot;tr&quot;);
+  tr.innerHTML = &quot;&lt;td&gt;&quot; + (tbody.rows.length + 1) + &quot;&lt;/td&gt;&quot; + cells.map(function (c) { return &quot;&lt;td&gt;&quot; + c + &quot;&lt;/td&gt;&quot;; }).join(&quot;&quot;);
+  tbody.insertBefore(tr, tbody.firstChild);
+}
+
+// 점 끌기 — 끄는 동안 점 줄을 바꾸고 파이썬을 다시 돌린다
+(function () {
+  var cv = $(&quot;fig&quot;), held = null;
+  if (DRAG.length) cv.classList.add(&quot;drag&quot;);
+  function at(e) { var b = cv.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; }
+  cv.addEventListener(&quot;pointerdown&quot;, function (e) {
+    if (!DRAG.length || !last || !last[&quot;점&quot;]) return;
+    var m = at(e), best = 22;
+    DRAG.forEach(function (k) {
+      var p = last[&quot;점&quot;][k]; if (!p) return;
+      var q = px(p), d = Math.hypot(q[0] - m[0], q[1] - m[1]);
+      if (d &lt; best) { best = d; held = k; }
+    });
+    if (held) { cv.setPointerCapture(e.pointerId); e.preventDefault(); }
+  });
+  cv.addEventListener(&quot;pointermove&quot;, function (e) {
+    if (!held) return;
+    var m = at(e), p = unpx(m[0], m[1]);
+    var x = Math.max(0, Math.min(100, Math.round(p[0]))), y = Math.max(0, Math.min(100, Math.round(p[1])));
+    last[&quot;점&quot;][held] = [x, y];
+    setVar(held, &quot;(&quot; + x + &quot;, &quot; + y + &quot;)&quot;);
+    paint();
+    runSoon();
+  });
+  function drop() { held = null; }
+  cv.addEventListener(&quot;pointerup&quot;, drop);
+  cv.addEventListener(&quot;pointercancel&quot;, drop);
+})();
+
+document.querySelectorAll(&quot;input[data-var]&quot;).forEach(function (el) {
+  el.addEventListener(&quot;input&quot;, function () {
+    var show = document.querySelector(&#x27;[data-show=&quot;&#x27; + el.dataset.var + &#x27;&quot;]&#x27;);
+    if (show) show.textContent = el.value;
+    setVar(el.dataset.var, el.value);
+    runSoon();
+  });
+});
+$(&quot;b-run&quot;).addEventListener(&quot;click&quot;, run);
+$(&quot;b-run-all&quot;).addEventListener(&quot;click&quot;, runAll);
+$(&quot;all&quot;).addEventListener(&quot;toggle&quot;, function () { if ($(&quot;all&quot;).open) runAll(); });
+$(&quot;b-clear&quot;).addEventListener(&quot;click&quot;, function () { $(&quot;log&quot;).tBodies[0].innerHTML = &quot;&quot;; lastRow = &quot;&quot;; });
+document.querySelectorAll(&quot;[data-copy]&quot;).forEach(function (b) {
+  b.addEventListener(&quot;click&quot;, function () {
+    var box = $(b.dataset.copy);
+    try { navigator.clipboard.writeText(box.value); $(&quot;py-state&quot;).textContent = &quot;복사했다&quot;; }
+    catch (e) { box.select(); }
+  });
+});
+window.addEventListener(&quot;resize&quot;, paint);
+if (window.matchMedia) window.matchMedia(&quot;(prefers-color-scheme: dark)&quot;).addEventListener(&quot;change&quot;, paint);
+
+paint();
+loadPyodide().then(function (p) {
+  py = p;
+  $(&quot;b-run&quot;).disabled = false;
+  $(&quot;b-run-all&quot;).disabled = false;
+  $(&quot;py-state&quot;).textContent = &quot;파이썬 준비됨&quot;;
+  run();
+}).catch(function () { $(&quot;py-state&quot;).textContent = &quot;파이썬을 불러오지 못했다. 인터넷 연결을 확인한다.&quot;; });
+&lt;/script&gt;
+" hidden></iframe>
+  <iframe data-tab="2" title="더 나아가 · 모든 점" data-src="&lt;!doctype html&gt;
+&lt;html lang=&quot;ko&quot;&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;title&gt;원 위의 말 더 나아가 실험대&lt;/title&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap&quot;&gt;
+
+
+&lt;style&gt;
+  :root {
+    --accent: #189E5A;
+    --ground: #F6F7FA;
+    --surface: #FFFFFF;
+    --surface-2: #EFF2F7;
+    --ink: #22314F;
+    --ink-soft: #5C6B85;
+    --ink-faint: #8A96AC;
+    --rule: #DDE3EC;
+    --gold: #F5B301;
+    --ok: #189E5A;
+    --warn: #E17B2E;
+    --head-bg: #22314F;
+    --head-ink: #FFFFFF;
+    --head-dim: #A9B6CE;
+    --code-bg: #1C2433;
+    --code-ink: #E5EAF2;
+    --shadow: 0 1px 2px rgba(34, 49, 79, .05), 0 6px 18px rgba(34, 49, 79, .05);
+    --sans: &#x27;IBM Plex Sans KR&#x27;, &#x27;Malgun Gothic&#x27;, &#x27;맑은 고딕&#x27;, system-ui, sans-serif;
+    --mono: &#x27;IBM Plex Mono&#x27;, &#x27;Consolas&#x27;, ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme=&quot;light&quot;]) {
+      --ground: #141A26; --surface: #1C2433; --surface-2: #232D3F;
+      --ink: #E5EAF2; --ink-soft: #93A0B8; --ink-faint: #6C7A94; --rule: #2E3A50;
+      --ok: #35BE79; --warn: #F0954B;
+      --head-bg: #0F1521; --head-ink: #E5EAF2; --head-dim: #7C8AA4;
+      --code-bg: #0F1521;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+    }
+  }
+  :root[data-theme=&quot;dark&quot;] {
+    --ground: #141A26; --surface: #1C2433; --surface-2: #232D3F;
+    --ink: #E5EAF2; --ink-soft: #93A0B8; --ink-faint: #6C7A94; --rule: #2E3A50;
+    --ok: #35BE79; --warn: #F0954B;
+    --head-bg: #0F1521; --head-ink: #E5EAF2; --head-dim: #7C8AA4;
+    --code-bg: #0F1521;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header { background: var(--head-bg); color: var(--head-ink); padding: 18px 26px 16px; border-bottom: 3px solid var(--accent); }
+  .kick { font-family: var(--mono); font-size: 11.5px; font-weight: 500; letter-spacing: .14em; color: var(--gold); }
+  header h1 { margin: 5px 0 3px; font-size: 25px; font-weight: 700; letter-spacing: -.02em; }
+  header p { margin: 0; color: var(--head-dim); font-size: 13.5px; max-width: 76ch; }
+
+  main { max-width: 1240px; margin: 0 auto; padding: 18px; }
+  .grid { display: grid; gap: 14px; align-items: start; grid-template-columns: 300px minmax(0, 1fr); margin-top: 14px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: minmax(0, 1fr); } main { padding: 14px; } }
+
+  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; box-shadow: var(--shadow); padding: 14px; min-width: 0; }
+  .card &gt; h2 { margin: 0 0 11px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--ink-faint); }
+  main &gt; .card { margin-top: 14px; }
+  .card.problem { border-left: 4px solid var(--accent); margin-top: 0; }
+  .problem .ask { margin: 0 0 9px; font-size: 14.5px; line-height: 1.75; }
+  .problem .src { margin: 11px 0 0; padding-top: 9px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-faint); }
+
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+  .row + .row { margin-top: 7px; }
+  button.btn {
+    font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 7px 12px; cursor: pointer;
+  }
+  button.btn:hover:not(:disabled) { border-color: var(--accent); }
+  button.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.btn:disabled { opacity: .38; cursor: default; }
+  button.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  label.fld { display: block; margin-bottom: 12px; }
+  label.fld &gt; span { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-faint); margin-bottom: 4px; }
+  label.fld b { color: var(--accent); font-size: 14px; }
+  input[type=&quot;range&quot;] { width: 100%; accent-color: var(--accent); }
+
+  canvas { display: block; width: 100%; touch-action: none; }
+  .msg { font-size: 13px; color: var(--ink-soft); margin: 8px 0 0; }
+  .msg.ok { color: var(--ok); font-weight: 600; }
+  .msg.bad { color: var(--warn); font-weight: 600; }
+
+  .readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; margin: 12px 0 0; background: var(--surface-2); }
+  .stat { padding: 9px 12px; border-right: 1px solid var(--rule); }
+  .stat:last-child { border-right: 0; }
+  .stat dt { font-family: var(--mono); font-size: 10px; letter-spacing: .05em; color: var(--ink-faint); margin: 0 0 1px; }
+  .stat dd { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 17px; font-weight: 500; margin: 0; color: var(--accent); }
+
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13px; }
+  th, td { padding: 6px 10px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
+  th { font-size: 10.5px; letter-spacing: .05em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  tbody tr:first-child td { background: rgba(245, 179, 1, .12); }
+
+  textarea.code {
+    width: 100%; min-height: 260px; resize: vertical;
+    font-family: var(--mono); font-size: 13px; line-height: 1.6; tab-size: 4;
+    color: var(--code-ink); background: var(--code-bg);
+    border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+    padding: 12px 14px; white-space: pre; overflow: auto;
+  }
+  textarea.code:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  pre.out {
+    margin: 10px 0 0; min-height: 3em; max-height: 320px; overflow: auto;
+    font-family: var(--mono); font-size: 13px; line-height: 1.6; white-space: pre-wrap;
+    background: var(--surface-2); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 14px;
+  }
+  pre.out.err { color: var(--warn); }
+  canvas.drag { cursor: grab; }
+  details.card &gt; summary {
+    cursor: pointer; list-style: none;
+    font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--ink-faint);
+  }
+  details.card &gt; summary::-webkit-details-marker { display: none; }
+  details.card &gt; summary::before { content: &quot;▶ &quot;; color: var(--accent); }
+  details.card[open] &gt; summary::before { content: &quot;▼ &quot;; }
+  details.card[open] &gt; summary { margin-bottom: 11px; }
+  details.sub { margin-top: 10px; }
+  details.sub &gt; summary { cursor: pointer; font-size: 13px; color: var(--ink-soft); }
+&lt;/style&gt;
+
+&lt;header&gt;
+  &lt;div class=&quot;kick&quot;&gt;9주차 · 실험대 · 더 나아가&lt;/div&gt;
+  &lt;h1&gt;원 위의 말&lt;/h1&gt;
+  &lt;p&gt;n 을 4 부터 늘려 가며, 모든 점을 밟게 하는 m 이 몇 개씩 있는지 막대로 본다.&lt;/p&gt;
+&lt;/header&gt;
+
+&lt;main&gt;
+  &lt;section class=&quot;card problem&quot;&gt;
+    &lt;h2&gt;문제&lt;/h2&gt;
+    &lt;p class=&quot;ask&quot;&gt;둘레가 nπ 인 원 위에 점 n 개가 같은 간격으로 있고, 시계 방향으로 0, 1, …, n − 1 번이다. 0 번 점의 말을 먼저 mπ 만큼 옮기고, 그다음부터는 직전 점의 번호 × mπ 만큼 시계 방향으로 옮긴다. 출발점이나 이미 놓았던 점에 다시 놓이면 멈춘다.&lt;/p&gt;
+    &lt;p class=&quot;ask&quot;&gt;&lt;b&gt;더 나아가&lt;/b&gt; n 이 홀수여도 모든 점을 밟게 하는 m 이 없을 수 있는가. 어떤 n 에서 그런 m 이 있는가.&lt;/p&gt;
+    &lt;p class=&quot;src&quot;&gt;대전과학고 2026 문항 2&lt;/p&gt;
+  &lt;/section&gt;
+
+  &lt;div class=&quot;grid&quot;&gt;
+    &lt;section class=&quot;card&quot;&gt;
+      &lt;h2&gt;조작&lt;/h2&gt;
+      &lt;label class=&quot;fld&quot;&gt;&lt;span&gt;n 의 끝 &lt;b data-show=&quot;N&quot;&gt;16&lt;/b&gt;&lt;/span&gt;&lt;input type=&quot;range&quot; data-var=&quot;N&quot; min=&quot;4&quot; max=&quot;30&quot; value=&quot;16&quot;&gt;&lt;/label&gt;
+      &lt;div class=&quot;row&quot;&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;b-clear&quot;&gt;↻ 표 비우기&lt;/button&gt;&lt;/div&gt;
+      &lt;dl class=&quot;readout&quot; id=&quot;readout&quot;&gt;&lt;/dl&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;card&quot;&gt;
+      &lt;h2&gt;그림&lt;/h2&gt;
+      &lt;canvas id=&quot;fig&quot; data-h=&quot;320&quot;&gt;&lt;/canvas&gt;
+      &lt;p class=&quot;msg&quot; id=&quot;fig-msg&quot;&gt;&lt;/p&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+  &lt;section class=&quot;card&quot;&gt;
+    &lt;h2&gt;표 · 파이썬이 돌 때마다 한 줄씩 쌓인다&lt;/h2&gt;
+    &lt;div class=&quot;table-scroll&quot;&gt;&lt;table id=&quot;log&quot;&gt;&lt;thead&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section class=&quot;card&quot;&gt;
+    &lt;h2&gt;파이썬 · 이 코드가 실제로 돈다&lt;/h2&gt;
+    &lt;textarea class=&quot;code&quot; id=&quot;code&quot; spellcheck=&quot;false&quot; aria-label=&quot;파이썬 코드&quot;&gt;&lt;/textarea&gt;
+    &lt;div class=&quot;row&quot; style=&quot;margin-top:8px&quot;&gt;
+      &lt;button class=&quot;btn primary&quot; type=&quot;button&quot; id=&quot;b-run&quot; disabled&gt;▶ 실행&lt;/button&gt;
+      &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-copy=&quot;code&quot;&gt;복사&lt;/button&gt;
+      &lt;span class=&quot;msg&quot; id=&quot;py-state&quot; style=&quot;margin:0&quot;&gt;파이썬 불러오는 중&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;pre class=&quot;out&quot; id=&quot;out&quot;&gt;&lt;/pre&gt;
+  &lt;/section&gt;
+
+  &lt;details class=&quot;card&quot; id=&quot;all&quot;&gt;
+    &lt;summary&gt;전체 케이스 보기 · 눌러서 펼친다&lt;/summary&gt;
+    &lt;pre class=&quot;out&quot; id=&quot;all-out&quot;&gt;&lt;/pre&gt;
+    &lt;details class=&quot;sub&quot;&gt;
+      &lt;summary&gt;전체 케이스를 찍는 파이썬 코드&lt;/summary&gt;
+      &lt;textarea class=&quot;code&quot; id=&quot;code-all&quot; spellcheck=&quot;false&quot; aria-label=&quot;전체 케이스 파이썬 코드&quot;&gt;&lt;/textarea&gt;
+      &lt;div class=&quot;row&quot; style=&quot;margin-top:8px&quot;&gt;
+        &lt;button class=&quot;btn primary&quot; type=&quot;button&quot; id=&quot;b-run-all&quot; disabled&gt;▶ 실행&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-copy=&quot;code-all&quot;&gt;복사&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/details&gt;
+  &lt;/details&gt;
+&lt;/main&gt;
+
+&lt;script type=&quot;text/plain&quot; id=&quot;py-src&quot;&gt;
+N = 16
+
+def walk(n, m):
+    # 이웃한 두 점 사이가 π 이므로 kπ 만큼 옮기는 것은 k 칸 옮기는 것이다
+    path = [0]
+    a = m % n                          # 1단계: 0 번 점에서 m 칸
+    while a not in path:
+        path.append(a)
+        a = (a + a * m) % n            # 다음 단계: 지금 번호 × m 칸
+    path.append(a)                     # 다시 놓인 점에서 멈춘다
+    return path
+
+def covers(n, m):
+    return len(set(walk(n, m))) == n
+
+# n = 4 부터 N 까지, 모든 점을 밟게 하는 m 을 하나씩 굴려 센다
+good = {}
+for n in range(4, N + 1):
+    good[n] = [m for m in range(1, n) if covers(n, m)]
+    print(f&quot;n = {n:&gt;2} : 모든 점을 밟는 m {good[n] if good[n] else &#x27;없다&#x27;}&quot;)
+
+result = {&quot;n&quot;: N, &quot;모든 점 밟는 m 수&quot;: len(good[N]), &quot;그런 m&quot;: &quot; &quot;.join(map(str, good[N])) or &quot;없다&quot;,
+          &quot;counts&quot;: [len(good[n]) for n in range(4, N + 1)]}
+&lt;/script&gt;
+
+&lt;script type=&quot;text/plain&quot; id=&quot;py-all&quot;&gt;
+N = 16
+
+def walk(n, m):
+    # 이웃한 두 점 사이가 π 이므로 kπ 만큼 옮기는 것은 k 칸 옮기는 것이다
+    path = [0]
+    a = m % n                          # 1단계: 0 번 점에서 m 칸
+    while a not in path:
+        path.append(a)
+        a = (a + a * m) % n            # 다음 단계: 지금 번호 × m 칸
+    path.append(a)                     # 다시 놓인 점에서 멈춘다
+    return path
+
+# n = N 에서 m 마다 못 밟은 점을 찍는다
+n = N
+for m in range(1, n):
+    seen = set(walk(n, m))
+    missed = [i for i in range(n) if i not in seen]
+    print(f&quot;m = {m:&gt;2}  못 밟은 점 {missed if missed else &#x27;없다&#x27;}&quot;)
+&lt;/script&gt;
+
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/pyodide@0.26.4/pyodide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+/* ===== 이 문제에 맞게 바꾼 부분 ===== */
+// 수치 판과 표에 보일 열. result 사전의 키 이름이다.
+var COLUMNS = [&quot;n&quot;, &quot;모든 점 밟는 m 수&quot;, &quot;그런 m&quot;];
+
+// 끌 점이 없는 문제다.
+var DRAG = [];
+
+// n = 4 부터 끝까지 막대 하나씩. 막대 높이는 모든 점을 밟게 하는 m 의 개수, 0 이면 빨간 점.
+function draw(ctx, w, h, r) {
+  if (!r) return;
+  var c = r.counts, k = c.length, top = 24, bot = h - 30, left = 10, bw = (w - 2 * left) / k;
+  var big = Math.max(1, Math.max.apply(null, c));
+  ctx.textAlign = &quot;center&quot;; ctx.font = &quot;500 11px &quot; + css(&quot;--mono&quot;);
+  for (var j = 0; j &lt; k; j++) {
+    var x = left + j * bw, bh = (bot - top) * c[j] / big;
+    if (c[j]) {
+      ctx.fillStyle = j === k - 1 ? css(&quot;--accent&quot;) : css(&quot;--rule&quot;);
+      ctx.fillRect(x + bw * 0.15, bot - bh, bw * 0.7, bh);
+      ctx.fillStyle = css(&quot;--ink&quot;); ctx.textBaseline = &quot;bottom&quot;;
+      ctx.fillText(String(c[j]), x + bw / 2, bot - bh - 3);
+    } else {
+      ctx.fillStyle = &quot;#D9443A&quot;;
+      ctx.beginPath(); ctx.arc(x + bw / 2, bot - 5, 4, 0, 2 * Math.PI); ctx.fill();
+    }
+    ctx.fillStyle = css(&quot;--ink-faint&quot;); ctx.textBaseline = &quot;top&quot;;
+    ctx.fillText(String(j + 4), x + bw / 2, bot + 6);
+  }
+  msg(&quot;아래 수는 n, 막대 위 수는 모든 점을 밟게 하는 m 의 개수다. 빨간 점은 그런 m 이 없는 n 이다.&quot;);
+}
+
+/* ===== 고치지 않는 부분: 파이썬 실행 · 슬라이더 · 점 끌기 · 수치 판 · 표 · 전체 케이스 ===== */
+var $ = function (id) { return document.getElementById(id); };
+function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function msg(text, kind) { var m = $(&quot;fig-msg&quot;); m.textContent = text || &quot;&quot;; m.className = &quot;msg&quot; + (kind ? &quot; &quot; + kind : &quot;&quot;); }
+
+var code = $(&quot;code&quot;), codeAll = $(&quot;code-all&quot;), py = null, last = null, timer = null, lastRow = &quot;&quot;;
+var queue = Promise.resolve();
+code.value = $(&quot;py-src&quot;).textContent.replace(/^\s*\n/, &quot;&quot;);
+codeAll.value = $(&quot;py-all&quot;).textContent.replace(/^\s*\n/, &quot;&quot;);
+
+var view = { s: 1, ox: 0, oy: 0 };
+function px(p) { return [view.ox + p[0] * view.s, view.oy + p[1] * view.s]; }
+function unpx(x, y) { return [(x - view.ox) / view.s, (y - view.oy) / view.s]; }
+
+function setVar(name, val) {
+  var re = new RegExp(&quot;^&quot; + name + &quot;\\s*=.*$&quot;, &quot;m&quot;);
+  [code, codeAll].forEach(function (box) {
+    box.value = re.test(box.value) ? box.value.replace(re, name + &quot; = &quot; + val) : name + &quot; = &quot; + val + &quot;\n&quot; + box.value;
+  });
+}
+
+// 파이썬 한 번 돌리기. 두 코드가 겹쳐 돌지 않게 차례로 줄 세운다.
+function exec(src) {
+  var job = queue.then(async function () {
+    var buf = [];
+    py.setStdout({ batched: function (s) { buf.push(s); } });
+    py.setStderr({ batched: function (s) { buf.push(s); } });
+    try {
+      py.runPython(&quot;result = None&quot;);
+      await py.runPythonAsync(src);
+      var r = py.globals.get(&quot;result&quot;);
+      var val = r &amp;&amp; r.toJs ? r.toJs({ dict_converter: Object.fromEntries }) : null;
+      if (r &amp;&amp; r.destroy) r.destroy();
+      return { ok: true, text: buf.join(&quot;\n&quot;), result: val };
+    } catch (e) {
+      var lines = String(e.message || e).trim().split(&quot;\n&quot;);
+      return { ok: false, text: buf.concat([lines[lines.length - 1]]).join(&quot;\n&quot;), result: null };
+    }
+  });
+  queue = job.catch(function () {});
+  return job;
+}
+
+async function run() {
+  if (!py) return;
+  var r = await exec(code.value);
+  $(&quot;out&quot;).textContent = r.text;
+  $(&quot;out&quot;).classList.toggle(&quot;err&quot;, !r.ok);
+  last = r.result;
+  if (r.ok) logRow();
+  paint();
+  if ($(&quot;all&quot;).open) runAll();
+}
+async function runAll() {
+  if (!py) return;
+  $(&quot;all-out&quot;).textContent = &quot;세는 중&quot;;
+  var r = await exec(codeAll.value);
+  $(&quot;all-out&quot;).textContent = r.text;
+  $(&quot;all-out&quot;).classList.toggle(&quot;err&quot;, !r.ok);
+}
+function runSoon() { clearTimeout(timer); timer = setTimeout(run, 120); }
+
+function paint() {
+  $(&quot;readout&quot;).innerHTML = COLUMNS.map(function (k) {
+    var v = last &amp;&amp; k in last ? last[k] : &quot;–&quot;;
+    return &#x27;&lt;div class=&quot;stat&quot;&gt;&lt;dt&gt;&#x27; + k + &quot;&lt;/dt&gt;&lt;dd&gt;&quot; + v + &quot;&lt;/dd&gt;&lt;/div&gt;&quot;;
+  }).join(&quot;&quot;);
+  var cv = $(&quot;fig&quot;), dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = +cv.dataset.h || 220;
+  cv.style.height = h + &quot;px&quot;;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  var m = 16;
+  view.s = Math.min(w - 2 * m, h - 2 * m) / 100;
+  view.ox = (w - 100 * view.s) / 2; view.oy = (h - 100 * view.s) / 2;
+  var ctx = cv.getContext(&quot;2d&quot;);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  msg(&quot;&quot;);
+  draw(ctx, w, h, last);
+  if (DRAG.length &amp;&amp; last &amp;&amp; last[&quot;점&quot;]) {
+    DRAG.forEach(function (k) {
+      var p = last[&quot;점&quot;][k]; if (!p) return;
+      var q = px(p);
+      ctx.beginPath(); ctx.arc(q[0], q[1], 9, 0, 2 * Math.PI);
+      ctx.fillStyle = css(&quot;--accent&quot;); ctx.globalAlpha = .22; ctx.fill(); ctx.globalAlpha = 1;
+    });
+  }
+}
+
+function logRow() {
+  if (!last) return;
+  var thead = $(&quot;log&quot;).tHead, tbody = $(&quot;log&quot;).tBodies[0];
+  if (!thead.rows.length) thead.innerHTML = &quot;&lt;tr&gt;&lt;th&gt;#&lt;/th&gt;&quot; + COLUMNS.map(function (k) { return &quot;&lt;th&gt;&quot; + k + &quot;&lt;/th&gt;&quot;; }).join(&quot;&quot;) + &quot;&lt;/tr&gt;&quot;;
+  var cells = COLUMNS.map(function (k) { return k in last ? last[k] : &quot;&quot;; });
+  var key = cells.join(&quot;|&quot;);
+  if (key === lastRow) return;
+  lastRow = key;
+  var tr = document.createElement(&quot;tr&quot;);
+  tr.innerHTML = &quot;&lt;td&gt;&quot; + (tbody.rows.length + 1) + &quot;&lt;/td&gt;&quot; + cells.map(function (c) { return &quot;&lt;td&gt;&quot; + c + &quot;&lt;/td&gt;&quot;; }).join(&quot;&quot;);
+  tbody.insertBefore(tr, tbody.firstChild);
+}
+
+// 점 끌기 — 끄는 동안 점 줄을 바꾸고 파이썬을 다시 돌린다
+(function () {
+  var cv = $(&quot;fig&quot;), held = null;
+  if (DRAG.length) cv.classList.add(&quot;drag&quot;);
+  function at(e) { var b = cv.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; }
+  cv.addEventListener(&quot;pointerdown&quot;, function (e) {
+    if (!DRAG.length || !last || !last[&quot;점&quot;]) return;
+    var m = at(e), best = 22;
+    DRAG.forEach(function (k) {
+      var p = last[&quot;점&quot;][k]; if (!p) return;
+      var q = px(p), d = Math.hypot(q[0] - m[0], q[1] - m[1]);
+      if (d &lt; best) { best = d; held = k; }
+    });
+    if (held) { cv.setPointerCapture(e.pointerId); e.preventDefault(); }
+  });
+  cv.addEventListener(&quot;pointermove&quot;, function (e) {
+    if (!held) return;
+    var m = at(e), p = unpx(m[0], m[1]);
+    var x = Math.max(0, Math.min(100, Math.round(p[0]))), y = Math.max(0, Math.min(100, Math.round(p[1])));
+    last[&quot;점&quot;][held] = [x, y];
+    setVar(held, &quot;(&quot; + x + &quot;, &quot; + y + &quot;)&quot;);
+    paint();
+    runSoon();
+  });
+  function drop() { held = null; }
+  cv.addEventListener(&quot;pointerup&quot;, drop);
+  cv.addEventListener(&quot;pointercancel&quot;, drop);
+})();
+
+document.querySelectorAll(&quot;input[data-var]&quot;).forEach(function (el) {
+  el.addEventListener(&quot;input&quot;, function () {
+    var show = document.querySelector(&#x27;[data-show=&quot;&#x27; + el.dataset.var + &#x27;&quot;]&#x27;);
+    if (show) show.textContent = el.value;
+    setVar(el.dataset.var, el.value);
+    runSoon();
+  });
+});
+$(&quot;b-run&quot;).addEventListener(&quot;click&quot;, run);
+$(&quot;b-run-all&quot;).addEventListener(&quot;click&quot;, runAll);
+$(&quot;all&quot;).addEventListener(&quot;toggle&quot;, function () { if ($(&quot;all&quot;).open) runAll(); });
+$(&quot;b-clear&quot;).addEventListener(&quot;click&quot;, function () { $(&quot;log&quot;).tBodies[0].innerHTML = &quot;&quot;; lastRow = &quot;&quot;; });
+document.querySelectorAll(&quot;[data-copy]&quot;).forEach(function (b) {
+  b.addEventListener(&quot;click&quot;, function () {
+    var box = $(b.dataset.copy);
+    try { navigator.clipboard.writeText(box.value); $(&quot;py-state&quot;).textContent = &quot;복사했다&quot;; }
+    catch (e) { box.select(); }
+  });
+});
+window.addEventListener(&quot;resize&quot;, paint);
+if (window.matchMedia) window.matchMedia(&quot;(prefers-color-scheme: dark)&quot;).addEventListener(&quot;change&quot;, paint);
+
+paint();
+loadPyodide().then(function (p) {
+  py = p;
+  $(&quot;b-run&quot;).disabled = false;
+  $(&quot;b-run-all&quot;).disabled = false;
+  $(&quot;py-state&quot;).textContent = &quot;파이썬 준비됨&quot;;
+  run();
+}).catch(function () { $(&quot;py-state&quot;).textContent = &quot;파이썬을 불러오지 못했다. 인터넷 연결을 확인한다.&quot;; });
+&lt;/script&gt;
+" hidden></iframe>
+<script>
+  var tabs = [].slice.call(document.querySelectorAll("nav button")),
+      frames = [].slice.call(document.querySelectorAll("iframe"));
+
+  // 쪽 높이에 맞춰 iframe 을 늘린다
+  function fit(f) {
+    var d = f.contentDocument;
+    if (!d || !d.body) return;
+    var go = function () { f.style.height = d.documentElement.scrollHeight + "px"; };
+    new ResizeObserver(go).observe(d.body);
+    go();
+  }
+  function open(i) {
+    tabs.forEach(function (b, j) { b.setAttribute("aria-selected", j === i ? "true" : "false"); });
+    frames.forEach(function (f, j) {
+      f.hidden = j !== i;
+      if (j === i && !f.srcdoc) { f.addEventListener("load", function () { fit(f); }); f.srcdoc = f.dataset.src; }
+    });
+    try { history.replaceState(null, "", "#" + (i + 1)); } catch (e) {}
+  }
+  tabs.forEach(function (b, i) {
+    b.addEventListener("click", function () { open(i); });
+    b.addEventListener("keydown", function (e) {
+      var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      var j = (i + d + tabs.length) % tabs.length;
+      open(j); tabs[j].focus();
+    });
+  });
+  var start = +location.hash.slice(1) - 1;
+  open(start >= 0 && start < tabs.length ? start : 0);
+</script>
