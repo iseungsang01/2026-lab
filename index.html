@@ -623,7 +623,7 @@
   </div>
   <div class="hud">
     <span class="chip where" id="where">로비 · 안내</span>
-    <span class="chip" id="keys">문 0 / 4</span>
+    <span class="chip" id="keys">열쇠 0 / 4</span>
     <button class="hbtn" id="b-theme" type="button">밤</button>
     <button class="hbtn" id="b-reset" type="button">처음부터</button>
   </div>
@@ -631,7 +631,7 @@
 
 <main class="wrap" id="wrap">
   <div class="stage" id="stage">
-    <canvas id="map" tabindex="0" aria-label="증명의 집 지도. 방향키로 걷고 Space 로 살핀다. 로비의 문 네 개에 문제가 붙어 있고, 소문항의 답을 차례로 넣으면 문이 열린다."></canvas>
+    <canvas id="map" tabindex="0" aria-label="증명의 집 지도. 방향키로 걷고 Space 로 살핀다. 로비의 문 네 개에 문제가 붙어 있고, 소문항의 답을 차례로 넣으면 문이 열린다. 방마다 열쇠를 주워 가운데 상자를 연다."></canvas>
     <div class="tapme" id="tapme" hidden>지도를 누르면 움직일 수 있다</div>
     <div class="dialog" id="dialog" hidden aria-live="polite">
       <span class="who" id="d-who"></span>
@@ -690,16 +690,16 @@
   </div>
 </div>
 
-<!-- 풀이 — 각 방 실험실의 「… 논법」 절과 같은 말이다 -->
 <!-- 로비 책상 — 안내 세 장 -->
 <template id="guide-house">
-  <h3>문 넷, 단말기 넷, 칠판 넷</h3>
+  <h3>문 넷, 열쇠 넷, 상자 하나</h3>
   <p>방마다 문제 하나가 문에 붙어 있다. 문 앞에서 Space 를 누르면 문제 원본과 자물쇠가 나온다.</p>
   <ol>
     <li><b>자물쇠</b> 소문항마다 한 칸이다. 질문 1 의 답을 맞히면 질문 2 가 나오고, 마지막 칸까지 맞히면 문이
         열린다. 한 칸에서 두 번 틀리면 그 칸의 힌트가 뜬다.</li>
     <li><b>문 옆 단말기</b> 그 문제의 실험대다. 수를 바꿔 보고, 파이썬이 하나씩 센 값을 표로 쌓아 볼 수 있다.</li>
-    <li><b>방 안 칠판</b> 풀이다. 문을 열어야 들어가서 읽을 수 있다.</li>
+    <li><b>방 안 받침대</b> 열쇠가 하나씩 놓여 있다. 문을 열어야 들어가서 주울 수 있다.</li>
+    <li><b>로비 가운데 상자</b> 열쇠 구멍이 넷이다. 네 방의 열쇠를 다 모으면 열린다.</li>
   </ol>
   <h3>답을 적는 법</h3>
   <ul>
@@ -748,85 +748,6 @@
   <p>표의 수가 범위 안에서 모두 맞아도 그것만으로는 증명이 아니다. 범위 밖의 수에서도 같은 까닭이 그대로 통하는지가 증명이다.</p>
 </template>
 
-<template id="sol-geo">
-  <h3>규칙을 식으로, 그다음 홀짝</h3>
-  <p>둘레가 <code>nπ</code> 이고 점이 <code>n</code> 개이므로 이웃한 두 점 사이가 <code>π</code> 다. <code>mπ</code> 만큼 옮기는 것은
-     <b>m 칸</b> 옮기는 것이다. 지금 번호가 <code>a</code> 면 <code>a × m</code> 칸 가므로 다음 번호는 <code>a(1 + m)</code> 을
-     <code>n</code> 으로 나눈 나머지다. 출발만 예외로 <code>a1 = m</code>.</p>
-  <p class="fx">a1 = m, 그다음은 a → a(1 + m) (n 으로 나눈 나머지)</p>
-  <p><b>질문 2</b> <code>n = 10</code> 은 짝수라 10 으로 나눈 나머지를 구해도 홀짝이 바뀌지 않는다. <code>m</code> 이 짝수면
-     <code>a1 = m</code> 부터 계속 짝수라 짝수 점만 밟고, 합은 아무리 커도 <code>0 + 2 + 4 + 6 + 8 = 20</code> 이다. 그래서 홀수
-     <code>m</code> 다섯 가지만 굴리면 된다. <code>m = 1 · 3 · 5 · 7 · 9</code> 의 합은 <code>21 · 13 · 5 · 27 · 9</code>.</p>
-  <p><b>질문 3</b> <code>n</code> 이 짝수면 <code>n</code> 으로 나눈 나머지를 구해도 홀짝은 그대로다. <code>m</code> 이 짝수면
-     <code>a1</code> 부터 전부 짝수라 홀수 점을 하나도 못 밟는다. <code>m</code> 이 홀수면 <code>1 + m</code> 이 짝수라
-     <code>a2</code> 부터 전부 짝수이고, 밟는 홀수 점은 <code>a1 = m</code> 하나뿐이다. 홀수 번호 점은 <code>n ÷ 2 ≥ 2</code> 개이므로
-     어느 쪽이든 적어도 하나가 남는다.</p>
-  <p class="ans"><span>자물쇠 번호</span>질문 2 는 <code>m = 7</code>, 이때 <code>0 → 7 → 6 → 8 → 4 → 2</code> 로 합이 <b>27</b>.
-     질문 3 은 <code>m</code> 이 홀수일 때 밟는 홀수 점이 <b>1</b> 개뿐이라 모든 점을 밟을 수 없다.</p>
-</template>
-
-<template id="sol-alg">
-  <h3>뒤바뀐 짝을 세는 논법</h3>
-  <p>가로줄 하나를 지나면 이웃한 두 세로줄 위의 수가 <b>자리를 맞바꾼다</b>. 그러니 사다리 하나는 이웃 맞바꾸기를
-     차례로 한 것이고, 가로줄 수는 맞바꾼 횟수다.</p>
-  <p>앞의 수가 뒤의 수보다 큰 짝을 <b>뒤바뀐 짝</b>이라 한다. 이웃한 두 수를 맞바꾸면 그 두 수의 짝 하나만 앞뒤가
-     뒤집히고, 나머지 짝은 그대로다. 그래서 가로줄 하나마다 뒤바뀐 짝은 <b>꼭 1 만</b> 달라진다.</p>
-  <ol>
-    <li><b>이보다 적을 수 없다.</b> 뒤바뀐 짝이 <code>I</code> 개인 순서는 맞바꾸기 <code>I</code> 번보다 적게는 못 만든다.</li>
-    <li><b>이만큼으로 만들 수 있다.</b> 뒤바뀐 짝이 남아 있으면 앞이 뒤보다 큰 이웃 자리가 꼭 있고, 그 자리를
-        맞바꾸면 1 줄어든다. <code>I</code> 번이면 <code>1 2 3 4</code> 로 돌아가고, 그 길을 거꾸로 밟으면 된다.</li>
-  </ol>
-  <p class="fx">가장 적은 가로줄 수 = 뒤바뀐 짝의 개수</p>
-  <p><b>질문 1</b> <code>{3, 4, 2, 1}</code> 의 뒤바뀐 짝은 <code>(3,2) (3,1) (4,2) (4,1) (2,1)</code> 다섯이다.</p>
-  <p><b>질문 2</b> 맨 앞 수가 만드는 뒤바뀐 짝은 그 수보다 작은 수의 개수다. 맨 앞이 <code>1 · 2 · 3</code> 이면
-     <code>0 · 1 · 2</code> 개이므로 나머지 세 자리에서 <code>2 · 1 · 0</code> 개를 더 만든다. 맨 앞이 <code>4</code> 면 이미 3 개라 안 된다.</p>
-  <p><b>질문 3</b> <code>1</code> 을 놓고 <code>2 · 3 · 4</code> 를 차례로 끼워 넣는다. 끼우는 수는 그때까지 가장 큰 수라,
-     새로 생기는 뒤바뀐 짝은 그 수 뒤로 밀린 수의 개수이고, 차례로 <code>0~1</code>, <code>0~2</code>, <code>0~3</code> 가운데 따로 고른다.
-     합이 <code>k</code> 가 되는 고르기를 세면 <code>1 · 3 · 5 · 6 · 5 · 3 · 1</code> 이다.</p>
-  <p class="ans"><span>자물쇠 번호</span>질문 1 은 <b>5</b> 개. 질문 2 는 <code>{1,3,4,2} {1,4,2,3} {2,1,4,3} {2,3,1,4} {3,1,2,4}</code>
-     다섯 가지. 질문 3 은 가로줄 <b>3</b> 개일 때 <b>6</b> 가지로 가장 많다.</p>
-</template>
-
-<template id="sol-com">
-  <h3>더 작은 경우로 되돌리는 논법</h3>
-  <p>0행부터 <code>2ᵏ−1</code>행까지를 블록 <code>T</code> 라 한다. 그 아래 <code>2ᵏ</code>행부터
-     <code>2ᵏ⁺¹−1</code>행까지에는 <code>T</code> 와 <b>똑같은 무늬가 왼쪽과 오른쪽에 하나씩</b> 놓이고, 그 사이는
-     <b>전부 0</b>이다. 홀짝만 보면 <code>C(n,k) ≡ C(n−2ᵏ, k) + C(n−2ᵏ, k−2ᵏ)</code> 이고, 두 항은 <code>k</code> 의
-     범위가 겹치지 않아 서로 더해지지 않기 때문이다.</p>
-  <p>그래서 <code>2n</code>행은 <code>n</code>행과 홀수 개수가 같고, <code>2n+1</code>행은 왼쪽·오른쪽 두 복제가
-     <b>동시에</b> 살아 있어 두 배가 된다. 두 줄이 <code>f(2n) = f(n)</code>, <code>f(2n+1) = 2f(n)</code> 이다.</p>
-  <p>2진법으로 <code>n</code> 을 쓰면 <code>n → 2n</code> 은 뒤에 <code>0</code> 을 붙이는 것,
-     <code>n → 2n+1</code> 은 <code>1</code> 을 붙이는 것이다. <code>0</code> 은 <code>f</code> 를 그대로 두고
-     <code>1</code> 은 두 배로 만들므로, <code>f(0) = 1</code> 에서 시작해 <code>1</code> 의 개수만큼 두 배가 된다.</p>
-  <p>관람석의 파랑은 파스칼 삼각형의 홀수 자리이고, 1 번째 줄이 0 행이다. 그래서 <code>N</code> 번째 줄의 파랑은
-     <code>N − 1</code> 을 2진법으로 썼을 때 <code>1</code> 의 개수만큼 2 를 곱한 수다.</p>
-  <p><b>질문 1</b> 8 번째 줄이 전부 파랑이라 9 번째 줄은 양 끝만 파랑이고, 10 번째 줄은 2 번째 줄이 양 끝에 한 벌씩
-     놓인 모양이다.</p>
-  <p><b>질문 2</b> 행 <code>0</code> 부터 <code>2ᵏ − 1</code> 까지 파랑을 다 더하면 자리마다 <code>1 + 2</code> 가 곱해져
-     <code>3ᵏ</code> 이다. 31 ~ 65 번째 줄은 행 30 ~ 64 이고, 행 0 ~ 63 이 <code>3⁶ = 729</code>, 행 0 ~ 29 가
-     <code>81 + 2 × (27 + 2 × 15) = 195</code>, 행 64 가 <code>2</code> 라서 <code>729 − 195 + 2</code> 다.</p>
-  <p class="ans"><span>자물쇠 번호</span>질문 1 은 왼쪽부터 <b>파 · 파 · 빨 · 빨 · 빨 · 빨 · 빨 · 빨 · 파 · 파</b>.
-     질문 2 는 <b>536</b> 명.</p>
-</template>
-
-<template id="sol-inf">
-  <h3>끝을 보고 나누는 논법</h3>
-  <p>어디를 보면 문제가 작아지는가 — 여기서는 <b>맨 오른쪽 끝</b>이다. 끝에서 가져간 카드가 몇 장 연속인지는
-     <code>0</code>·<code>1</code>·<code>2</code> 셋뿐이다 — <code>3</code> 은 금지라 없다.</p>
-  <p>끝이 <code>□</code>(안 가져감)이면 그 앞 <code>n−1</code> 장은 조건만 지키면 아무렇게나 놓아도 된다.
-     끝이 <code>□■</code> 이면 <b>가져간 앞 자리는 반드시 안 가져감</b>이어야 하므로 그 앞 <code>n−2</code> 장이
-     자유롭고, <code>□■■</code> 이면 <code>n−3</code> 장이 자유롭다. <b>자유로운 부분은 다시 같은 문제</b>다.</p>
-  <p class="fx">a(n) = a(n−1) + a(n−2) + a(n−3)</p>
-  <p>세 갈래는 <b>겹치지 않는다</b> — 끝 모양이 서로 다르기 때문이다. <b>빠지는 것도 없다</b> — 끝의 연속이
-     <code>0</code>·<code>1</code>·<code>2</code> 말고는 있을 수 없기 때문이다. <b>겹침 없음</b>과 <b>빠짐 없음</b>
-     둘을 다 말해야 「더하면 된다」가 성립한다.</p>
-  <p><code>k</code> 번 연속 금지로 바꾸면 끝의 연속이 <code>0 … k−1</code> 이라 갈래가 <code>k</code> 개가 되고, 같은
-     논법이 <code>a(n) = a(n−1) + … + a(n−k)</code> 를 준다. <code>k = 2</code> 면 피보나치다.</p>
-  <p class="ans"><span>자물쇠 번호</span><code>1 · 2 · 4 · 7 · 13 · 24 · 44 · 81 · 149</code> —
-     질문 1 <code>n = 5</code> 는 <b>24</b>, 질문 2 <code>n = 8</code> 은 <b>149</b>. 질문 3 은 앞 네 개를 더해
-     <code>1 · 2 · 4 · 8 · 15 · 29 · 56 · 108 · 208 · 401 · 773</code>, 카드 10 장이면 <b>773</b>.</p>
-</template>
-
 <script>
 (function () {
   "use strict";
@@ -862,7 +783,7 @@
   var MW = MAP[0].length, MH = MAP.length;
   var ZONE = { ".": "lobby", "D": "lobby", a: "alg", g: "geo", c: "com", i: "inf" };
 
-  /* 방 — 문에는 문제(q, 원본 그대로), 문 옆에는 실험대(page), 방 안 칠판에는 풀이.
+  /* 방 — 문에는 문제(q, 원본 그대로), 문 옆에는 실험대(page), 방 안 받침대에는 열쇠.
      page 는 9주차 폴더의 실험대, q 는 _src/build_house.py 가 원본에서 잘라 낸 SVG 다.
      자물쇠는 소문항마다 한 칸(steps)이고, 앞 칸을 맞혀야 다음 칸이 열린다. 답을 읽는 방법(kind)은 넷이다.
        num    수 하나          colors  파 · 빨 (또는 B · R, 1 · 0) 을 왼쪽부터
@@ -929,17 +850,18 @@
   /* 칸 위의 물건 */
   var OBJ = {};
   function put(x, y, o) { o.x = x; o.y = y; OBJ[x + "," + y] = o; }
-  // 로비 책상 — 안내 세 장: 집에서 하는 일 · 실험대 보는 법 · 규칙에서 풀이로
-  put(12, 8, { kind: "paper", room: "lobby", sheet: "guide-house", mark: "?" });
-  put(13, 8, { kind: "lab", room: "lobby", sheet: "guide-lab" });
-  put(14, 8, { kind: "paper", room: "lobby", sheet: "guide-proof", mark: "v" });
+  // 로비 가운데 — 보물 상자, 그 양옆에 안내 세 장
+  put(13, 8, { kind: "chest" });
+  put(11, 8, { kind: "paper", room: "lobby", sheet: "guide-house", mark: "?" });
+  put(12, 8, { kind: "lab", room: "lobby", sheet: "guide-lab" });
+  put(15, 8, { kind: "paper", room: "lobby", sheet: "guide-proof", mark: "v" });
   ORDER.forEach(function (id) {
     var R = ROOMS[id];
     put(R.lab[0], R.lab[1], { kind: "lab", room: id });          // 문 옆 실험실
   });
-  // 방 안 칠판 — 풀이. 칠판 아래 칸에서 위를 보고 읽는다
-  [["alg", 3, 1], ["geo", 21, 1], ["com", 3, 8], ["inf", 21, 8]].forEach(function (b) {
-    for (var i = 0; i < 3; i++) put(b[1] + i, b[2], { kind: "board", room: b[0] });
+  // 방 안 받침대 — 열쇠 하나씩. 칠판은 벽에 그림으로만 남는다
+  [["alg", 4, 4], ["geo", 22, 4], ["com", 4, 11], ["inf", 22, 11]].forEach(function (b) {
+    put(b[1], b[2], { kind: "key", room: b[0] });
   });
   [[1, 2], [25, 2], [1, 9], [25, 9]].forEach(function (p) { put(p[0], p[1], { kind: "shelf" }); });
   [[1, 6], [25, 6], [1, 13], [25, 13], [9, 15], [17, 15]].forEach(function (p) { put(p[0], p[1], { kind: "plant" }); });
@@ -959,13 +881,13 @@
   var BACK = { up: "down", down: "up", left: "right", right: "left" };
 
   /* ---------------- 상태 ---------------- */
-  var S = { open: {}, step: {}, anim: {}, busy: null, zone: "lobby", lockId: null, tries: 0, sheetRoom: null };
+  var S = { open: {}, step: {}, keys: {}, treasure: false, anim: {}, busy: null, zone: "lobby", lockId: null, tries: 0, sheetRoom: null };
   var me = { x: START.x, y: START.y, dir: START.dir, fx: START.x, fy: START.y, t: 1, moving: false, steps: 0 };
-  var STORE = "house-of-proofs-v3";
+  var STORE = "house-of-proofs-v4";
 
   function save() {
     try {
-      localStorage.setItem(STORE, JSON.stringify({ open: S.open, step: S.step, x: me.x, y: me.y, dir: me.dir }));
+      localStorage.setItem(STORE, JSON.stringify({ open: S.open, step: S.step, keys: S.keys, treasure: S.treasure, x: me.x, y: me.y, dir: me.dir }));
     } catch (e) { /* 저장이 막혀도 그대로 논다 */ }
   }
   function load() {
@@ -975,13 +897,16 @@
     ORDER.forEach(function (id) {
       if (d.open && d.open[id]) S.open[id] = true;
       if (d.step && d.step[id] > 0) S.step[id] = Math.min(d.step[id], ROOMS[id].steps.length);
+      if (d.keys && d.keys[id] && S.open[id]) S.keys[id] = true;
     });
+    S.treasure = !!d.treasure && keyCount() === ORDER.length;
     if (typeof d.x === "number" && typeof d.y === "number" && walkable(d.x, d.y)) {
       me.x = me.fx = d.x; me.y = me.fy = d.y;
     }
     if (DIRS[d.dir]) me.dir = d.dir;
   }
   function openCount() { return ORDER.filter(function (id) { return S.open[id]; }).length; }
+  function keyCount() { return ORDER.filter(function (id) { return S.keys[id]; }).length; }
 
   function walkable(x, y) {
     if (x < 0 || y < 0 || x >= MW || y >= MH) return false;
@@ -1151,9 +1076,47 @@
     rect(C.desk, px + 1, py + 3, 14, 8);
   }
 
+  // 열쇠 — 고리 하나와 이빨 둘
+  function keyIcon(x, y, tone) {
+    rect(OUT, x, y, 6, 6);
+    rect(tone, x + 1, y + 1, 4, 4);
+    rect(OUT, x + 2, y + 2, 2, 2);
+    rect(tone, x + 6, y + 2, 6, 2);
+    rect(tone, x + 9, y + 4, 1, 2);
+    rect(tone, x + 11, y + 4, 1, 3);
+  }
+
   function thing(o) {
     var px = o.x * T, py = o.y * T;
-    if (o.kind === "paper") {
+    if (o.kind === "key") {
+      // 받침대 — 열쇠를 주우면 빈 받침대만 남는다
+      rect(C["desk-edge"], px + 3, py + 9, 10, 6);
+      rect(C["wall-line"], px + 2, py + 7, 12, 3);
+      rect(C["wall-top"], px + 3, py + 7, 10, 1);
+      if (!S.keys[o.room]) {
+        var bob = reduced ? 0 : Math.round(Math.sin(performance.now() / 300));
+        keyIcon(px + 2, py + 1 + bob, toneOf(o.room));
+      }
+    } else if (o.kind === "chest") {
+      // 보물 상자 — 열쇠 구멍 넷에 모은 열쇠의 색이 켜진다
+      var open = S.treasure;
+      rect(OUT, px, py + 4, 16, 12);
+      rect("#8A5A2B", px + 1, py + 5, 14, 10);
+      rect("#6B4220", px + 1, py + 9, 14, 1);
+      rect(C.gold, px + 1, py + 5, 1, 10); rect(C.gold, px + 14, py + 5, 1, 10);
+      if (open) {
+        rect(OUT, px, py - 2, 16, 6);
+        rect("#A06A35", px + 1, py - 1, 14, 4);
+        rect(C.gold, px + 3, py + 5, 10, 3);
+        rect("#FFF3B0", px + 6, py + 5, 2, 1);
+      } else {
+        rect("#A06A35", px + 1, py + 5, 14, 4);
+        rect(C.gold, px + 1, py + 8, 14, 1);
+      }
+      ORDER.forEach(function (id, i) {
+        rect(S.keys[id] ? toneOf(id) : OUT, px + 3 + i * 3, py + 11, 2, 2);
+      });
+    } else if (o.kind === "paper") {
       desk(px, py);
       rect(C["paper-line"], px + 3, py + 1, 10, 10);
       rect(C.paper, px + 4, py + 2, 8, 8);
@@ -1356,7 +1319,8 @@
     if (t.kind === "door") return R.name + " · 문 — " + ACT + " 문제를 본다.";
     if (t.kind === "lab" && t.room === "lobby") return "안내 · " + GUIDE[t.sheet] + " — " + ACT + " 읽는다.";
     if (t.kind === "lab") return R.name + " 실험대 — " + ACT + " 켠다.";
-    if (t.kind === "board") return R.name + " · 칠판 — " + ACT + " 풀이를 읽는다.";
+    if (t.kind === "key") return S.keys[t.room] ? R.name + " · 빈 받침대" : R.name + " · 열쇠 — " + ACT + " 줍는다.";
+    if (t.kind === "chest") return S.treasure ? "열린 상자" : "보물 상자 — 열쇠 " + keyCount() + " / " + ORDER.length + " · " + ACT + " 연다.";
     if (t.kind === "paper") return "안내 · " + GUIDE[t.sheet] + " — " + ACT + " 읽는다.";
     if (t.kind === "npc") return "관리인 — " + ACT + " 말을 건다.";
     return ACT + " 살핀다.";
@@ -1409,13 +1373,36 @@
   var LINES = {
     plant: ["화분이다. 잎이 반질반질하다."],
     shelf: ["1~7주차 문제지가 빼곡히 꽂혀 있다."],
-    sign: ["증명의 집 · 로비", "문에 붙은 문제를 풀어 답을 넣으면 문이 열린다. 가운데 책상에 안내 세 장이 있다."]
+    sign: ["증명의 집 · 로비", "문에 붙은 문제를 풀어 답을 넣으면 문이 열린다. 방마다 열쇠가 하나 있고, 가운데 상자는 열쇠 넷으로 열린다."]
   };
 
   function talk() {
     NPC.dir = BACK[me.dir];
     var pages = ["멘토 - 이승상\n멘티 - 곽서희, 송태윤, 정수현, 박태규"];
     say(pages, "관리인", function () { NPC.dir = NPC.home; });
+  }
+
+  function takeKey(id) {
+    if (S.keys[id]) { say("빈 받침대다. 열쇠는 이미 주웠다."); return; }
+    S.keys[id] = true;
+    save();
+    renderHud();
+    var k = keyCount(), n = ORDER.length;
+    say(k < n
+      ? [ROOMS[id].name + "의 열쇠를 주웠다.", "열쇠 " + k + " / " + n + ". 로비 가운데 상자에 쓴다."]
+      : [ROOMS[id].name + "의 열쇠를 주웠다.", "열쇠 " + n + " 개가 다 모였다. 로비 가운데 상자로 간다."]);
+  }
+  function openChest() {
+    var k = keyCount(), n = ORDER.length;
+    if (S.treasure) { say("상자는 열려 있다. 금빛 트로피가 반짝인다."); return; }
+    if (k < n) {
+      say(["열쇠 구멍이 " + n + " 개 있는 상자다.", "지금 열쇠 " + k + " 개. 방마다 하나씩 있다."]);
+      return;
+    }
+    S.treasure = true;
+    save();
+    renderHud();
+    say(["열쇠 " + n + " 개를 차례로 꽂았다.", "철컥 — 상자가 열렸다.", "금빛 트로피가 들어 있다. 증명의 집의 문을 모두 열었다."]);
   }
 
   function act() {
@@ -1426,7 +1413,8 @@
     if (t.kind === "npc") talk();
     else if (t.kind === "door") openSheet(t.room, "door");
     else if (t.kind === "lab") openSheet(t.room, t.room === "lobby" ? t.sheet : "lab");
-    else if (t.kind === "board") openSheet(t.room, "solution");
+    else if (t.kind === "key") takeKey(t.room);
+    else if (t.kind === "chest") openChest();
     else if (t.kind === "paper") openSheet("lobby", t.sheet);
     else if (t.kind === "window") say(C.night ? "창밖이 캄캄하다. 달이 떴다." : "창밖이 환하다.");
     else if (LINES[t.kind]) say(LINES[t.kind]);
@@ -1435,7 +1423,7 @@
   /* ---------------- 종이 ---------------- */
   var FRAMES = {};
 
-  // 실험실은 힌트로만 연다 — 증명 조립 · 논법 탭은 방 안 칠판(풀이)의 몫이라 가린다
+  // 예전 네 탭 실험실이면 증명 조립 · 논법 탭을 가린다 (실험대에는 없다)
   function prepFrame(f) {
     try {
       var d = f.contentDocument;
@@ -1463,7 +1451,7 @@
     return f;
   }
 
-  var MODE = { door: "문 · 문제", lab: "실험대", solution: "풀이" };
+  var MODE = { door: "문 · 문제", lab: "실험대" };
   var GUIDE = { "guide-house": "증명의 집에서 하는 일", "guide-lab": "실험대 보는 법", "guide-proof": "규칙에서 풀이로" };
 
   function openSheet(room, mode) {
@@ -1486,9 +1474,9 @@
       $("sheet-doc").hidden = false;
       $("sheet-doc").className = "doc" + (mode === "door" ? " with-lock" : "");
       var paper = $("sheet-paper");
-      if (lobby || mode === "solution") {
+      if (lobby) {
         paper.className = "paper";
-        paper.innerHTML = $(lobby ? mode : "sol-" + room).innerHTML;
+        paper.innerHTML = $(mode).innerHTML;
       } else {
         // 문제는 다시 쓰지 않는다 — 원본 쪽을 잘라 낸 그대로 보여 준다
         paper.className = "paper orig";
@@ -1580,7 +1568,7 @@
       save();
       renderHud();
       closeSheet();
-      say(["철컥 — 문이 열렸다.", R.name + " 안쪽 칠판에 풀이가 적혀 있다."]);
+      say(["철컥 — 문이 열렸다.", R.name + " 안쪽 받침대에 열쇠가 있다."]);
       return;
     }
     S.tries++;
@@ -1686,14 +1674,14 @@
     var R = ROOMS[S.zone];
     $("where").textContent = R.name + " · " + R.title;
     $("where").style.setProperty("--zone", "var(" + R.tone + ")");
-    $("keys").textContent = "문 " + openCount() + " / " + ORDER.length;
+    $("keys").textContent = (S.treasure ? "보물 · " : "") + "열쇠 " + keyCount() + " / " + ORDER.length;
     var h = '<li style="--zone:var(--lobby)"><i></i><span class="rn">로비</span>'
       + '<span class="rt">안내 세 장</span><span class="st on">열림</span></li>';
     ORDER.forEach(function (id) {
       var R2 = ROOMS[id], op = !!S.open[id], k = S.step[id] || 0;
       h += '<li style="--zone:var(' + R2.tone + ')"><i></i><span class="rn">' + R2.name + "</span>"
         + '<span class="rt">' + R2.title + '</span><span class="st' + (op ? " on" : "") + '">'
-        + (op ? "열림" : "잠김 · " + k + " / " + R2.steps.length) + "</span></li>";
+        + (S.keys[id] ? "열쇠 ✓" : op ? "열림" : "잠김 · " + k + " / " + R2.steps.length) + "</span></li>";
     });
     $("room-list").innerHTML = h;
   }
@@ -1721,7 +1709,7 @@
 
   $("b-reset").addEventListener("click", function () {
     if (S.busy === "sheet") closeSheet();
-    S.open = {}; S.step = {}; S.anim = {}; S.tries = 0; S.lockId = null;
+    S.open = {}; S.step = {}; S.keys = {}; S.treasure = false; S.anim = {}; S.tries = 0; S.lockId = null;
     me.x = me.fx = START.x; me.y = me.fy = START.y; me.dir = START.dir; me.moving = false;
     queue.length = 0;
     NPC.dir = NPC.home;
