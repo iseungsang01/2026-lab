@@ -622,7 +622,7 @@
     <h1>증명의 집</h1>
   </div>
   <div class="hud">
-    <span class="chip where" id="where">로비 · 거리의 합</span>
+    <span class="chip where" id="where">로비 · 안내</span>
     <span class="chip" id="keys">문 0 / 4</span>
     <button class="hbtn" id="b-theme" type="button">밤</button>
     <button class="hbtn" id="b-reset" type="button">처음부터</button>
@@ -749,16 +749,30 @@
 </template>
 
 <template id="sol-geo">
-  <h3>바깥에서부터 짝짓는 논법</h3>
-  <p>수직선에서 <code>|x − a|</code> 는 <code>x</code> 와 <code>a</code> 사이의 거리다. 그래서 <code>f(x) = |x − 1| + |x − 5|</code>
-     는 점 <code>x</code> 에서 1 과 5 까지 가는 거리의 합이다.</p>
-  <p><code>x</code> 가 1 과 5 <b>사이</b>에 있으면 두 거리를 이어 붙인 것이 1 에서 5 까지라 합은 늘 <code>4</code> 다. 밖으로 나가면
-     나간 만큼이 두 거리에 한 번씩 더해져 1 갈 때마다 <code>2</code> 씩 커진다.</p>
-  <p>점이 여럿이면 가장 바깥 두 점부터 한 쌍씩 묶는다. 쌍마다 두 점 사이에서 일정하므로, 모든 쌍이 동시에 일정한
-     곳은 <b>가장 안쪽 쌍의 구간</b>이다. 점이 홀수 개면 가운데 하나가 짝 없이 남고, 그 점은 <code>x</code> 가 그 점일 때만
-     <code>0</code> 이라 가장 작은 곳이 <b>점 하나</b>로 좁혀진다.</p>
-  <p class="ans"><span>자물쇠 번호</span>(1) <code>6 · 4 · 4 · 4 · 4 · 4 · 6</code>. (2) 최솟값 <b>4</b>, <code>1 ≤ x ≤ 5</code>.
-     (3) 5 보다 오른쪽에서는 1 갈 때마다 <b>2</b> 씩 커진다. (4) 가운데 점 <code>x = 5</code> 에서 최솟값 <b>8</b>.</p>
+  <h3>짝수를 합성수로 미는 논법</h3>
+  <p>2주차에서 푼 기출 (3) 은 <code>n</code> 이 4 이상의 짝수인 경우였고, 무기는 <b>홀짝</b>이었다.
+     짝수 걸음은 짝수 점으로만 간다. <b>2 로 나눈 나머지</b>가 걸음마다 안 바뀌기 때문이다.</p>
+  <p>그 논증에서 <code>2</code> 가 하는 일은 <b>n 을 나눈다</b>는 것 하나뿐이다. 그래서 <code>2</code> 자리에
+     <code>n</code> 의 아무 소인수 <code>p</code> 를 넣어도 같은 논증이 그대로 돈다.</p>
+  <p>번호가 <code>a</code> 인 점에서는 <code>a × m</code> 칸 가므로, 다음 번호는 <code>a × (1 + m)</code> 을
+     <code>n</code> 으로 나눈 나머지다. 곧 <code>a1 = m</code>, <code>a(k+1) = a(k) · (1 + m)</code>.
+     <code>p</code> 가 <code>n</code> 을 나누므로 <code>p</code> 로 나눈 나머지는 <code>n</code> 으로 나눈 뒤에도 그대로다.</p>
+  <ol>
+    <li><b>m 이 p 의 배수</b> — <code>a1</code> 부터 전부 <code>p</code> 의 배수다. 말은 <code>p</code> 의 배수인 점
+        <code>n/p</code> 개 안에 갇히고, 나머지 <code>n − n/p</code> 개는 못 밟는다.</li>
+    <li><b>1 + m 이 p 의 배수</b> — <code>a2</code> 부터 전부 <code>p</code> 의 배수다. <code>p</code> 의 배수가 아닌
+        점 가운데 밟는 것은 <code>a1</code> 하나뿐인데, 그런 점은 <code>n − n/p ≥ 2</code> 개라 적어도 하나가 남는다.</li>
+    <li><b>둘 다 아니다</b> — <code>m</code> 도 <code>1 + m</code> 도 <code>p</code> 로 나누어떨어지지 않고 <code>p</code> 가
+        소수이므로, 그 둘을 곱해 가는 <code>a(k)</code> 도 <code>p</code> 로 나누어떨어지지 않는다. 0 말고 <code>p</code> 의
+        배수인 점 <code>n/p − 1</code> 개(1 개 이상)를 못 밟는다.</li>
+  </ol>
+  <p>세 경우 어디서든 못 밟는 점이 남는다. <code>n</code> 이 소수면 잡을 수 있는 소인수가 <code>n</code> 자신뿐이라
+     이 논증이 막힌다 — 다만 <b>막힌다는 것이 곧 전부 밟힌다는 뜻은 아니다.</b> 소수에서 그런 <code>m</code> 이
+     반드시 있는지는 아직 안 닫혀 있다.</p>
+  <p class="ans"><span>자물쇠 번호</span>(2) <code>m = 7</code> 이면 <code>0 → 7 → 6 → 8 → 4 → 2</code> 로 합이 <b>27</b>.
+     짝수 <code>m</code> 은 짝수 점만 밟아 아무리 커도 20 이다. (3) <code>m</code> 이 홀수면 홀수 점은 <code>a1 = m</code>
+     <b>1</b> 개뿐이다. 더 나아가 4 부터 30 까지 가운데 소수 <code>5 · 7 · 11 · 13 · 17 · 19 · 23 · 29</code> 여덟 개에서는
+     그런 <code>m</code> 이 실제로 있고, 남은 합성수 <b>19</b> 개에서는 없다.</p>
 </template>
 
 <template id="sol-alg">
@@ -834,7 +848,7 @@
   var T = 16;
 
   /* ---------------- 지도 ----------------
-     # 벽 윗면 · = 벽 앞면 · D 문 · . 로비 · a 수현(사다리) · g 승상(거리의 합) · c 서희(관람석) · i 태윤(카드)
+     # 벽 윗면 · = 벽 앞면 · D 문 · . 로비 · a 수현(사다리) · g 승상(원 위의 말) · c 서희(관람석) · i 태윤(카드)
      방 id 와 색 토큰(alg · geo · com · inf)은 예전 방 자리를 그대로 쓴다. */
   var MAP = [
     "###########################",
@@ -881,21 +895,18 @@
       ]
     },
     geo: {
-      name: "승상의 방", title: "거리의 합", tone: "--geo", page: "견본_거리의합과중앙값.html", door: [18, 4], lab: [17, 3],
-      q: "문항/거리의합.svg", src: "3주차 마무리 문제 · 기출 아님",
+      name: "승상의 방", title: "원 위의 말", tone: "--geo", page: "실험실_원위의말.html", door: [18, 4], lab: [17, 3],
+      q: "문항/원위의말.svg", src: "2주차 · 대전과학고 2026 문항 2",
       steps: [
-        { q: "<b>(1)</b> x = <b>0, 1, 2, 3, 4, 5, 6</b> 일 때 f(x) 를 차례로 적는다.",
-          kind: "nums", a: [6, 4, 4, 4, 4, 4, 6], ph: "f(0), f(1), …",
-          hint: "f(0) 은 0 에서 1 까지의 거리와 0 에서 5 까지의 거리를 더한 것이다." },
-        { q: "<b>(2)</b> f(x) 의 최솟값, 그리고 최솟값이 되는 x 의 범위의 처음과 끝을 차례로 적는다.",
-          kind: "nums", a: [4, 1, 5], ph: "최솟값, 처음, 끝",
-          hint: "(1) 의 표에서 가장 작은 값이 이어지는 칸을 본다." },
-        { q: "<b>(3)</b> 수직선에서 x 가 5 보다 오른쪽으로 1 갈 때마다 f(x) 는 얼마씩 커지는가?",
-          kind: "num", a: "2",
-          hint: "x 가 오른쪽으로 1 가면 1 까지의 거리도, 5 까지의 거리도 1 씩 는다." },
-        { q: "<b>(4)</b> g(x) = |x − 1| + |x − 5| + |x − 9| 의 최솟값과 그때의 x 를 차례로 적는다.",
-          kind: "nums", a: [8, 5], ph: "최솟값, x",
-          hint: "1 과 9 를 한 쌍으로 묶으면 그 사이에서 늘 8 이다. 남은 점은 5 하나다." }
+        { q: "<b>(2)</b> <b>n = 10</b> 일 때 말이 놓이는 서로 다른 점들의 번호의 합이 가장 큰 m 과, 그때의 합을 차례로 적는다.",
+          kind: "nums", a: [7, 27], ph: "m, 합",
+          hint: "m = <b>1</b> 이면 <b>0 → 1 → 2 → 4 → 8 → 6</b> 으로 합이 <b>21</b> 이다." },
+        { q: "<b>(3)</b> n 이 4 이상의 짝수이고 m 이 홀수일 때, 말이 밟는 <b>홀수 번호</b> 점은 몇 개인가?",
+          kind: "num", a: "1",
+          hint: "다음 번호는 지금 번호에 <b>1 + m</b> 을 곱한 것을 n 으로 나눈 나머지다. 1 + m 은 짝수다." },
+        { q: "<b>더 나아가</b> <b>n = 4</b> 부터 <b>30</b> 까지 가운데, 말이 모든 점을 밟게 하는 m 이 <b>없는</b> n 은 몇 개인가?",
+          kind: "num", a: "19",
+          hint: "<b>n = 4 · 6 · 8 · 9</b> 에서는 그런 m 이 없고, <b>n = 5 · 7</b> 에서는 있다." }
       ]
     },
     com: {
@@ -1137,10 +1148,12 @@
     } else if (b.room === "lobby") {
       ["alg", "geo", "com", "inf"].forEach(function (id, i) { rect(C[id], cx - 15 + i * 8, cy - 3, 6, 6); });
     } else {
-      rect(C.chalk, cx - 18, cy + 2, 37, 1);
-      [-16, -9, -2, 6, 15].forEach(function (o) { rect(o === -2 ? C.gold : C.chalk, cx + o, cy, 2, 2); });
-      rect(C.gold, cx - 3, cy - 4, 4, 1);
-      rect(C.gold, cx - 2, cy - 3, 2, 1);
+      // 원 위의 말 — 원 위의 점 일곱과 출발점
+      for (j = 0; j < 7; j++) {
+        a = -Math.PI / 2 + 2 * Math.PI * j / 7;
+        dot(cx + 4.4 * Math.cos(a), cy + 4.4 * Math.sin(a));
+      }
+      rect(C.gold, cx, cy - 5, 1, 2);
     }
   }
 
