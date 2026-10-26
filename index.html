@@ -623,7 +623,7 @@
   </div>
   <div class="hud">
     <span class="chip where" id="where">로비 · 거리의 합</span>
-    <span class="chip" id="keys">문 0 / 3</span>
+    <span class="chip" id="keys">문 0 / 4</span>
     <button class="hbtn" id="b-theme" type="button">밤</button>
     <button class="hbtn" id="b-reset" type="button">처음부터</button>
   </div>
@@ -631,7 +631,7 @@
 
 <main class="wrap" id="wrap">
   <div class="stage" id="stage">
-    <canvas id="map" tabindex="0" aria-label="증명의 집 지도. 방향키로 걷고 Space 로 살핀다. 로비의 문 세 개에 문제가 붙어 있고, 소문항의 답을 차례로 넣으면 문이 열린다."></canvas>
+    <canvas id="map" tabindex="0" aria-label="증명의 집 지도. 방향키로 걷고 Space 로 살핀다. 로비의 문 네 개에 문제가 붙어 있고, 소문항의 답을 차례로 넣으면 문이 열린다."></canvas>
     <div class="tapme" id="tapme" hidden>지도를 누르면 움직일 수 있다</div>
     <div class="dialog" id="dialog" hidden aria-live="polite">
       <span class="who" id="d-who"></span>
@@ -691,16 +691,74 @@
 </div>
 
 <!-- 풀이 — 각 방 실험실의 「… 논법」 절과 같은 말이다 -->
-<template id="sol-lobby">
+<!-- 로비 책상 — 안내 세 장 -->
+<template id="guide-house">
+  <h3>문 넷, 단말기 넷, 칠판 넷</h3>
+  <p>방마다 문제 하나가 문에 붙어 있다. 문 앞에서 Space 를 누르면 문제 원본과 자물쇠가 나온다.</p>
+  <ol>
+    <li><b>자물쇠</b> 소문항마다 한 칸이다. 질문 1 의 답을 맞히면 질문 2 가 나오고, 마지막 칸까지 맞히면 문이
+        열린다. 한 칸에서 두 번 틀리면 그 칸의 힌트가 뜬다.</li>
+    <li><b>문 옆 단말기</b> 그 문제의 실험대다. 수를 바꿔 보고, 파이썬이 하나씩 센 값을 표로 쌓아 볼 수 있다.</li>
+    <li><b>방 안 칠판</b> 풀이다. 문을 열어야 들어가서 읽을 수 있다.</li>
+  </ol>
+  <h3>답을 적는 법</h3>
+  <ul>
+    <li><b>수 하나</b> 그대로 적는다. <code>37</code></li>
+    <li><b>수 여럿</b> 묻는 차례대로 쉼표나 띄어쓰기로 나눈다. <code>3, 7</code></li>
+    <li><b>색</b> 왼쪽부터 파랑은 파, 빨강은 빨로 적는다. <code>파빨파</code></li>
+    <li><b>순서 여럿</b> 순서마다 숫자를 붙여 쓰고, 순서끼리는 띄어 쓴다. 적는 차례는 상관없다. <code>2134 1324</code></li>
+  </ul>
+  <p>띄어쓰기 · 쉼표 · 괄호는 따지지 않는다. 어디까지 풀었는지와 열린 문은 이 브라우저에 남는다.
+     처음부터 다시 하려면 위의 「처음부터」 를 누른다.</p>
+</template>
+
+<template id="guide-lab">
+  <h3>실험대의 여섯 칸</h3>
+  <p>단말기를 켜면 실험대가 열린다. 질문마다 탭이 있으면 맨 위 띠에서 고른다.</p>
+  <ol>
+    <li><b>조작</b> 슬라이더로 수를 바꾼다. 바꿀 때마다 아래 파이썬이 다시 돈다.</li>
+    <li><b>그림</b> 지금 수에서 문제가 어떻게 생겼는지 그린다. 파이썬이 낸 값만 그린다.</li>
+    <li><b>수치 판</b> 지금 값이다. 표의 맨 윗줄과 같다.</li>
+    <li><b>표</b> 파이썬이 돌 때마다 맨 위에 한 줄씩 쌓인다. 수를 차례로 바꿔 가며 쌓은 뒤 열끼리 견주어 본다.
+        「표 비우기」 를 누르면 새로 쌓는다.</li>
+    <li><b>파이썬</b> 화면의 수를 실제로 내는 코드다. 맨 윗줄이 슬라이더 값이다. 코드를 고치고 ▶ 실행을 누르면
+        고친 코드로 다시 돈다. 슬라이더 끝보다 큰 수도 맨 윗줄에 직접 적어 돌릴 수 있다.</li>
+    <li><b>전체 케이스 보기</b> 접힌 칸을 펼치면 경우를 하나씩 모두 찍는다. 작은 수에서 손으로 센 것과 한 줄씩
+        맞춰 본다.</li>
+  </ol>
+  <p>화면의 수는 공식으로 낸 값이 아니라 경우를 하나씩 만들어 센 값이다. 그래서 표에서 보이는 규칙은 아직
+     추측이고, 왜 그런지는 종이에서 따로 보여야 한다.</p>
+</template>
+
+<template id="guide-proof">
+  <h3>규칙에서 풀이로</h3>
+  <ol>
+    <li><b>작은 경우를 손으로 센다.</b> 둘셋은 직접 세고, 실험대의 값과 같은지 본다.</li>
+    <li><b>표에서 규칙 후보를 찾는다.</b> 앞 줄과의 차, 앞 몇 줄의 합, 2진법처럼 한 번 바꾼 값을 옆에 놓으면 잘 보인다.</li>
+    <li><b>왜 그런지 보인다.</b> 자주 쓰는 길은 셋이다.
+      <ul>
+        <li>큰 경우를 같은 모양의 더 작은 경우로 나눈다. 나눈 갈래끼리 겹치지 않는지, 빠진 경우가 없는지 둘 다 확인한다.</li>
+        <li>한 번 움직일 때마다 꼭 같은 만큼만 변하는 양을 찾는다. 「가장 적다」 를 말하려면 이보다 적을 수 없다는 것과
+            이만큼으로 된다는 것을 둘 다 보인다.</li>
+        <li>그림 안에서 앞의 그림이 그대로 되풀이되는 자리를 찾는다.</li>
+      </ul>
+    </li>
+    <li><b>풀이를 적는다.</b> 무엇을 묻는가(질문), 어떻게 나누고 세는가(전개), 답(결론) 차례로 쓴다.</li>
+  </ol>
+  <p>표의 수가 범위 안에서 모두 맞아도 그것만으로는 증명이 아니다. 범위 밖의 수에서도 같은 까닭이 그대로 통하는지가 증명이다.</p>
+</template>
+
+<template id="sol-geo">
   <h3>바깥에서부터 짝짓는 논법</h3>
-  <p>가장 바깥 두 점 <code>aᵢ</code>, <code>aⱼ</code> 를 한 쌍으로 묶으면, 이 쌍의 거리 합은 두 점
-     <b>사이</b>에서 <code>aⱼ − aᵢ</code> 로 <b>일정</b>하고 밖으로 나가면 나간 만큼 두 배로 늘어난다.</p>
-  <p>안쪽으로 계속 짝지어 들어가면 모든 쌍이 동시에 일정한 구간은 <b>가장 안쪽 쌍의 구간</b> 하나뿐이다.
-     그 구간이 중앙값이고, 그때의 값은 각 쌍의 길이를 전부 더한 것이다.</p>
-  <p>점이 홀수 개면 가운데 하나가 짝 없이 남는다. 그 점은 <code>x</code> 가 자기 자신일 때만 <code>0</code>
-     이므로, 최소가 되는 곳이 구간이 아니라 <b>점 하나</b>로 좁혀진다.</p>
-  <p class="ans"><span>결론</span>f(x) 는 x 가 중앙값일 때 가장 작다. n 이 홀수면 가운데 점 하나, 짝수면
-     가운데 두 점 사이의 구간 전체다.</p>
+  <p>수직선에서 <code>|x − a|</code> 는 <code>x</code> 와 <code>a</code> 사이의 거리다. 그래서 <code>f(x) = |x − 1| + |x − 5|</code>
+     는 점 <code>x</code> 에서 1 과 5 까지 가는 거리의 합이다.</p>
+  <p><code>x</code> 가 1 과 5 <b>사이</b>에 있으면 두 거리를 이어 붙인 것이 1 에서 5 까지라 합은 늘 <code>4</code> 다. 밖으로 나가면
+     나간 만큼이 두 거리에 한 번씩 더해져 1 갈 때마다 <code>2</code> 씩 커진다.</p>
+  <p>점이 여럿이면 가장 바깥 두 점부터 한 쌍씩 묶는다. 쌍마다 두 점 사이에서 일정하므로, 모든 쌍이 동시에 일정한
+     곳은 <b>가장 안쪽 쌍의 구간</b>이다. 점이 홀수 개면 가운데 하나가 짝 없이 남고, 그 점은 <code>x</code> 가 그 점일 때만
+     <code>0</code> 이라 가장 작은 곳이 <b>점 하나</b>로 좁혀진다.</p>
+  <p class="ans"><span>자물쇠 번호</span>(1) <code>6 · 4 · 4 · 4 · 4 · 4 · 6</code>. (2) 최솟값 <b>4</b>, <code>1 ≤ x ≤ 5</code>.
+     (3) 5 보다 오른쪽에서는 1 갈 때마다 <b>2</b> 씩 커진다. (4) 가운데 점 <code>x = 5</code> 에서 최솟값 <b>8</b>.</p>
 </template>
 
 <template id="sol-alg">
@@ -776,16 +834,16 @@
   var T = 16;
 
   /* ---------------- 지도 ----------------
-     # 벽 윗면 · = 벽 앞면 · D 문 · . 로비 · a 수현(사다리) · c 서희(관람석) · i 태윤(카드)
-     방 id 와 색 토큰(alg · com · inf)은 예전 방 자리를 그대로 쓴다. 오른쪽 위 방은 비워 벽으로 막았다. */
+     # 벽 윗면 · = 벽 앞면 · D 문 · . 로비 · a 수현(사다리) · g 승상(거리의 합) · c 서희(관람석) · i 태윤(카드)
+     방 id 와 색 토큰(alg · geo · com · inf)은 예전 방 자리를 그대로 쓴다. */
   var MAP = [
     "###########################",
-    "#=======#=========#########",
-    "#aaaaaaa#.........#########",
-    "#aaaaaaa#.........#########",
-    "#aaaaaaaD.........#########",
-    "#aaaaaaa#.........#########",
-    "#aaaaaaa#.........#########",
+    "#=======#=========#=======#",
+    "#aaaaaaa#.........#ggggggg#",
+    "#aaaaaaa#.........#ggggggg#",
+    "#aaaaaaaD.........Dggggggg#",
+    "#aaaaaaa#.........#ggggggg#",
+    "#aaaaaaa#.........#ggggggg#",
     "#########.........#########",
     "#=======#.........#=======#",
     "#ccccccc#.........#iiiiiii#",
@@ -798,7 +856,7 @@
     "###########################"
   ];
   var MW = MAP[0].length, MH = MAP.length;
-  var ZONE = { ".": "lobby", "D": "lobby", a: "alg", c: "com", i: "inf" };
+  var ZONE = { ".": "lobby", "D": "lobby", a: "alg", g: "geo", c: "com", i: "inf" };
 
   /* 방 — 문에는 문제(q, 원본 그대로), 문 옆에는 실험대(page), 방 안 칠판에는 풀이.
      page 는 9주차 폴더의 실험대, q 는 _src/build_house.py 가 원본에서 잘라 낸 SVG 다.
@@ -806,10 +864,7 @@
        num    수 하나          colors  파 · 빨 (또는 B · R, 1 · 0) 을 왼쪽부터
        set    네 자리 순서 여럿  nums    수 여럿을 차례로 */
   var ROOMS = {
-    lobby: {
-      name: "로비", title: "거리의 합", tone: "--lobby", page: "견본_거리의합과중앙값.html",
-      q: "문항/로비.svg", src: "3주차 마무리 문제 · 기출 아님"
-    },
+    lobby: { name: "로비", title: "안내", tone: "--lobby" },
     alg: {
       name: "수현의 방", title: "사다리타기", tone: "--alg", page: "사다리 (수현).html", door: [8, 4], lab: [9, 3],
       q: "문항/사다리.svg", src: "7주차 · 충북과학고 2025 문항 6",
@@ -823,6 +878,24 @@
         { q: "<b>질문 3</b> 급식 순서를 가장 많이 만드는 가로줄 개수와, 그때 만들어지는 급식 순서의 가짓수를 차례로 적는다.",
           kind: "nums", a: [3, 6], ph: "개수, 가짓수",
           hint: "가로줄 <b>0 · 1 · 2</b> 개로 만들어지는 급식 순서는 <b>1 · 3 · 5</b> 가지다." }
+      ]
+    },
+    geo: {
+      name: "승상의 방", title: "거리의 합", tone: "--geo", page: "견본_거리의합과중앙값.html", door: [18, 4], lab: [17, 3],
+      q: "문항/거리의합.svg", src: "3주차 마무리 문제 · 기출 아님",
+      steps: [
+        { q: "<b>(1)</b> x = <b>0, 1, 2, 3, 4, 5, 6</b> 일 때 f(x) 를 차례로 적는다.",
+          kind: "nums", a: [6, 4, 4, 4, 4, 4, 6], ph: "f(0), f(1), …",
+          hint: "f(0) 은 0 에서 1 까지의 거리와 0 에서 5 까지의 거리를 더한 것이다." },
+        { q: "<b>(2)</b> f(x) 의 최솟값, 그리고 최솟값이 되는 x 의 범위의 처음과 끝을 차례로 적는다.",
+          kind: "nums", a: [4, 1, 5], ph: "최솟값, 처음, 끝",
+          hint: "(1) 의 표에서 가장 작은 값이 이어지는 칸을 본다." },
+        { q: "<b>(3)</b> 수직선에서 x 가 5 보다 오른쪽으로 1 갈 때마다 f(x) 는 얼마씩 커지는가?",
+          kind: "num", a: "2",
+          hint: "x 가 오른쪽으로 1 가면 1 까지의 거리도, 5 까지의 거리도 1 씩 는다." },
+        { q: "<b>(4)</b> g(x) = |x − 1| + |x − 5| + |x − 9| 의 최솟값과 그때의 x 를 차례로 적는다.",
+          kind: "nums", a: [8, 5], ph: "최솟값, x",
+          hint: "1 과 9 를 한 쌍으로 묶으면 그 사이에서 늘 8 이다. 남은 점은 5 하나다." }
       ]
     },
     com: {
@@ -853,30 +926,30 @@
       ]
     }
   };
-  var ORDER = ["alg", "com", "inf"];
+  var ORDER = ["alg", "geo", "com", "inf"];
 
   /* 칸 위의 물건 */
   var OBJ = {};
   function put(x, y, o) { o.x = x; o.y = y; OBJ[x + "," + y] = o; }
-  // 로비 책상 — 견본 한 벌: 문제 · 실험실 · 풀이
-  put(12, 8, { kind: "paper", room: "lobby", sheet: "problem", mark: "?" });
-  put(13, 8, { kind: "lab", room: "lobby" });
-  put(14, 8, { kind: "paper", room: "lobby", sheet: "solution", mark: "v" });
+  // 로비 책상 — 안내 세 장: 집에서 하는 일 · 실험대 보는 법 · 규칙에서 풀이로
+  put(12, 8, { kind: "paper", room: "lobby", sheet: "guide-house", mark: "?" });
+  put(13, 8, { kind: "lab", room: "lobby", sheet: "guide-lab" });
+  put(14, 8, { kind: "paper", room: "lobby", sheet: "guide-proof", mark: "v" });
   ORDER.forEach(function (id) {
     var R = ROOMS[id];
     put(R.lab[0], R.lab[1], { kind: "lab", room: id });          // 문 옆 실험실
   });
   // 방 안 칠판 — 풀이. 칠판 아래 칸에서 위를 보고 읽는다
-  [["alg", 3, 1], ["com", 3, 8], ["inf", 21, 8]].forEach(function (b) {
+  [["alg", 3, 1], ["geo", 21, 1], ["com", 3, 8], ["inf", 21, 8]].forEach(function (b) {
     for (var i = 0; i < 3; i++) put(b[1] + i, b[2], { kind: "board", room: b[0] });
   });
-  [[1, 2], [1, 9], [25, 9]].forEach(function (p) { put(p[0], p[1], { kind: "shelf" }); });
-  [[1, 6], [1, 13], [25, 13], [9, 15], [17, 15]].forEach(function (p) { put(p[0], p[1], { kind: "plant" }); });
+  [[1, 2], [25, 2], [1, 9], [25, 9]].forEach(function (p) { put(p[0], p[1], { kind: "shelf" }); });
+  [[1, 6], [25, 6], [1, 13], [25, 13], [9, 15], [17, 15]].forEach(function (p) { put(p[0], p[1], { kind: "plant" }); });
   put(10, 1, { kind: "sign" });
   put(16, 1, { kind: "window" });
 
   var BOARDS = [
-    { room: "lobby", x: 12, y: 1 }, { room: "alg", x: 3, y: 1 },
+    { room: "lobby", x: 12, y: 1 }, { room: "alg", x: 3, y: 1 }, { room: "geo", x: 21, y: 1 },
     { room: "com", x: 3, y: 8 }, { room: "inf", x: 21, y: 8 }
   ];
   var DOOR_AT = {};
@@ -1061,6 +1134,8 @@
         rect(C.chalk, x, cy - 3, 4, 6);
         if (!cards[j]) rect(C.board, x + 1, cy - 2, 2, 4);
       }
+    } else if (b.room === "lobby") {
+      ["alg", "geo", "com", "inf"].forEach(function (id, i) { rect(C[id], cx - 15 + i * 8, cy - 3, 6, 6); });
     } else {
       rect(C.chalk, cx - 18, cy + 2, 37, 1);
       [-16, -9, -2, 6, 15].forEach(function (o) { rect(o === -2 ? C.gold : C.chalk, cx + o, cy, 2, 2); });
@@ -1279,9 +1354,10 @@
     }
     var R = ROOMS[t.room] || {};
     if (t.kind === "door") return R.name + " · 문 — " + ACT + " 문제를 본다.";
-    if (t.kind === "lab") return (t.room === "lobby" ? "견본" : R.name) + " 실험실 — " + ACT + " 켠다.";
+    if (t.kind === "lab" && t.room === "lobby") return "안내 · " + GUIDE[t.sheet] + " — " + ACT + " 읽는다.";
+    if (t.kind === "lab") return R.name + " 실험대 — " + ACT + " 켠다.";
     if (t.kind === "board") return R.name + " · 칠판 — " + ACT + " 풀이를 읽는다.";
-    if (t.kind === "paper") return "견본 · " + (t.sheet === "problem" ? "문제" : "풀이") + " — " + ACT + " 읽는다.";
+    if (t.kind === "paper") return "안내 · " + GUIDE[t.sheet] + " — " + ACT + " 읽는다.";
     if (t.kind === "npc") return "관리인 — " + ACT + " 말을 건다.";
     return ACT + " 살핀다.";
   }
@@ -1333,7 +1409,7 @@
   var LINES = {
     plant: ["화분이다. 잎이 반질반질하다."],
     shelf: ["1~7주차 문제지가 빼곡히 꽂혀 있다."],
-    sign: ["증명의 집 · 로비", "문에 붙은 문제를 풀어 답을 넣으면 문이 열린다. 가운데 책상은 견본 한 벌이다."]
+    sign: ["증명의 집 · 로비", "문에 붙은 문제를 풀어 답을 넣으면 문이 열린다. 가운데 책상에 안내 세 장이 있다."]
   };
 
   function talk() {
@@ -1349,7 +1425,7 @@
     if (!t) return;
     if (t.kind === "npc") talk();
     else if (t.kind === "door") openSheet(t.room, "door");
-    else if (t.kind === "lab") openSheet(t.room, "lab");
+    else if (t.kind === "lab") openSheet(t.room, t.room === "lobby" ? t.sheet : "lab");
     else if (t.kind === "board") openSheet(t.room, "solution");
     else if (t.kind === "paper") openSheet("lobby", t.sheet);
     else if (t.kind === "window") say(C.night ? "창밖이 캄캄하다. 달이 떴다." : "창밖이 환하다.");
@@ -1387,7 +1463,8 @@
     return f;
   }
 
-  var MODE = { problem: "문제", door: "문 · 문제", lab: "실험실", solution: "풀이" };
+  var MODE = { door: "문 · 문제", lab: "실험대", solution: "풀이" };
+  var GUIDE = { "guide-house": "증명의 집에서 하는 일", "guide-lab": "실험대 보는 법", "guide-proof": "규칙에서 풀이로" };
 
   function openSheet(room, mode) {
     var R = ROOMS[room], lobby = room === "lobby";
@@ -1395,9 +1472,8 @@
     S.sheetRoom = room;
     held.length = 0;
     $("sheet").style.setProperty("--zone", "var(" + R.tone + ")");
-    $("sheet-kick").textContent = (lobby ? "로비 · 견본" : R.name) + " · " + MODE[mode]
-      + (mode === "lab" && !lobby ? " · 힌트" : "");
-    $("sheet-title").textContent = R.title;
+    $("sheet-kick").textContent = lobby ? "로비 · 안내" : R.name + " · " + MODE[mode] + (mode === "lab" ? " · 힌트" : "");
+    $("sheet-title").textContent = lobby ? GUIDE[mode] : R.title;
     $("sheet-alt").hidden = !(mode === "lab" && !lobby && !S.open[room]);
     for (var k in FRAMES) FRAMES[k].classList.remove("on");
 
@@ -1410,9 +1486,9 @@
       $("sheet-doc").hidden = false;
       $("sheet-doc").className = "doc" + (mode === "door" ? " with-lock" : "");
       var paper = $("sheet-paper");
-      if (mode === "solution") {
+      if (lobby || mode === "solution") {
         paper.className = "paper";
-        paper.innerHTML = $("sol-" + room).innerHTML;
+        paper.innerHTML = $(lobby ? mode : "sol-" + room).innerHTML;
       } else {
         // 문제는 다시 쓰지 않는다 — 원본 쪽을 잘라 낸 그대로 보여 준다
         paper.className = "paper orig";
@@ -1610,7 +1686,7 @@
     $("where").style.setProperty("--zone", "var(" + R.tone + ")");
     $("keys").textContent = "문 " + openCount() + " / " + ORDER.length;
     var h = '<li style="--zone:var(--lobby)"><i></i><span class="rn">로비</span>'
-      + '<span class="rt">거리의 합 · 견본</span><span class="st on">열림</span></li>';
+      + '<span class="rt">안내 세 장</span><span class="st on">열림</span></li>';
     ORDER.forEach(function (id) {
       var R2 = ROOMS[id], op = !!S.open[id], k = S.step[id] || 0;
       h += '<li style="--zone:var(' + R2.tone + ')"><i></i><span class="rn">' + R2.name + "</span>"
