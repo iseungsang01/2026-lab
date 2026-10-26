@@ -544,6 +544,19 @@
   .lockbox input:focus-visible { outline: none; border-color: var(--gold); }
   .lock-msg { min-height: 1.6em; margin: 10px 0 0; font-size: 13px; color: var(--ink-soft); }
   .lock-msg.bad { color: var(--warn); font-weight: 600; }
+  .lock-msg.good { color: var(--zone); font-weight: 600; }
+  .lock-steps { display: flex; gap: 6px; margin: 0 0 10px; padding: 0; list-style: none; }
+  .lock-steps li {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 2px 8px;
+    border: 1px solid var(--rule);
+    border-radius: 99px;
+    color: var(--ink-soft);
+  }
+  .lock-steps li.now { border-color: var(--zone); color: var(--ink); font-weight: 600; }
+  .lock-steps li.done { background: var(--zone); border-color: var(--zone); color: #fff; }
+  .lockbox input.wide { font-size: 16px; letter-spacing: .06em; }
   .lock-hint {
     margin: 4px 0 0;
     font-size: 13px;
@@ -610,7 +623,7 @@
   </div>
   <div class="hud">
     <span class="chip where" id="where">로비 · 거리의 합</span>
-    <span class="chip" id="keys">문 0 / 4</span>
+    <span class="chip" id="keys">문 0 / 3</span>
     <button class="hbtn" id="b-theme" type="button">밤</button>
     <button class="hbtn" id="b-reset" type="button">처음부터</button>
   </div>
@@ -618,7 +631,7 @@
 
 <main class="wrap" id="wrap">
   <div class="stage" id="stage">
-    <canvas id="map" tabindex="0" aria-label="증명의 집 지도. 방향키로 걷고 Space 로 살핀다. 로비의 문 네 개에 문제가 붙어 있고, 답을 넣으면 문이 열린다."></canvas>
+    <canvas id="map" tabindex="0" aria-label="증명의 집 지도. 방향키로 걷고 Space 로 살핀다. 로비의 문 세 개에 문제가 붙어 있고, 소문항의 답을 차례로 넣으면 문이 열린다."></canvas>
     <div class="tapme" id="tapme" hidden>지도를 누르면 움직일 수 있다</div>
     <div class="dialog" id="dialog" hidden aria-live="polite">
       <span class="who" id="d-who"></span>
@@ -658,11 +671,12 @@
     <div class="doc" id="sheet-doc">
       <article class="paper" id="sheet-paper"></article>
       <section class="lockbox" id="lockbox" hidden aria-labelledby="lock-kick">
-        <p class="lock-kick" id="lock-kick">자물쇠 번호</p>
+        <p class="lock-kick" id="lock-kick">자물쇠 · 소문항을 차례로 푼다</p>
+        <ol class="lock-steps" id="lock-steps"></ol>
         <p class="lock-q" id="lock-q"></p>
         <form id="lock-form" autocomplete="off">
-          <label class="sr" for="lock-in">번호</label>
-          <input id="lock-in" type="text" inputmode="numeric" maxlength="6" placeholder="번호">
+          <label class="sr" for="lock-in">답</label>
+          <input id="lock-in" type="text" maxlength="60" placeholder="답">
           <button class="btn primary" type="submit">열기</button>
         </form>
         <p class="lock-msg" id="lock-msg" aria-live="polite"></p>
@@ -690,43 +704,25 @@
 </template>
 
 <template id="sol-alg">
-  <h3>짝수를 합성수로 미는 논법</h3>
-  <p>2주차에서 푼 기출 (3) 은 <code>n</code> 이 4 이상의 짝수인 경우였고, 무기는 <b>홀짝</b>이었다.
-     짝수 걸음은 짝수 점으로만 간다. <b>2 로 나눈 나머지</b>가 걸음마다 안 바뀌기 때문이다.</p>
-  <p>그 논증에서 <code>2</code> 가 하는 일은 <b>n 을 나눈다</b>는 것 하나뿐이다. 그래서 <code>2</code> 자리에
-     <code>n</code> 의 아무 소인수 <code>p</code> 를 넣어도 같은 논증이 그대로 돈다.</p>
-  <p>번호가 <code>a</code> 인 점에서는 <code>a × m</code> 칸 가므로, 다음 번호는 <code>a × (1 + m)</code> 을
-     <code>n</code> 으로 나눈 나머지다. 곧 <code>a1 = m</code>, <code>a(k+1) = a(k) · (1 + m)</code>.
-     <code>p</code> 가 <code>n</code> 을 나누므로 <code>p</code> 로 나눈 나머지는 <code>n</code> 으로 나눈 뒤에도 그대로다.</p>
+  <h3>뒤바뀐 짝을 세는 논법</h3>
+  <p>가로줄 하나를 지나면 이웃한 두 세로줄 위의 수가 <b>자리를 맞바꾼다</b>. 그러니 사다리 하나는 이웃 맞바꾸기를
+     차례로 한 것이고, 가로줄 수는 맞바꾼 횟수다.</p>
+  <p>앞의 수가 뒤의 수보다 큰 짝을 <b>뒤바뀐 짝</b>이라 한다. 이웃한 두 수를 맞바꾸면 그 두 수의 짝 하나만 앞뒤가
+     뒤집히고, 나머지 짝은 그대로다. 그래서 가로줄 하나마다 뒤바뀐 짝은 <b>꼭 1 만</b> 달라진다.</p>
   <ol>
-    <li><b>m 이 p 의 배수</b> — <code>a1</code> 부터 전부 <code>p</code> 의 배수다. 말은 <code>p</code> 의 배수인 점
-        <code>n/p</code> 개 안에 갇히고, 나머지 <code>n − n/p</code> 개는 못 밟는다.</li>
-    <li><b>1 + m 이 p 의 배수</b> — <code>a2</code> 부터 전부 <code>p</code> 의 배수다. <code>p</code> 의 배수가 아닌
-        점 가운데 밟는 것은 <code>a1</code> 하나뿐인데, 그런 점은 <code>n − n/p ≥ 2</code> 개라 적어도 하나가 남는다.</li>
-    <li><b>둘 다 아니다</b> — <code>m</code> 도 <code>1 + m</code> 도 <code>p</code> 로 나누어떨어지지 않고 <code>p</code> 가
-        소수이므로, 그 둘을 곱해 가는 <code>a(k)</code> 도 <code>p</code> 로 나누어떨어지지 않는다. 0 말고 <code>p</code> 의
-        배수인 점 <code>n/p − 1</code> 개(1 개 이상)를 못 밟는다.</li>
+    <li><b>이보다 적을 수 없다.</b> 뒤바뀐 짝이 <code>I</code> 개인 순서는 맞바꾸기 <code>I</code> 번보다 적게는 못 만든다.</li>
+    <li><b>이만큼으로 만들 수 있다.</b> 뒤바뀐 짝이 남아 있으면 앞이 뒤보다 큰 이웃 자리가 꼭 있고, 그 자리를
+        맞바꾸면 1 줄어든다. <code>I</code> 번이면 <code>1 2 3 4</code> 로 돌아가고, 그 길을 거꾸로 밟으면 된다.</li>
   </ol>
-  <p>세 경우 어디서든 못 밟는 점이 남는다. <code>n</code> 이 소수면 잡을 수 있는 소인수가 <code>n</code> 자신뿐이라
-     이 논증이 막힌다 — 다만 <b>막힌다는 것이 곧 전부 밟힌다는 뜻은 아니다.</b> 소수에서 그런 <code>m</code> 이
-     반드시 있는지는 아직 안 닫혀 있다.</p>
-  <p class="ans"><span>자물쇠 번호</span>4 부터 30 까지 27 개 가운데 소수
-     <code>5 · 7 · 11 · 13 · 17 · 19 · 23 · 29</code> 여덟 개에서는 그런 <code>m</code> 이 실제로 있다(실험실에서 확인).
-     남은 합성수 <b>19</b> 개에서는 없다.</p>
-</template>
-
-<template id="sol-geo">
-  <h3>몇 바퀴 도는가로 세는 논법</h3>
-  <p>별을 한 붓으로 그릴 때 손은 직선으로 나아가다 꼭짓점에서만 방향을 튼다. 튼 각이 <b>외각</b>이고,
-     꼭짓점의 각은 <code>180° − 외각</code> 이다.</p>
-  <p>출발점으로 돌아오면 손이 향한 방향도 출발할 때와 같다. 따라서 튼 각을 전부 더하면 <code>360°</code> 의
-     배수가 되고, 몇 배인지가 곧 <b>몇 바퀴 돌았는가</b>다. <code>k</code> 칸씩 건너뛰면 한 바퀴 도는 동안 원을
-     <code>k</code> 번 감으므로 그 배수는 <code>k</code> 다.</p>
-  <p>그러면 <code>n × 외각 = 360k</code>, 즉 외각은 <code>360k/n</code> 이고 한 각은
-     <code>180 − 360k/n = 180(n − 2k)/n</code> 이다. <code>n</code> 배 하면 <code>180(n − 2k)</code>.
-     <code>k = 1</code> 을 넣으면 <code>180(n − 2)</code> — 볼록 다각형 공식이 이 식의 한 경우다.</p>
-  <p class="ans"><span>자물쇠 번호</span>점 9 개를 2 칸씩 이은 별 <code>{9/2}</code> 는 <code>180 × (9 − 4) = 900</code>.
-     오각별 <code>{5/2}</code> 의 180°, <code>{7/2}</code> 의 540° 도 같은 식에서 나온다.</p>
+  <p class="fx">가장 적은 가로줄 수 = 뒤바뀐 짝의 개수</p>
+  <p><b>질문 1</b> <code>{3, 4, 2, 1}</code> 의 뒤바뀐 짝은 <code>(3,2) (3,1) (4,2) (4,1) (2,1)</code> 다섯이다.</p>
+  <p><b>질문 2</b> 맨 앞 수가 만드는 뒤바뀐 짝은 그 수보다 작은 수의 개수다. 맨 앞이 <code>1 · 2 · 3</code> 이면
+     <code>0 · 1 · 2</code> 개이므로 나머지 세 자리에서 <code>2 · 1 · 0</code> 개를 더 만든다. 맨 앞이 <code>4</code> 면 이미 3 개라 안 된다.</p>
+  <p><b>질문 3</b> <code>1</code> 을 놓고 <code>2 · 3 · 4</code> 를 차례로 끼워 넣는다. 끼우는 수는 그때까지 가장 큰 수라,
+     새로 생기는 뒤바뀐 짝은 그 수 뒤로 밀린 수의 개수이고, 차례로 <code>0~1</code>, <code>0~2</code>, <code>0~3</code> 가운데 따로 고른다.
+     합이 <code>k</code> 가 되는 고르기를 세면 <code>1 · 3 · 5 · 6 · 5 · 3 · 1</code> 이다.</p>
+  <p class="ans"><span>자물쇠 번호</span>질문 1 은 <b>5</b> 개. 질문 2 는 <code>{1,3,4,2} {1,4,2,3} {2,1,4,3} {2,3,1,4} {3,1,2,4}</code>
+     다섯 가지. 질문 3 은 가로줄 <b>3</b> 개일 때 <b>6</b> 가지로 가장 많다.</p>
 </template>
 
 <template id="sol-com">
@@ -740,8 +736,15 @@
   <p>2진법으로 <code>n</code> 을 쓰면 <code>n → 2n</code> 은 뒤에 <code>0</code> 을 붙이는 것,
      <code>n → 2n+1</code> 은 <code>1</code> 을 붙이는 것이다. <code>0</code> 은 <code>f</code> 를 그대로 두고
      <code>1</code> 은 두 배로 만들므로, <code>f(0) = 1</code> 에서 시작해 <code>1</code> 의 개수만큼 두 배가 된다.</p>
-  <p class="ans"><span>자물쇠 번호</span>관람석의 파랑은 파스칼 삼각형의 홀수 자리이고, 1번째 줄이 0 행이다.
-     2026번째 줄은 2025 행 — <code>2025 = 11111101001₂</code> 에 <code>1</code> 이 8 개라 <code>2⁸ = 256</code> 명.</p>
+  <p>관람석의 파랑은 파스칼 삼각형의 홀수 자리이고, 1 번째 줄이 0 행이다. 그래서 <code>N</code> 번째 줄의 파랑은
+     <code>N − 1</code> 을 2진법으로 썼을 때 <code>1</code> 의 개수만큼 2 를 곱한 수다.</p>
+  <p><b>질문 1</b> 8 번째 줄이 전부 파랑이라 9 번째 줄은 양 끝만 파랑이고, 10 번째 줄은 2 번째 줄이 양 끝에 한 벌씩
+     놓인 모양이다.</p>
+  <p><b>질문 2</b> 행 <code>0</code> 부터 <code>2ᵏ − 1</code> 까지 파랑을 다 더하면 자리마다 <code>1 + 2</code> 가 곱해져
+     <code>3ᵏ</code> 이다. 31 ~ 65 번째 줄은 행 30 ~ 64 이고, 행 0 ~ 63 이 <code>3⁶ = 729</code>, 행 0 ~ 29 가
+     <code>81 + 2 × (27 + 2 × 15) = 195</code>, 행 64 가 <code>2</code> 라서 <code>729 − 195 + 2</code> 다.</p>
+  <p class="ans"><span>자물쇠 번호</span>질문 1 은 왼쪽부터 <b>파 · 파 · 빨 · 빨 · 빨 · 빨 · 빨 · 빨 · 파 · 파</b>.
+     질문 2 는 <b>536</b> 명.</p>
 </template>
 
 <template id="sol-inf">
@@ -758,7 +761,8 @@
   <p><code>k</code> 번 연속 금지로 바꾸면 끝의 연속이 <code>0 … k−1</code> 이라 갈래가 <code>k</code> 개가 되고, 같은
      논법이 <code>a(n) = a(n−1) + … + a(n−k)</code> 를 준다. <code>k = 2</code> 면 피보나치다.</p>
   <p class="ans"><span>자물쇠 번호</span><code>1 · 2 · 4 · 7 · 13 · 24 · 44 · 81 · 149</code> —
-     <code>n = 5</code> 면 24, <code>n = 8</code> 이면 <b>149</b>.</p>
+     질문 1 <code>n = 5</code> 는 <b>24</b>, 질문 2 <code>n = 8</code> 은 <b>149</b>. 질문 3 은 앞 네 개를 더해
+     <code>1 · 2 · 4 · 8 · 15 · 29 · 56 · 108 · 208 · 401 · 773</code>, 카드 10 장이면 <b>773</b>.</p>
 </template>
 
 <script>
@@ -772,15 +776,16 @@
   var T = 16;
 
   /* ---------------- 지도 ----------------
-     # 벽 윗면 · = 벽 앞면 · D 문 · . 로비 · a 대수 · g 기하 · c 조합 · i 정보 */
+     # 벽 윗면 · = 벽 앞면 · D 문 · . 로비 · a 수현(사다리) · c 서희(관람석) · i 태윤(카드)
+     방 id 와 색 토큰(alg · com · inf)은 예전 방 자리를 그대로 쓴다. 오른쪽 위 방은 비워 벽으로 막았다. */
   var MAP = [
     "###########################",
-    "#=======#=========#=======#",
-    "#aaaaaaa#.........#ggggggg#",
-    "#aaaaaaa#.........#ggggggg#",
-    "#aaaaaaaD.........Dggggggg#",
-    "#aaaaaaa#.........#ggggggg#",
-    "#aaaaaaa#.........#ggggggg#",
+    "#=======#=========#########",
+    "#aaaaaaa#.........#########",
+    "#aaaaaaa#.........#########",
+    "#aaaaaaaD.........#########",
+    "#aaaaaaa#.........#########",
+    "#aaaaaaa#.........#########",
     "#########.........#########",
     "#=======#.........#=======#",
     "#ccccccc#.........#iiiiiii#",
@@ -793,54 +798,62 @@
     "###########################"
   ];
   var MW = MAP[0].length, MH = MAP.length;
-  var ZONE = { ".": "lobby", "D": "lobby", a: "alg", g: "geo", c: "com", i: "inf" };
+  var ZONE = { ".": "lobby", "D": "lobby", a: "alg", c: "com", i: "inf" };
 
-  /* 방 — 문에는 문제(q, 원본 그대로), 문 옆에는 실험실(page), 방 안 칠판에는 풀이.
-     page 는 같은 폴더의 실험실 쪽, q 는 _src/build_house.py 가 원본에서 잘라 낸 SVG 다. */
+  /* 방 — 문에는 문제(q, 원본 그대로), 문 옆에는 실험대(page), 방 안 칠판에는 풀이.
+     page 는 9주차 폴더의 실험대, q 는 _src/build_house.py 가 원본에서 잘라 낸 SVG 다.
+     자물쇠는 소문항마다 한 칸(steps)이고, 앞 칸을 맞혀야 다음 칸이 열린다. 답을 읽는 방법(kind)은 넷이다.
+       num    수 하나          colors  파 · 빨 (또는 B · R, 1 · 0) 을 왼쪽부터
+       set    네 자리 순서 여럿  nums    수 여럿을 차례로 */
   var ROOMS = {
     lobby: {
       name: "로비", title: "거리의 합", tone: "--lobby", page: "견본_거리의합과중앙값.html",
       q: "문항/로비.svg", src: "3주차 마무리 문제 · 기출 아님"
     },
     alg: {
-      name: "대수의 방", title: "원 위의 말", tone: "--alg", page: "실험실_원위의말.html", door: [8, 4], lab: [9, 3],
-      q: "문항/대수.svg", src: "2주차 · 대전과학고 2026 문항 2",
-      lock: {
-        q: "<b>n = 4</b> 부터 <b>30</b> 까지 가운데, 말이 모든 점을 밟게 하는 <b>m</b> 이 <b>없는</b> n 은 몇 개인가?",
-        a: "19",
-        hint: "<b>n = 4 · 6 · 8 · 9</b> 에서는 그런 m 이 없고, <b>n = 5 · 7</b> 에서는 있다."
-      }
-    },
-    geo: {
-      name: "기하의 방", title: "별 다각형", tone: "--geo", page: "실험실_별다각형.html", door: [18, 4], lab: [17, 3],
-      q: "문항/기하.svg", src: "1주차 진단 B3 · 기출 아님",
-      lock: {
-        q: "원 위에 같은 간격으로 찍은 점 <b>9</b> 개를 <b>2</b> 칸씩 건너뛰며 한 붓으로 이은 별에서, "
-          + "뾰족한 각 9 개를 모두 더하면 몇 도인가?",
-        a: "900",
-        hint: "오각별(점 <b>5</b> 개 · <b>2</b> 칸씩)은 <b>180°</b>, 점 <b>7</b> 개를 <b>2</b> 칸씩 이으면 <b>540°</b> 다."
-      }
+      name: "수현의 방", title: "사다리타기", tone: "--alg", page: "사다리 (수현).html", door: [8, 4], lab: [9, 3],
+      q: "문항/사다리.svg", src: "7주차 · 충북과학고 2025 문항 6",
+      steps: [
+        { q: "<b>질문 1</b> 급식 순서가 <b>{3, 4, 2, 1}</b> 일 때 필요한 가로줄은 가장 적게 몇 개인가?",
+          kind: "num", a: "5",
+          hint: "세로줄이 셋이면 <b>3 2 1</b> 은 가로줄 <b>3</b> 개, <b>2 3 1</b> 은 <b>2</b> 개가 가장 적다." },
+        { q: "<b>질문 2</b> 가로줄 <b>2</b> 개로 만들 수 있는 급식 순서를 <b>모두</b> 적는다. 순서마다 네 숫자를 붙여 쓰고 띄어 쓴다.",
+          kind: "set", a: ["1342", "1423", "2143", "2314", "3124"], ph: "보기 : 2134 1324",
+          hint: "모두 <b>다섯</b> 가지다. 맨 앞이 <b>4</b> 인 것은 없다." },
+        { q: "<b>질문 3</b> 급식 순서를 가장 많이 만드는 가로줄 개수와, 그때 만들어지는 급식 순서의 가짓수를 차례로 적는다.",
+          kind: "nums", a: [3, 6], ph: "개수, 가짓수",
+          hint: "가로줄 <b>0 · 1 · 2</b> 개로 만들어지는 급식 순서는 <b>1 · 3 · 5</b> 가지다." }
+      ]
     },
     com: {
-      name: "조합의 방", title: "파스칼 mod 2", tone: "--com", page: "실험실_파스칼mod2.html", door: [8, 11], lab: [9, 10],
-      q: "문항/조합.svg", src: "6주차 · 충북과학고 2023 문항 6",
-      lock: {
-        q: "같은 규칙으로 <b>2026번째 줄</b>까지 앉았을 때, 2026번째 줄에서 파란색 옷을 입은 사람은 몇 명인가?",
-        a: "256",
-        hint: "<b>5 · 8 · 12</b>번째 줄의 파랑은 <b>2 · 8 · 8</b> 명이다. 줄 번호에서 1 을 뺀 수를 2진법으로 써 본다."
-      }
+      name: "서희의 방", title: "관람석 옷 색", tone: "--com", page: "관람석 (서희).html", door: [8, 11], lab: [9, 10],
+      q: "문항/관람석.svg", src: "6주차 · 충북과학고 2023 문항 6",
+      steps: [
+        { q: "<b>질문 1</b> <b>10 번째 줄</b>의 옷 색을 왼쪽부터 차례로 적는다. 파랑은 <b>파</b>, 빨강은 <b>빨</b>.",
+          kind: "colors", a: "1100000011", ph: "파빨…",
+          hint: "<b>9 번째 줄</b>은 양 끝 둘만 파랑이다." },
+        { q: "<b>질문 2</b> <b>31 번째 줄</b>부터 <b>65 번째 줄</b>까지 파란 옷을 입은 사람은 모두 몇 명인가?",
+          kind: "num", a: "536",
+          hint: "<b>5 · 8 · 12</b> 번째 줄의 파랑은 <b>2 · 8 · 8</b> 명이고, 1 ~ 64 번째 줄을 다 더하면 <b>729</b> 명이다." }
+      ]
     },
     inf: {
-      name: "정보의 방", title: "카드 3연속", tone: "--inf", page: "실험실_카드3연속.html", door: [18, 11], lab: [17, 10],
-      q: "문항/정보.svg", src: "7주차 · 충북과학고 2026 문항 5",
-      lock: {
-        q: "질문 2 — <b>n = 8</b> 일 때 가능한 경우의 수는 몇 가지인가?",
-        a: "149",
-        hint: "카드가 <b>0 · 1 · 2 · 3 · 4 · 5</b> 장이면 <b>1 · 2 · 4 · 7 · 13 · 24</b> 가지다."
-      }
+      name: "태윤의 방", title: "카드 3연속", tone: "--inf", page: "카드3연속 (태윤).html", door: [18, 11], lab: [17, 10],
+      q: "문항/카드.svg", src: "7주차 · 충북과학고 2026 문항 5",
+      steps: [
+        { q: "<b>질문 1</b> <b>n = 5</b> 일 때 가능한 경우의 수는 몇 가지인가?",
+          kind: "num", a: "24",
+          hint: "카드가 <b>3 · 4</b> 장이면 <b>7 · 13</b> 가지다." },
+        { q: "<b>질문 2</b> <b>n = 8</b> 일 때 가능한 경우의 수는 몇 가지인가?",
+          kind: "num", a: "149",
+          hint: "카드가 <b>0 · 1 · 2 · 3 · 4 · 5</b> 장이면 <b>1 · 2 · 4 · 7 · 13 · 24</b> 가지다." },
+        { q: "<b>질문 3</b> 「세 번」 을 「<b>네 번</b>」 으로 바꾼다(k = 4). 카드가 <b>10</b> 장이면 가능한 경우는 몇 가지인가?",
+          kind: "num", a: "773",
+          hint: "k = 4 이면 카드 <b>0 · 1 · 2 · 3 · 4</b> 장에서 <b>1 · 2 · 4 · 8 · 15</b> 가지다." }
+      ]
     }
   };
-  var ORDER = ["alg", "geo", "com", "inf"];
+  var ORDER = ["alg", "com", "inf"];
 
   /* 칸 위의 물건 */
   var OBJ = {};
@@ -854,16 +867,16 @@
     put(R.lab[0], R.lab[1], { kind: "lab", room: id });          // 문 옆 실험실
   });
   // 방 안 칠판 — 풀이. 칠판 아래 칸에서 위를 보고 읽는다
-  [["alg", 3, 1], ["geo", 21, 1], ["com", 3, 8], ["inf", 21, 8]].forEach(function (b) {
+  [["alg", 3, 1], ["com", 3, 8], ["inf", 21, 8]].forEach(function (b) {
     for (var i = 0; i < 3; i++) put(b[1] + i, b[2], { kind: "board", room: b[0] });
   });
-  [[1, 2], [25, 2], [1, 9], [25, 9]].forEach(function (p) { put(p[0], p[1], { kind: "shelf" }); });
-  [[1, 6], [25, 6], [1, 13], [25, 13], [9, 15], [17, 15]].forEach(function (p) { put(p[0], p[1], { kind: "plant" }); });
+  [[1, 2], [1, 9], [25, 9]].forEach(function (p) { put(p[0], p[1], { kind: "shelf" }); });
+  [[1, 6], [1, 13], [25, 13], [9, 15], [17, 15]].forEach(function (p) { put(p[0], p[1], { kind: "plant" }); });
   put(10, 1, { kind: "sign" });
   put(16, 1, { kind: "window" });
 
   var BOARDS = [
-    { room: "lobby", x: 12, y: 1 }, { room: "alg", x: 3, y: 1 }, { room: "geo", x: 21, y: 1 },
+    { room: "lobby", x: 12, y: 1 }, { room: "alg", x: 3, y: 1 },
     { room: "com", x: 3, y: 8 }, { room: "inf", x: 21, y: 8 }
   ];
   var DOOR_AT = {};
@@ -875,20 +888,23 @@
   var BACK = { up: "down", down: "up", left: "right", right: "left" };
 
   /* ---------------- 상태 ---------------- */
-  var S = { open: {}, anim: {}, busy: null, zone: "lobby", lockId: null, tries: 0, sheetRoom: null };
+  var S = { open: {}, step: {}, anim: {}, busy: null, zone: "lobby", lockId: null, tries: 0, sheetRoom: null };
   var me = { x: START.x, y: START.y, dir: START.dir, fx: START.x, fy: START.y, t: 1, moving: false, steps: 0 };
-  var STORE = "house-of-proofs-v2";
+  var STORE = "house-of-proofs-v3";
 
   function save() {
     try {
-      localStorage.setItem(STORE, JSON.stringify({ open: S.open, x: me.x, y: me.y, dir: me.dir }));
+      localStorage.setItem(STORE, JSON.stringify({ open: S.open, step: S.step, x: me.x, y: me.y, dir: me.dir }));
     } catch (e) { /* 저장이 막혀도 그대로 논다 */ }
   }
   function load() {
     var d = null;
     try { d = JSON.parse(localStorage.getItem(STORE) || "null"); } catch (e) { d = null; }
     if (!d) return;
-    ORDER.forEach(function (id) { if (d.open && d.open[id]) S.open[id] = true; });
+    ORDER.forEach(function (id) {
+      if (d.open && d.open[id]) S.open[id] = true;
+      if (d.step && d.step[id] > 0) S.step[id] = Math.min(d.step[id], ROOMS[id].steps.length);
+    });
     if (typeof d.x === "number" && typeof d.y === "number" && walkable(d.x, d.y)) {
       me.x = me.fx = d.x; me.y = me.fy = d.y;
     }
@@ -1024,18 +1040,6 @@
   }
 
   function dot(x, y) { g.fillRect(Math.round(x), Math.round(y), 1, 1); }
-  function pline(x0, y0, x1, y1) {
-    x0 = Math.round(x0); y0 = Math.round(y0); x1 = Math.round(x1); y1 = Math.round(y1);
-    var dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1, e = dx + dy;
-    for (;;) {
-      g.fillRect(x0, y0, 1, 1);
-      if (x0 === x1 && y0 === y1) break;
-      var e2 = 2 * e;
-      if (e2 >= dy) { e += dy; x0 += sx; }
-      if (e2 <= dx) { e += dx; y0 += sy; }
-    }
-  }
-
   /* 칠판 그림 — 방마다 그 방 문제의 모양 하나 */
   function board(b) {
     var px = b.x * T, py = b.y * T, cx = px + 24, cy = py + 7, j, a;
@@ -1043,18 +1047,9 @@
     rect(C.board, px + 2, py + 2, 44, 11);
     g.fillStyle = C.chalk;
     if (b.room === "alg") {
-      for (j = 0; j < 7; j++) {
-        a = -Math.PI / 2 + 2 * Math.PI * j / 7;
-        dot(cx + 4.4 * Math.cos(a), cy + 4.4 * Math.sin(a));
-      }
-      rect(C.gold, cx, cy - 5, 1, 2);
-    } else if (b.room === "geo") {
-      var P = [];
-      for (j = 0; j < 5; j++) {
-        a = -Math.PI / 2 + 2 * Math.PI * j / 5;
-        P.push([cx + 5 * Math.cos(a), cy + 1 + 5 * Math.sin(a)]);
-      }
-      for (j = 0; j < 5; j++) { var q = P[(j + 2) % 5]; pline(P[j][0], P[j][1], q[0], q[1]); }
+      // 사다리 — 세로줄 넷과 가로줄 다섯 ({3, 4, 2, 1})
+      for (j = 0; j < 4; j++) rect(C.chalk, cx - 9 + j * 6, cy - 4, 1, 9);
+      [0, 1, 0, 2, 1].forEach(function (i, r) { rect(r === 4 ? C.gold : C.chalk, cx - 9 + i * 6, cy - 3 + r * 2, 6, 1); });
     } else if (b.room === "com") {
       for (var n = 0; n < 8; n++) {
         for (var k = 0; k <= n; k++) if ((k & n) === k) dot(cx - n + 2 * k, cy - 3 + n);
@@ -1425,7 +1420,11 @@
           + '<p class="src">' + R.src + "</p>";
       }
       $("lockbox").hidden = mode !== "door";
-      if (mode === "door") prepLock(room);
+      if (mode === "door") {
+        prepLock(room);
+        $("lock-msg").textContent = "";
+        $("lock-msg").className = "lock-msg";
+      }
       $("sheet-body").scrollTop = 0;
     }
     $("sheet").hidden = false;
@@ -1444,24 +1443,60 @@
   $("sheet-alt").addEventListener("click", function () { openSheet(S.sheetRoom, "door"); });
   $("lock-lab").addEventListener("click", function () { openSheet(S.lockId, "lab"); });
 
-  /* ---------------- 자물쇠 ---------------- */
+  /* ---------------- 자물쇠 — 소문항을 차례로 ---------------- */
+  // 답을 읽는다. 띄어쓰기 · 쉼표 · 괄호는 따지지 않는다
+  function digits(v) { return v.replace(/[^0-9]/g, ""); }
+  function check(st, v) {
+    if (st.kind === "num") return digits(v) === st.a;
+    if (st.kind === "nums") {
+      var got = (v.match(/[0-9]+/g) || []).map(Number);
+      return got.length === st.a.length && got.every(function (x, i) { return x === st.a[i]; });
+    }
+    if (st.kind === "colors") {
+      var c = v.replace(/[파Bb1]/g, "1").replace(/[빨Rr0]/g, "0").replace(/[^01]/g, "");
+      return c === st.a;
+    }
+    if (st.kind === "set") {
+      var d = digits(v), got2 = [];
+      if (d.length % 4) return false;
+      for (var i = 0; i < d.length; i += 4) got2.push(d.slice(i, i + 4));
+      got2.sort();
+      return got2.length === st.a.length && got2.every(function (x, i) { return x === st.a.slice().sort()[i]; });
+    }
+    return false;
+  }
   function prepLock(id) {
-    var R = ROOMS[id];
+    var R = ROOMS[id], k = S.step[id] || 0, st = R.steps[k];
     if (S.lockId !== id) S.tries = 0;
     S.lockId = id;
-    $("lock-q").innerHTML = R.lock.q;
-    $("lock-hint").innerHTML = R.lock.hint;
+    $("lock-steps").innerHTML = R.steps.map(function (x, i) {
+      return '<li class="' + (i < k ? "done" : i === k ? "now" : "") + '">질문 ' + (i + 1) + (i < k ? " ✓" : "") + "</li>";
+    }).join("");
+    $("lock-q").innerHTML = st.q;
+    $("lock-hint").innerHTML = st.hint;
     $("lock-hint").hidden = S.tries < 2;
-    $("lock-msg").textContent = "";
-    $("lock-msg").className = "lock-msg";
     $("lock-in").value = "";
+    $("lock-in").placeholder = st.ph || "답";
+    $("lock-in").inputMode = st.kind === "num" ? "numeric" : "text";
+    $("lock-in").classList.toggle("wide", st.kind !== "num");
   }
   $("lock-form").addEventListener("submit", function (ev) {
     ev.preventDefault();
-    var id = S.lockId, R = ROOMS[id], v = $("lock-in").value.replace(/[^0-9]/g, "");
+    var id = S.lockId, R = ROOMS[id], k = S.step[id] || 0, v = $("lock-in").value;
     var msg = $("lock-msg");
-    if (!v) { msg.className = "lock-msg"; msg.textContent = "번호를 넣는다."; return; }
-    if (v === R.lock.a) {
+    if (!v.trim()) { msg.className = "lock-msg"; msg.textContent = "답을 넣는다."; return; }
+    if (check(R.steps[k], v)) {
+      S.step[id] = k + 1;
+      S.tries = 0;
+      if (k + 1 < R.steps.length) {
+        save();
+        renderHud();
+        prepLock(id);
+        msg.className = "lock-msg good";
+        msg.textContent = "딸깍. 하나 풀렸다. 이어서 질문 " + (k + 2) + " 이다.";
+        if (!coarse) $("lock-in").focus({ preventScroll: true });
+        return;
+      }
       S.open[id] = true;
       S.anim[id] = performance.now();
       save();
@@ -1573,14 +1608,14 @@
     var R = ROOMS[S.zone];
     $("where").textContent = R.name + " · " + R.title;
     $("where").style.setProperty("--zone", "var(" + R.tone + ")");
-    $("keys").textContent = "문 " + openCount() + " / 4";
+    $("keys").textContent = "문 " + openCount() + " / " + ORDER.length;
     var h = '<li style="--zone:var(--lobby)"><i></i><span class="rn">로비</span>'
       + '<span class="rt">거리의 합 · 견본</span><span class="st on">열림</span></li>';
     ORDER.forEach(function (id) {
-      var R2 = ROOMS[id], op = !!S.open[id];
+      var R2 = ROOMS[id], op = !!S.open[id], k = S.step[id] || 0;
       h += '<li style="--zone:var(' + R2.tone + ')"><i></i><span class="rn">' + R2.name + "</span>"
         + '<span class="rt">' + R2.title + '</span><span class="st' + (op ? " on" : "") + '">'
-        + (op ? "열림" : "잠김") + "</span></li>";
+        + (op ? "열림" : "잠김 · " + k + " / " + R2.steps.length) + "</span></li>";
     });
     $("room-list").innerHTML = h;
   }
@@ -1608,7 +1643,7 @@
 
   $("b-reset").addEventListener("click", function () {
     if (S.busy === "sheet") closeSheet();
-    S.open = {}; S.anim = {}; S.tries = 0; S.lockId = null;
+    S.open = {}; S.step = {}; S.anim = {}; S.tries = 0; S.lockId = null;
     me.x = me.fx = START.x; me.y = me.fy = START.y; me.dir = START.dir; me.moving = false;
     queue.length = 0;
     NPC.dir = NPC.home;
