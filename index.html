@@ -749,30 +749,20 @@
 </template>
 
 <template id="sol-geo">
-  <h3>짝수를 합성수로 미는 논법</h3>
-  <p>2주차에서 푼 기출 (3) 은 <code>n</code> 이 4 이상의 짝수인 경우였고, 무기는 <b>홀짝</b>이었다.
-     짝수 걸음은 짝수 점으로만 간다. <b>2 로 나눈 나머지</b>가 걸음마다 안 바뀌기 때문이다.</p>
-  <p>그 논증에서 <code>2</code> 가 하는 일은 <b>n 을 나눈다</b>는 것 하나뿐이다. 그래서 <code>2</code> 자리에
-     <code>n</code> 의 아무 소인수 <code>p</code> 를 넣어도 같은 논증이 그대로 돈다.</p>
-  <p>번호가 <code>a</code> 인 점에서는 <code>a × m</code> 칸 가므로, 다음 번호는 <code>a × (1 + m)</code> 을
-     <code>n</code> 으로 나눈 나머지다. 곧 <code>a1 = m</code>, <code>a(k+1) = a(k) · (1 + m)</code>.
-     <code>p</code> 가 <code>n</code> 을 나누므로 <code>p</code> 로 나눈 나머지는 <code>n</code> 으로 나눈 뒤에도 그대로다.</p>
-  <ol>
-    <li><b>m 이 p 의 배수</b> — <code>a1</code> 부터 전부 <code>p</code> 의 배수다. 말은 <code>p</code> 의 배수인 점
-        <code>n/p</code> 개 안에 갇히고, 나머지 <code>n − n/p</code> 개는 못 밟는다.</li>
-    <li><b>1 + m 이 p 의 배수</b> — <code>a2</code> 부터 전부 <code>p</code> 의 배수다. <code>p</code> 의 배수가 아닌
-        점 가운데 밟는 것은 <code>a1</code> 하나뿐인데, 그런 점은 <code>n − n/p ≥ 2</code> 개라 적어도 하나가 남는다.</li>
-    <li><b>둘 다 아니다</b> — <code>m</code> 도 <code>1 + m</code> 도 <code>p</code> 로 나누어떨어지지 않고 <code>p</code> 가
-        소수이므로, 그 둘을 곱해 가는 <code>a(k)</code> 도 <code>p</code> 로 나누어떨어지지 않는다. 0 말고 <code>p</code> 의
-        배수인 점 <code>n/p − 1</code> 개(1 개 이상)를 못 밟는다.</li>
-  </ol>
-  <p>세 경우 어디서든 못 밟는 점이 남는다. <code>n</code> 이 소수면 잡을 수 있는 소인수가 <code>n</code> 자신뿐이라
-     이 논증이 막힌다 — 다만 <b>막힌다는 것이 곧 전부 밟힌다는 뜻은 아니다.</b> 소수에서 그런 <code>m</code> 이
-     반드시 있는지는 아직 안 닫혀 있다.</p>
-  <p class="ans"><span>자물쇠 번호</span>(2) <code>m = 7</code> 이면 <code>0 → 7 → 6 → 8 → 4 → 2</code> 로 합이 <b>27</b>.
-     짝수 <code>m</code> 은 짝수 점만 밟아 아무리 커도 20 이다. (3) <code>m</code> 이 홀수면 홀수 점은 <code>a1 = m</code>
-     <b>1</b> 개뿐이다. 더 나아가 4 부터 30 까지 가운데 소수 <code>5 · 7 · 11 · 13 · 17 · 19 · 23 · 29</code> 여덟 개에서는
-     그런 <code>m</code> 이 실제로 있고, 남은 합성수 <b>19</b> 개에서는 없다.</p>
+  <h3>규칙을 식으로, 그다음 홀짝</h3>
+  <p>둘레가 <code>nπ</code> 이고 점이 <code>n</code> 개이므로 이웃한 두 점 사이가 <code>π</code> 다. <code>mπ</code> 만큼 옮기는 것은
+     <b>m 칸</b> 옮기는 것이다. 지금 번호가 <code>a</code> 면 <code>a × m</code> 칸 가므로 다음 번호는 <code>a(1 + m)</code> 을
+     <code>n</code> 으로 나눈 나머지다. 출발만 예외로 <code>a1 = m</code>.</p>
+  <p class="fx">a1 = m, 그다음은 a → a(1 + m) (n 으로 나눈 나머지)</p>
+  <p><b>질문 2</b> <code>n = 10</code> 은 짝수라 10 으로 나눈 나머지를 구해도 홀짝이 바뀌지 않는다. <code>m</code> 이 짝수면
+     <code>a1 = m</code> 부터 계속 짝수라 짝수 점만 밟고, 합은 아무리 커도 <code>0 + 2 + 4 + 6 + 8 = 20</code> 이다. 그래서 홀수
+     <code>m</code> 다섯 가지만 굴리면 된다. <code>m = 1 · 3 · 5 · 7 · 9</code> 의 합은 <code>21 · 13 · 5 · 27 · 9</code>.</p>
+  <p><b>질문 3</b> <code>n</code> 이 짝수면 <code>n</code> 으로 나눈 나머지를 구해도 홀짝은 그대로다. <code>m</code> 이 짝수면
+     <code>a1</code> 부터 전부 짝수라 홀수 점을 하나도 못 밟는다. <code>m</code> 이 홀수면 <code>1 + m</code> 이 짝수라
+     <code>a2</code> 부터 전부 짝수이고, 밟는 홀수 점은 <code>a1 = m</code> 하나뿐이다. 홀수 번호 점은 <code>n ÷ 2 ≥ 2</code> 개이므로
+     어느 쪽이든 적어도 하나가 남는다.</p>
+  <p class="ans"><span>자물쇠 번호</span>질문 2 는 <code>m = 7</code>, 이때 <code>0 → 7 → 6 → 8 → 4 → 2</code> 로 합이 <b>27</b>.
+     질문 3 은 <code>m</code> 이 홀수일 때 밟는 홀수 점이 <b>1</b> 개뿐이라 모든 점을 밟을 수 없다.</p>
 </template>
 
 <template id="sol-alg">
@@ -898,15 +888,12 @@
       name: "승상의 방", title: "원 위의 말", tone: "--geo", page: "원위의말 (승상).html", door: [18, 4], lab: [17, 3],
       q: "문항/원위의말.svg", src: "2주차 · 대전과학고 2026 문항 2",
       steps: [
-        { q: "<b>(2)</b> <b>n = 10</b> 일 때 말이 놓이는 서로 다른 점들의 번호의 합이 가장 큰 m 과, 그때의 합을 차례로 적는다.",
+        { name: "질문 2", q: "<b>(2)</b> <b>n = 10</b> 일 때 말이 놓이는 서로 다른 점들의 번호의 합이 가장 큰 m 과, 그때의 합을 차례로 적는다.",
           kind: "nums", a: [7, 27], ph: "m, 합",
           hint: "m = <b>1</b> 이면 <b>0 → 1 → 2 → 4 → 8 → 6</b> 으로 합이 <b>21</b> 이다." },
-        { q: "<b>(3)</b> n 이 4 이상의 짝수이고 m 이 홀수일 때, 말이 밟는 <b>홀수 번호</b> 점은 몇 개인가?",
+        { name: "질문 3", q: "<b>(3)</b> n 이 4 이상의 짝수이고 m 이 홀수일 때, 말이 밟는 <b>홀수 번호</b> 점은 몇 개인가?",
           kind: "num", a: "1",
-          hint: "다음 번호는 지금 번호에 <b>1 + m</b> 을 곱한 것을 n 으로 나눈 나머지다. 1 + m 은 짝수다." },
-        { q: "<b>더 나아가</b> <b>n = 4</b> 부터 <b>30</b> 까지 가운데, 말이 모든 점을 밟게 하는 m 이 <b>없는</b> n 은 몇 개인가?",
-          kind: "num", a: "19",
-          hint: "<b>n = 4 · 6 · 8 · 9</b> 에서는 그런 m 이 없고, <b>n = 5 · 7</b> 에서는 있다." }
+          hint: "다음 번호는 지금 번호에 <b>1 + m</b> 을 곱한 것을 n 으로 나눈 나머지다. 1 + m 은 짝수다." }
       ]
     },
     com: {
@@ -1554,12 +1541,14 @@
     }
     return false;
   }
+  // 칸 이름표 — 원본 소문항 번호가 1 부터가 아니면 칸에 name 을 준다
+  function stepName(st, i) { return st.name || "질문 " + (i + 1); }
   function prepLock(id) {
     var R = ROOMS[id], k = S.step[id] || 0, st = R.steps[k];
     if (S.lockId !== id) S.tries = 0;
     S.lockId = id;
     $("lock-steps").innerHTML = R.steps.map(function (x, i) {
-      return '<li class="' + (i < k ? "done" : i === k ? "now" : "") + '">질문 ' + (i + 1) + (i < k ? " ✓" : "") + "</li>";
+      return '<li class="' + (i < k ? "done" : i === k ? "now" : "") + '">' + stepName(x, i) + (i < k ? " ✓" : "") + "</li>";
     }).join("");
     $("lock-q").innerHTML = st.q;
     $("lock-hint").innerHTML = st.hint;
@@ -1582,7 +1571,7 @@
         renderHud();
         prepLock(id);
         msg.className = "lock-msg good";
-        msg.textContent = "딸깍. 하나 풀렸다. 이어서 질문 " + (k + 2) + " 이다.";
+        msg.textContent = "딸깍. 하나 풀렸다. 이어서 " + stepName(R.steps[k + 1], k + 1) + " 이다.";
         if (!coarse) $("lock-in").focus({ preventScroll: true });
         return;
       }
