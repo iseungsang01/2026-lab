@@ -26,6 +26,7 @@
 <nav role="tablist">
     <button type="button" role="tab" data-tab="0" aria-selected="true">질문 2 · n = 10</button>
     <button type="button" role="tab" data-tab="1" aria-selected="false">질문 3 · 짝수 n</button>
+    <button type="button" role="tab" data-tab="2" aria-selected="false">더 나아가 · n 에 따라</button>
 </nav>
   <iframe data-tab="0" title="질문 2 · n = 10" data-src="&lt;!doctype html&gt;
 &lt;html lang=&quot;ko&quot;&gt;
@@ -787,6 +788,446 @@ function draw(ctx, w, h, r) {
   if (!r) return;
   circle(ctx, w, h, r.n, r.path, true);
   msg(r[&quot;못 밟은 점 수&quot;] ? &quot;못 밟은 점이 &quot; + r[&quot;못 밟은 점 수&quot;] + &quot; 개 남았다.&quot; : &quot;모든 점을 밟았다.&quot;);
+}
+
+/* ===== 고치지 않는 부분: 파이썬 실행 · 슬라이더 · 점 끌기 · 수치 판 · 표 · 전체 케이스 ===== */
+var $ = function (id) { return document.getElementById(id); };
+function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function msg(text, kind) { var m = $(&quot;fig-msg&quot;); m.textContent = text || &quot;&quot;; m.className = &quot;msg&quot; + (kind ? &quot; &quot; + kind : &quot;&quot;); }
+
+var code = $(&quot;code&quot;), codeAll = $(&quot;code-all&quot;), py = null, last = null, timer = null, lastRow = &quot;&quot;;
+var queue = Promise.resolve();
+code.value = $(&quot;py-src&quot;).textContent.replace(/^\s*\n/, &quot;&quot;);
+codeAll.value = $(&quot;py-all&quot;).textContent.replace(/^\s*\n/, &quot;&quot;);
+
+var view = { s: 1, ox: 0, oy: 0 };
+function px(p) { return [view.ox + p[0] * view.s, view.oy + p[1] * view.s]; }
+function unpx(x, y) { return [(x - view.ox) / view.s, (y - view.oy) / view.s]; }
+
+function setVar(name, val) {
+  var re = new RegExp(&quot;^&quot; + name + &quot;\\s*=.*$&quot;, &quot;m&quot;);
+  [code, codeAll].forEach(function (box) {
+    box.value = re.test(box.value) ? box.value.replace(re, name + &quot; = &quot; + val) : name + &quot; = &quot; + val + &quot;\n&quot; + box.value;
+  });
+}
+
+// 파이썬 한 번 돌리기. 두 코드가 겹쳐 돌지 않게 차례로 줄 세운다.
+function exec(src) {
+  var job = queue.then(async function () {
+    var buf = [];
+    py.setStdout({ batched: function (s) { buf.push(s); } });
+    py.setStderr({ batched: function (s) { buf.push(s); } });
+    try {
+      py.runPython(&quot;result = None&quot;);
+      await py.runPythonAsync(src);
+      var r = py.globals.get(&quot;result&quot;);
+      var val = r &amp;&amp; r.toJs ? r.toJs({ dict_converter: Object.fromEntries }) : null;
+      if (r &amp;&amp; r.destroy) r.destroy();
+      return { ok: true, text: buf.join(&quot;\n&quot;), result: val };
+    } catch (e) {
+      var lines = String(e.message || e).trim().split(&quot;\n&quot;);
+      return { ok: false, text: buf.concat([lines[lines.length - 1]]).join(&quot;\n&quot;), result: null };
+    }
+  });
+  queue = job.catch(function () {});
+  return job;
+}
+
+async function run() {
+  if (!py) return;
+  var r = await exec(code.value);
+  $(&quot;out&quot;).textContent = r.text;
+  $(&quot;out&quot;).classList.toggle(&quot;err&quot;, !r.ok);
+  last = r.result;
+  if (r.ok) logRow();
+  paint();
+  if ($(&quot;all&quot;).open) runAll();
+}
+async function runAll() {
+  if (!py) return;
+  $(&quot;all-out&quot;).textContent = &quot;세는 중&quot;;
+  var r = await exec(codeAll.value);
+  $(&quot;all-out&quot;).textContent = r.text;
+  $(&quot;all-out&quot;).classList.toggle(&quot;err&quot;, !r.ok);
+}
+function runSoon() { clearTimeout(timer); timer = setTimeout(run, 120); }
+
+function paint() {
+  $(&quot;readout&quot;).innerHTML = COLUMNS.map(function (k) {
+    var v = last &amp;&amp; k in last ? last[k] : &quot;–&quot;;
+    return &#x27;&lt;div class=&quot;stat&quot;&gt;&lt;dt&gt;&#x27; + k + &quot;&lt;/dt&gt;&lt;dd&gt;&quot; + v + &quot;&lt;/dd&gt;&lt;/div&gt;&quot;;
+  }).join(&quot;&quot;);
+  var cv = $(&quot;fig&quot;), dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = +cv.dataset.h || 220;
+  cv.style.height = h + &quot;px&quot;;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  var m = 16;
+  view.s = Math.min(w - 2 * m, h - 2 * m) / 100;
+  view.ox = (w - 100 * view.s) / 2; view.oy = (h - 100 * view.s) / 2;
+  var ctx = cv.getContext(&quot;2d&quot;);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  msg(&quot;&quot;);
+  draw(ctx, w, h, last);
+  if (DRAG.length &amp;&amp; last &amp;&amp; last[&quot;점&quot;]) {
+    DRAG.forEach(function (k) {
+      var p = last[&quot;점&quot;][k]; if (!p) return;
+      var q = px(p);
+      ctx.beginPath(); ctx.arc(q[0], q[1], 9, 0, 2 * Math.PI);
+      ctx.fillStyle = css(&quot;--accent&quot;); ctx.globalAlpha = .22; ctx.fill(); ctx.globalAlpha = 1;
+    });
+  }
+}
+
+function logRow() {
+  if (!last) return;
+  var thead = $(&quot;log&quot;).tHead, tbody = $(&quot;log&quot;).tBodies[0];
+  if (!thead.rows.length) thead.innerHTML = &quot;&lt;tr&gt;&lt;th&gt;#&lt;/th&gt;&quot; + COLUMNS.map(function (k) { return &quot;&lt;th&gt;&quot; + k + &quot;&lt;/th&gt;&quot;; }).join(&quot;&quot;) + &quot;&lt;/tr&gt;&quot;;
+  var cells = COLUMNS.map(function (k) { return k in last ? last[k] : &quot;&quot;; });
+  var key = cells.join(&quot;|&quot;);
+  if (key === lastRow) return;
+  lastRow = key;
+  var tr = document.createElement(&quot;tr&quot;);
+  tr.innerHTML = &quot;&lt;td&gt;&quot; + (tbody.rows.length + 1) + &quot;&lt;/td&gt;&quot; + cells.map(function (c) { return &quot;&lt;td&gt;&quot; + c + &quot;&lt;/td&gt;&quot;; }).join(&quot;&quot;);
+  tbody.insertBefore(tr, tbody.firstChild);
+}
+
+// 점 끌기 — 끄는 동안 점 줄을 바꾸고 파이썬을 다시 돌린다
+(function () {
+  var cv = $(&quot;fig&quot;), held = null;
+  if (DRAG.length) cv.classList.add(&quot;drag&quot;);
+  function at(e) { var b = cv.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; }
+  cv.addEventListener(&quot;pointerdown&quot;, function (e) {
+    if (!DRAG.length || !last || !last[&quot;점&quot;]) return;
+    var m = at(e), best = 22;
+    DRAG.forEach(function (k) {
+      var p = last[&quot;점&quot;][k]; if (!p) return;
+      var q = px(p), d = Math.hypot(q[0] - m[0], q[1] - m[1]);
+      if (d &lt; best) { best = d; held = k; }
+    });
+    if (held) { cv.setPointerCapture(e.pointerId); e.preventDefault(); }
+  });
+  cv.addEventListener(&quot;pointermove&quot;, function (e) {
+    if (!held) return;
+    var m = at(e), p = unpx(m[0], m[1]);
+    var x = Math.max(0, Math.min(100, Math.round(p[0]))), y = Math.max(0, Math.min(100, Math.round(p[1])));
+    last[&quot;점&quot;][held] = [x, y];
+    setVar(held, &quot;(&quot; + x + &quot;, &quot; + y + &quot;)&quot;);
+    paint();
+    runSoon();
+  });
+  function drop() { held = null; }
+  cv.addEventListener(&quot;pointerup&quot;, drop);
+  cv.addEventListener(&quot;pointercancel&quot;, drop);
+})();
+
+document.querySelectorAll(&quot;input[data-var]&quot;).forEach(function (el) {
+  el.addEventListener(&quot;input&quot;, function () {
+    var show = document.querySelector(&#x27;[data-show=&quot;&#x27; + el.dataset.var + &#x27;&quot;]&#x27;);
+    if (show) show.textContent = el.value;
+    setVar(el.dataset.var, el.value);
+    runSoon();
+  });
+});
+$(&quot;b-run&quot;).addEventListener(&quot;click&quot;, run);
+$(&quot;b-run-all&quot;).addEventListener(&quot;click&quot;, runAll);
+$(&quot;all&quot;).addEventListener(&quot;toggle&quot;, function () { if ($(&quot;all&quot;).open) runAll(); });
+$(&quot;b-clear&quot;).addEventListener(&quot;click&quot;, function () { $(&quot;log&quot;).tBodies[0].innerHTML = &quot;&quot;; lastRow = &quot;&quot;; });
+document.querySelectorAll(&quot;[data-copy]&quot;).forEach(function (b) {
+  b.addEventListener(&quot;click&quot;, function () {
+    var box = $(b.dataset.copy);
+    try { navigator.clipboard.writeText(box.value); $(&quot;py-state&quot;).textContent = &quot;복사했다&quot;; }
+    catch (e) { box.select(); }
+  });
+});
+window.addEventListener(&quot;resize&quot;, paint);
+if (window.matchMedia) window.matchMedia(&quot;(prefers-color-scheme: dark)&quot;).addEventListener(&quot;change&quot;, paint);
+
+paint();
+loadPyodide().then(function (p) {
+  py = p;
+  $(&quot;b-run&quot;).disabled = false;
+  $(&quot;b-run-all&quot;).disabled = false;
+  $(&quot;py-state&quot;).textContent = &quot;파이썬 준비됨&quot;;
+  run();
+}).catch(function () { $(&quot;py-state&quot;).textContent = &quot;파이썬을 불러오지 못했다. 인터넷 연결을 확인한다.&quot;; });
+&lt;/script&gt;
+" hidden></iframe>
+  <iframe data-tab="2" title="더 나아가 · n 에 따라" data-src="&lt;!doctype html&gt;
+&lt;html lang=&quot;ko&quot;&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;title&gt;원 위의 말 더 나아가 실험대&lt;/title&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap&quot;&gt;
+
+
+&lt;style&gt;
+  :root {
+    --accent: #189E5A;
+    --ground: #F6F7FA;
+    --surface: #FFFFFF;
+    --surface-2: #EFF2F7;
+    --ink: #22314F;
+    --ink-soft: #5C6B85;
+    --ink-faint: #8A96AC;
+    --rule: #DDE3EC;
+    --gold: #F5B301;
+    --ok: #189E5A;
+    --warn: #E17B2E;
+    --head-bg: #22314F;
+    --head-ink: #FFFFFF;
+    --head-dim: #A9B6CE;
+    --code-bg: #1C2433;
+    --code-ink: #E5EAF2;
+    --shadow: 0 1px 2px rgba(34, 49, 79, .05), 0 6px 18px rgba(34, 49, 79, .05);
+    --sans: &#x27;IBM Plex Sans KR&#x27;, &#x27;Malgun Gothic&#x27;, &#x27;맑은 고딕&#x27;, system-ui, sans-serif;
+    --mono: &#x27;IBM Plex Mono&#x27;, &#x27;Consolas&#x27;, ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme=&quot;light&quot;]) {
+      --ground: #141A26; --surface: #1C2433; --surface-2: #232D3F;
+      --ink: #E5EAF2; --ink-soft: #93A0B8; --ink-faint: #6C7A94; --rule: #2E3A50;
+      --ok: #35BE79; --warn: #F0954B;
+      --head-bg: #0F1521; --head-ink: #E5EAF2; --head-dim: #7C8AA4;
+      --code-bg: #0F1521;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+    }
+  }
+  :root[data-theme=&quot;dark&quot;] {
+    --ground: #141A26; --surface: #1C2433; --surface-2: #232D3F;
+    --ink: #E5EAF2; --ink-soft: #93A0B8; --ink-faint: #6C7A94; --rule: #2E3A50;
+    --ok: #35BE79; --warn: #F0954B;
+    --head-bg: #0F1521; --head-ink: #E5EAF2; --head-dim: #7C8AA4;
+    --code-bg: #0F1521;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header { background: var(--head-bg); color: var(--head-ink); padding: 18px 26px 16px; border-bottom: 3px solid var(--accent); }
+  .kick { font-family: var(--mono); font-size: 11.5px; font-weight: 500; letter-spacing: .14em; color: var(--gold); }
+  header h1 { margin: 5px 0 3px; font-size: 25px; font-weight: 700; letter-spacing: -.02em; }
+  header p { margin: 0; color: var(--head-dim); font-size: 13.5px; max-width: 76ch; }
+
+  main { max-width: 1240px; margin: 0 auto; padding: 18px; }
+  .grid { display: grid; gap: 14px; align-items: start; grid-template-columns: 300px minmax(0, 1fr); margin-top: 14px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: minmax(0, 1fr); } main { padding: 14px; } }
+
+  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; box-shadow: var(--shadow); padding: 14px; min-width: 0; }
+  .card &gt; h2 { margin: 0 0 11px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--ink-faint); }
+  main &gt; .card { margin-top: 14px; }
+  .card.problem { border-left: 4px solid var(--accent); margin-top: 0; }
+  .problem .ask { margin: 0 0 9px; font-size: 14.5px; line-height: 1.75; }
+  .problem .src { margin: 11px 0 0; padding-top: 9px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-faint); }
+
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+  .row + .row { margin-top: 7px; }
+  button.btn {
+    font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 7px 12px; cursor: pointer;
+  }
+  button.btn:hover:not(:disabled) { border-color: var(--accent); }
+  button.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.btn:disabled { opacity: .38; cursor: default; }
+  button.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  label.fld { display: block; margin-bottom: 12px; }
+  label.fld &gt; span { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-faint); margin-bottom: 4px; }
+  label.fld b { color: var(--accent); font-size: 14px; }
+  input[type=&quot;range&quot;] { width: 100%; accent-color: var(--accent); }
+
+  canvas { display: block; width: 100%; touch-action: none; }
+  .msg { font-size: 13px; color: var(--ink-soft); margin: 8px 0 0; }
+  .msg.ok { color: var(--ok); font-weight: 600; }
+  .msg.bad { color: var(--warn); font-weight: 600; }
+
+  .readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; margin: 12px 0 0; background: var(--surface-2); }
+  .stat { padding: 9px 12px; border-right: 1px solid var(--rule); }
+  .stat:last-child { border-right: 0; }
+  .stat dt { font-family: var(--mono); font-size: 10px; letter-spacing: .05em; color: var(--ink-faint); margin: 0 0 1px; }
+  .stat dd { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 17px; font-weight: 500; margin: 0; color: var(--accent); }
+
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13px; }
+  th, td { padding: 6px 10px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
+  th { font-size: 10.5px; letter-spacing: .05em; color: var(--ink-faint); font-weight: 600; background: var(--surface-2); }
+  tbody tr:first-child td { background: rgba(245, 179, 1, .12); }
+
+  textarea.code {
+    width: 100%; min-height: 260px; resize: vertical;
+    font-family: var(--mono); font-size: 13px; line-height: 1.6; tab-size: 4;
+    color: var(--code-ink); background: var(--code-bg);
+    border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+    padding: 12px 14px; white-space: pre; overflow: auto;
+  }
+  textarea.code:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  pre.out {
+    margin: 10px 0 0; min-height: 3em; max-height: 320px; overflow: auto;
+    font-family: var(--mono); font-size: 13px; line-height: 1.6; white-space: pre-wrap;
+    background: var(--surface-2); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 14px;
+  }
+  pre.out.err { color: var(--warn); }
+  canvas.drag { cursor: grab; }
+  details.card &gt; summary {
+    cursor: pointer; list-style: none;
+    font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--ink-faint);
+  }
+  details.card &gt; summary::-webkit-details-marker { display: none; }
+  details.card &gt; summary::before { content: &quot;▶ &quot;; color: var(--accent); }
+  details.card[open] &gt; summary::before { content: &quot;▼ &quot;; }
+  details.card[open] &gt; summary { margin-bottom: 11px; }
+  details.sub { margin-top: 10px; }
+  details.sub &gt; summary { cursor: pointer; font-size: 13px; color: var(--ink-soft); }
+&lt;/style&gt;
+
+&lt;header&gt;
+  &lt;div class=&quot;kick&quot;&gt;9주차 · 실험대 · 더 나아가&lt;/div&gt;
+  &lt;h1&gt;원 위의 말&lt;/h1&gt;
+  &lt;p&gt;n 을 4 부터 늘려 가며, n 마다 말이 가장 많이 밟는 점이 몇 개인지 본다.&lt;/p&gt;
+&lt;/header&gt;
+
+&lt;main&gt;
+  &lt;section class=&quot;card problem&quot;&gt;
+    &lt;h2&gt;문제&lt;/h2&gt;
+    &lt;p class=&quot;ask&quot;&gt;둘레가 nπ 인 원 위에 점 n 개가 같은 간격으로 있고, 시계 방향으로 0, 1, …, n − 1 번이다. 0 번 점의 말을 먼저 mπ 만큼 옮기고, 그다음부터는 직전 점의 번호 × mπ 만큼 시계 방향으로 옮긴다. 출발점이나 이미 놓았던 점에 다시 놓이면 멈춘다.&lt;/p&gt;
+    &lt;p class=&quot;ask&quot;&gt;&lt;b&gt;더 나아가&lt;/b&gt; n 이 홀수여도 모든 점을 밟게 하는 m 이 없을 수 있는가. 어떤 n 에서 그런 m 이 있는가.&lt;/p&gt;
+    &lt;p class=&quot;src&quot;&gt;대전과학고 2026 문항 2&lt;/p&gt;
+  &lt;/section&gt;
+
+  &lt;div class=&quot;grid&quot;&gt;
+    &lt;section class=&quot;card&quot;&gt;
+      &lt;h2&gt;조작&lt;/h2&gt;
+      &lt;label class=&quot;fld&quot;&gt;&lt;span&gt;n &lt;b data-show=&quot;n&quot;&gt;16&lt;/b&gt;&lt;/span&gt;&lt;input type=&quot;range&quot; data-var=&quot;n&quot; min=&quot;4&quot; max=&quot;30&quot; value=&quot;16&quot;&gt;&lt;/label&gt;
+      &lt;div class=&quot;row&quot;&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;b-clear&quot;&gt;↻ 표 비우기&lt;/button&gt;&lt;/div&gt;
+      &lt;dl class=&quot;readout&quot; id=&quot;readout&quot;&gt;&lt;/dl&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;card&quot;&gt;
+      &lt;h2&gt;그림&lt;/h2&gt;
+      &lt;canvas id=&quot;fig&quot; data-h=&quot;340&quot;&gt;&lt;/canvas&gt;
+      &lt;p class=&quot;msg&quot; id=&quot;fig-msg&quot;&gt;&lt;/p&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+  &lt;section class=&quot;card&quot;&gt;
+    &lt;h2&gt;표 · 파이썬이 돌 때마다 한 줄씩 쌓인다&lt;/h2&gt;
+    &lt;div class=&quot;table-scroll&quot;&gt;&lt;table id=&quot;log&quot;&gt;&lt;thead&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section class=&quot;card&quot;&gt;
+    &lt;h2&gt;파이썬 · 이 코드가 실제로 돈다&lt;/h2&gt;
+    &lt;textarea class=&quot;code&quot; id=&quot;code&quot; spellcheck=&quot;false&quot; aria-label=&quot;파이썬 코드&quot;&gt;&lt;/textarea&gt;
+    &lt;div class=&quot;row&quot; style=&quot;margin-top:8px&quot;&gt;
+      &lt;button class=&quot;btn primary&quot; type=&quot;button&quot; id=&quot;b-run&quot; disabled&gt;▶ 실행&lt;/button&gt;
+      &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-copy=&quot;code&quot;&gt;복사&lt;/button&gt;
+      &lt;span class=&quot;msg&quot; id=&quot;py-state&quot; style=&quot;margin:0&quot;&gt;파이썬 불러오는 중&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;pre class=&quot;out&quot; id=&quot;out&quot;&gt;&lt;/pre&gt;
+  &lt;/section&gt;
+
+  &lt;details class=&quot;card&quot; id=&quot;all&quot;&gt;
+    &lt;summary&gt;전체 케이스 보기 · 눌러서 펼친다&lt;/summary&gt;
+    &lt;pre class=&quot;out&quot; id=&quot;all-out&quot;&gt;&lt;/pre&gt;
+    &lt;details class=&quot;sub&quot;&gt;
+      &lt;summary&gt;전체 케이스를 찍는 파이썬 코드&lt;/summary&gt;
+      &lt;textarea class=&quot;code&quot; id=&quot;code-all&quot; spellcheck=&quot;false&quot; aria-label=&quot;전체 케이스 파이썬 코드&quot;&gt;&lt;/textarea&gt;
+      &lt;div class=&quot;row&quot; style=&quot;margin-top:8px&quot;&gt;
+        &lt;button class=&quot;btn primary&quot; type=&quot;button&quot; id=&quot;b-run-all&quot; disabled&gt;▶ 실행&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-copy=&quot;code-all&quot;&gt;복사&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/details&gt;
+  &lt;/details&gt;
+&lt;/main&gt;
+
+&lt;script type=&quot;text/plain&quot; id=&quot;py-src&quot;&gt;
+n = 16
+
+def walk(n, m):
+    # 이웃한 두 점 사이가 π 이므로 kπ 만큼 옮기는 것은 k 칸 옮기는 것이다
+    path = [0]
+    a = m % n                          # 1단계: 0 번 점에서 m 칸
+    while a not in path:
+        path.append(a)
+        a = (a + a * m) % n            # 다음 단계: 지금 번호 × m 칸
+    path.append(a)                     # 다시 놓인 점에서 멈춘다
+    return path
+
+def most(k):
+    # 점 k 개에서 m 을 1 부터 k - 1 까지 모두 굴려, 가장 많이 밟는 점 수와 그때의 m
+    best, best_m = 0, 1
+    for m in range(1, k):
+        c = len(set(walk(k, m)))
+        if c &gt; best:
+            best, best_m = c, m
+    return best, best_m
+
+bars = []
+for k in range(4, n + 1):
+    c, m = most(k)
+    bars.append([k, c])
+    print(f&quot;n = {k:&gt;2} : 가장 많이 밟는 점 {c:&gt;2} 개 (m = {m})&quot;, &quot; ← 모든 점&quot; if c == k else &quot;&quot;)
+
+c, m = most(n)
+result = {&quot;n&quot;: n, &quot;가장 많이 밟은 점&quot;: c, &quot;그때 m&quot;: m, &quot;모든 점&quot;: &quot;밟는다&quot; if c == n else &quot;못 밟는다&quot;,
+          &quot;bars&quot;: bars}
+&lt;/script&gt;
+
+&lt;script type=&quot;text/plain&quot; id=&quot;py-all&quot;&gt;
+n = 16
+
+def walk(n, m):
+    # 이웃한 두 점 사이가 π 이므로 kπ 만큼 옮기는 것은 k 칸 옮기는 것이다
+    path = [0]
+    a = m % n                          # 1단계: 0 번 점에서 m 칸
+    while a not in path:
+        path.append(a)
+        a = (a + a * m) % n            # 다음 단계: 지금 번호 × m 칸
+    path.append(a)                     # 다시 놓인 점에서 멈춘다
+    return path
+
+# n 에서 m 마다 밟은 점 수와 못 밟은 점을 찍는다
+for m in range(1, n):
+    seen = set(walk(n, m))
+    missed = [i for i in range(n) if i not in seen]
+    print(f&quot;m = {m:&gt;2}  밟은 점 {len(seen):&gt;2} 개   못 밟은 점 {missed if missed else &#x27;없다&#x27;}&quot;)
+&lt;/script&gt;
+
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/pyodide@0.26.4/pyodide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+/* ===== 이 문제에 맞게 바꾼 부분 ===== */
+// 수치 판과 표에 보일 열. result 사전의 키 이름이다.
+var COLUMNS = [&quot;n&quot;, &quot;가장 많이 밟은 점&quot;, &quot;그때 m&quot;, &quot;모든 점&quot;];
+
+// 끌 점이 없는 문제다.
+var DRAG = [];
+
+// n 마다 막대 하나. 연한 테두리는 점 n 개 전체, 채운 높이는 가장 많이 밟은 점 수.
+// 다 채워지면(모든 점을 밟으면) 방 색, 아니면 회색.
+function draw(ctx, w, h, r) {
+  if (!r) return;
+  var b = r.bars, k = b.length, top = 24, bot = h - 30, left = 10, bw = (w - 2 * left) / k;
+  var big = b[k - 1][0], u = (bot - top) / big;
+  ctx.textAlign = &quot;center&quot;; ctx.font = &quot;500 11px &quot; + css(&quot;--mono&quot;);
+  for (var j = 0; j &lt; k; j++) {
+    var n = b[j][0], c = b[j][1], x = left + j * bw + bw * 0.15, bwi = bw * 0.7;
+    ctx.strokeStyle = css(&quot;--ink-faint&quot;); ctx.lineWidth = 1;
+    ctx.strokeRect(x + 0.5, bot - n * u + 0.5, bwi - 1, n * u - 1);
+    ctx.fillStyle = c === n ? css(&quot;--accent&quot;) : css(&quot;--rule&quot;);
+    ctx.fillRect(x, bot - c * u, bwi, c * u);
+    if (j === k - 1) { ctx.strokeStyle = css(&quot;--gold&quot;); ctx.lineWidth = 2; ctx.strokeRect(x - 2, bot - n * u - 2, bwi + 4, n * u + 2); }
+    ctx.fillStyle = css(&quot;--ink&quot;); ctx.textBaseline = &quot;bottom&quot;;
+    ctx.fillText(String(c), x + bwi / 2, bot - n * u - 3);
+    ctx.fillStyle = css(&quot;--ink-faint&quot;); ctx.textBaseline = &quot;top&quot;;
+    ctx.fillText(String(n), x + bwi / 2, bot + 6);
+  }
+  msg(&quot;아래 수는 n 이다. 테두리는 점 n 개 전체, 채운 높이와 위의 수는 m 을 모두 굴려 가장 많이 밟은 점 수다.&quot;);
 }
 
 /* ===== 고치지 않는 부분: 파이썬 실행 · 슬라이더 · 점 끌기 · 수치 판 · 표 · 전체 케이스 ===== */
