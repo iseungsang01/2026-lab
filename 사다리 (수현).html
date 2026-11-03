@@ -1175,6 +1175,27 @@ loadPyodide().then(function (p) {
     &lt;/section&gt;
   &lt;/div&gt;
 
+&lt;style&gt;
+.all-ladders { margin-top:14px; }
+.all-ladders .ladder-intro { margin:0 0 12px; color:var(--ink-soft); font-size:13px; }
+.ladder-gallery { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.ladder-case { min-width:0; border:1px solid var(--rule); border-radius:9px; padding:10px 8px; text-align:center; background:var(--surface-2); }
+.ladder-case h3 { margin:0 0 4px; font-size:13px; }
+.ladder-case svg { display:block; width:100%; max-width:230px; height:auto; margin:0 auto; }
+.ladder-vertical { stroke:var(--ink-soft); stroke-width:2.5; stroke-linecap:round; }
+.ladder-rung { stroke:var(--accent); stroke-width:4; stroke-linecap:round; }
+.ladder-num { fill:var(--ink-soft); font-size:10px; text-anchor:middle; }
+.ladder-bottom { fill:var(--accent); font-size:12px; font-weight:700; text-anchor:middle; }
+.ladder-case p { margin:0 0 2px; font-size:12px; }
+.ladder-case small { color:var(--ink-soft); font-size:10px; }
+@media(max-width:700px) { .ladder-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; } }
+&lt;/style&gt;
+&lt;section class=&quot;card all-ladders&quot;&gt;
+&lt;h2&gt;질문 3 · 선택한 가로줄 수의 모든 사다리&lt;/h2&gt;
+&lt;p class=&quot;ladder-intro&quot; id=&quot;ladder-intro&quot;&gt;슬라이더에서 세로줄과 가로줄 개수를 바꾸면 해당하는 모든 사다리가 나타난다.&lt;/p&gt;
+&lt;div class=&quot;ladder-gallery&quot; id=&quot;ladder-gallery&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+&lt;/section&gt;
+
   &lt;section class=&quot;card&quot;&gt;
     &lt;h2&gt;표 · 파이썬이 돌 때마다 한 줄씩 쌓인다&lt;/h2&gt;
     &lt;div class=&quot;table-scroll&quot;&gt;&lt;table id=&quot;log&quot;&gt;&lt;thead&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
@@ -1349,7 +1370,47 @@ async function runAll() {
 }
 function runSoon() { clearTimeout(timer); timer = setTimeout(run, 120); }
 
+function renderAllLadders() {
+  var n = +document.querySelector(&#x27;input[data-var=&quot;N&quot;]&#x27;).value;
+  var k = +document.querySelector(&#x27;input[data-var=&quot;k&quot;]&#x27;).value;
+  var gallery = $(&quot;ladder-gallery&quot;), intro = $(&quot;ladder-intro&quot;);
+  // 인접한 두 세로줄을 바꾸는 BFS로 각 순서의 최소 가로줄 사다리를 찾는다.
+  var start = Array.from({length:n}, function(_,i){return i+1;});
+  var key = function(a){return a.join(&quot;,&quot;);};
+  var seen = new Map([[key(start), {order:start, rungs:[]}]]), queue = [seen.get(key(start))];
+  for (var qi=0; qi&lt;queue.length; qi++) {
+    var cur=queue[qi];
+    for (var i=0;i&lt;n-1;i++) {
+      var next=cur.order.slice();
+      var tmp=next[i]; next[i]=next[i+1]; next[i+1]=tmp;
+      var kk=key(next);
+      if (!seen.has(kk)) {
+        var item={order:next,rungs:cur.rungs.concat(i)};
+        seen.set(kk,item); queue.push(item);
+      }
+    }
+  }
+  var cases=Array.from(seen.values()).filter(function(x){return x.rungs.length===k;});
+  var max=n*(n-1)/2;
+  var slider=document.querySelector(&#x27;input[data-var=&quot;k&quot;]&#x27;);
+  slider.max=max;
+  if (k&gt;max) { slider.value=max; var sh=document.querySelector(&#x27;[data-show=&quot;k&quot;]&#x27;); if(sh)sh.textContent=max; setVar(&#x27;k&#x27;,max); k=max; cases=Array.from(seen.values()).filter(function(x){return x.rungs.length===k;}); }
+  intro.textContent=&#x27;세로줄 &#x27;+n+&#x27;개, 가로줄 &#x27;+k+&#x27;개일 때 가능한 사다리 &#x27;+cases.length+&#x27;가지를 모두 표시한다. 각 그림의 아래 숫자가 완성된 급식 순서다.&#x27;;
+  if (!cases.length) { gallery.innerHTML=&#x27;&lt;p class=&quot;msg&quot;&gt;이 개수의 가로줄로 만들 수 있는 사다리가 없다.&lt;/p&gt;&#x27;; return; }
+  var width=Math.max(150, Math.min(250, 42*n+28)), height=Math.max(150, 104+k*22);
+  gallery.innerHTML=cases.map(function(item,index){
+    var pad=18, gap=(width-2*pad)/(n-1), top=24, bottom=height-24;
+    var lines=&#x27;&#x27;;
+    for(var c=0;c&lt;n;c++){var x=pad+c*gap; lines+=&#x27;&lt;line x1=&quot;&#x27;+x+&#x27;&quot; y1=&quot;&#x27;+top+&#x27;&quot; x2=&quot;&#x27;+x+&#x27;&quot; y2=&quot;&#x27;+bottom+&#x27;&quot; class=&quot;ladder-vertical&quot;/&gt;&#x27;;}
+    item.rungs.forEach(function(pos,j){var y=top+(j+1)*(bottom-top)/(k+1);var x1=pad+pos*gap,x2=x1+gap;lines+=&#x27;&lt;line x1=&quot;&#x27;+x1+&#x27;&quot; y1=&quot;&#x27;+y+&#x27;&quot; x2=&quot;&#x27;+x2+&#x27;&quot; y2=&quot;&#x27;+y+&#x27;&quot; class=&quot;ladder-rung&quot;/&gt;&#x27;;});
+    for(var c=0;c&lt;n;c++){var x=pad+c*gap;lines+=&#x27;&lt;text x=&quot;&#x27;+x+&#x27;&quot; y=&quot;13&quot; class=&quot;ladder-num&quot;&gt;&#x27;+(c+1)+&#x27;&lt;/text&gt;&lt;text x=&quot;&#x27;+x+&#x27;&quot; y=&quot;&#x27;+(height-5)+&#x27;&quot; class=&quot;ladder-bottom&quot;&gt;&#x27;+item.order[c]+&#x27;&lt;/text&gt;&#x27;;}
+    var positions=item.rungs.map(function(v){return (v+1)+&#x27;·&#x27;+(v+2);}).join(&#x27; → &#x27;) || &#x27;없음&#x27;;
+    return &#x27;&lt;article class=&quot;ladder-case&quot;&gt;&lt;h3&gt;경우 &#x27;+(index+1)+&#x27;&lt;/h3&gt;&lt;svg viewBox=&quot;0 0 &#x27;+width+&#x27; &#x27;+height+&#x27;&quot; role=&quot;img&quot; aria-label=&quot;사다리 경우 &#x27;+(index+1)+&#x27;&quot;&gt;&#x27;+lines+&#x27;&lt;/svg&gt;&lt;p&gt;급식 순서 &lt;b&gt;{&#x27;+item.order.join(&#x27;, &#x27;)+&#x27;}&lt;/b&gt;&lt;/p&gt;&lt;small&gt;가로줄 위치: &#x27;+positions+&#x27;&lt;/small&gt;&lt;/article&gt;&#x27;;
+  }).join(&#x27;&#x27;);
+}
+
 function paint() {
+  renderAllLadders();
   $(&quot;readout&quot;).innerHTML = COLUMNS.map(function (k) {
     var v = last &amp;&amp; k in last ? last[k] : &quot;–&quot;;
     return &#x27;&lt;div class=&quot;stat&quot;&gt;&lt;dt&gt;&#x27; + k + &quot;&lt;/dt&gt;&lt;dd&gt;&quot; + v + &quot;&lt;/dd&gt;&lt;/div&gt;&quot;;
