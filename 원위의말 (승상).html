@@ -161,6 +161,24 @@
   details.card[open] &gt; summary { margin-bottom: 11px; }
   details.sub { margin-top: 10px; }
   details.sub &gt; summary { cursor: pointer; font-size: 13px; color: var(--ink-soft); }
+
+  /* 휴대폰 : 한글 라벨을 본문 글꼴로, 자간 없이, 조금 크게 */
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    header p { font-size: 14px; }
+    .kick { letter-spacing: .04em; font-size: 12px; }
+    .card &gt; h2, details.card &gt; summary { font-family: var(--sans); font-size: 13px; letter-spacing: 0; }
+    .problem .ask { font-size: 15.5px; }
+    .problem .src { font-size: 13px; }
+    label.fld &gt; span { font-family: var(--sans); font-size: 13.5px; letter-spacing: 0; color: var(--ink-soft); }
+    label.fld b { font-size: 16px; }
+    .msg { font-size: 14px; }
+    .readout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stat dt { font-family: var(--sans); font-size: 12.5px; letter-spacing: 0; color: var(--ink-soft); }
+    .stat dd { font-size: 19px; }
+    th { font-family: var(--sans); font-size: 12px; letter-spacing: 0; }
+    pre.out { font-size: 12.5px; }
+  }
 &lt;/style&gt;
 
 &lt;header&gt;
@@ -620,6 +638,24 @@ loadPyodide().then(function (p) {
   details.card[open] &gt; summary { margin-bottom: 11px; }
   details.sub { margin-top: 10px; }
   details.sub &gt; summary { cursor: pointer; font-size: 13px; color: var(--ink-soft); }
+
+  /* 휴대폰 : 한글 라벨을 본문 글꼴로, 자간 없이, 조금 크게 */
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    header p { font-size: 14px; }
+    .kick { letter-spacing: .04em; font-size: 12px; }
+    .card &gt; h2, details.card &gt; summary { font-family: var(--sans); font-size: 13px; letter-spacing: 0; }
+    .problem .ask { font-size: 15.5px; }
+    .problem .src { font-size: 13px; }
+    label.fld &gt; span { font-family: var(--sans); font-size: 13.5px; letter-spacing: 0; color: var(--ink-soft); }
+    label.fld b { font-size: 16px; }
+    .msg { font-size: 14px; }
+    .readout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stat dt { font-family: var(--sans); font-size: 12.5px; letter-spacing: 0; color: var(--ink-soft); }
+    .stat dd { font-size: 19px; }
+    th { font-family: var(--sans); font-size: 12px; letter-spacing: 0; }
+    pre.out { font-size: 12.5px; }
+  }
 &lt;/style&gt;
 
 &lt;header&gt;
@@ -1085,6 +1121,24 @@ loadPyodide().then(function (p) {
   details.card[open] &gt; summary { margin-bottom: 11px; }
   details.sub { margin-top: 10px; }
   details.sub &gt; summary { cursor: pointer; font-size: 13px; color: var(--ink-soft); }
+
+  /* 휴대폰 : 한글 라벨을 본문 글꼴로, 자간 없이, 조금 크게 */
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    header p { font-size: 14px; }
+    .kick { letter-spacing: .04em; font-size: 12px; }
+    .card &gt; h2, details.card &gt; summary { font-family: var(--sans); font-size: 13px; letter-spacing: 0; }
+    .problem .ask { font-size: 15.5px; }
+    .problem .src { font-size: 13px; }
+    label.fld &gt; span { font-family: var(--sans); font-size: 13.5px; letter-spacing: 0; color: var(--ink-soft); }
+    label.fld b { font-size: 16px; }
+    .msg { font-size: 14px; }
+    .readout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stat dt { font-family: var(--sans); font-size: 12.5px; letter-spacing: 0; color: var(--ink-soft); }
+    .stat dd { font-size: 19px; }
+    th { font-family: var(--sans); font-size: 12px; letter-spacing: 0; }
+    pre.out { font-size: 12.5px; }
+  }
 &lt;/style&gt;
 
 &lt;header&gt;
